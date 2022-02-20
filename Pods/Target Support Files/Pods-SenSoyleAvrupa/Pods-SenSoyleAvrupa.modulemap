@@ -1,0 +1,6 @@
+framework module Pods_SenSoyleAvrupa {
+  umbrella header "Pods-SenSoyleAvrupa-umbrella.h"
+
+  export *
+  module * { export * }
+}
