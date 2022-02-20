@@ -127,7 +127,7 @@ class ForgotPasswordController: UITableViewController {
         
         
         
-        loadingView.doldurSuperView()
+        loadingView.addToSuperViewAnchors()
         
       
         

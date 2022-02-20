@@ -11,38 +11,30 @@ import AVFoundation
 
 class ReklamController: UIViewController {
     
-    let btnLeft : UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "xmark"), for: .normal)
-        btn.tintColor = .black
-        btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
-        btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
-        return btn
+    let buttonLeft : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.tintColor = .black
+        button.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 36).isActive = true
+        button.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
+        button.layer.cornerRadius = 18
+        button.backgroundColor = .customBackgorundButton()
+        return button
     }()
     
     var player: AVPlayer?
     
-    var url = ""
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         navigationController?.navigationBar.isHidden = true
-    
-      
-        
+
         pullData()
-        
-        
-      
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+
     }
     
     @objc func actionLeft() {
@@ -50,32 +42,29 @@ class ReklamController: UIViewController {
     }
     
     func pullData() {
-        
         AF.request("\(NetworkManager.url)/api/get-ad",method: .get).responseString { [self] response in
             
             print("response: \(response)")
             
             switch response.result {
-            case .success(let value):
-                url = value
-                confugireVideo()
+            case .success(let url):
+                configureVideo(url: url)
                 return
             case .failure(let error):
                 print("error**: \(error)")
                 return
             }
-            
         }
     }
     
-    func confugireVideo() {
-    print("url \(url)")
+    func configureVideo(url: String) {
+        print("url \(url)")
         guard let url = URL(string: url) else {
             return
         }
 
         player = AVPlayer(url: url)
-    
+
         let playerView = AVPlayerLayer()
         playerView.backgroundColor = UIColor.customBackgorund().cgColor
         playerView.player = player
@@ -86,15 +75,19 @@ class ReklamController: UIViewController {
         NotificationCenter.default.addObserver(self, selector:#selector(self.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
         player?.play()
         
-        view.addSubview(btnLeft)
+        view.addSubview(buttonLeft)
         
-        btnLeft.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: view.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+        buttonLeft.anchor(top: view.safeAreaLayoutGuide.topAnchor,
+                       bottom: nil,
+                       leading: view.leadingAnchor,
+                       trailing: nil,
+                       padding: .init(top: 20, left: 20, bottom: 0, right: 0))
     }
     
     @objc func playerDidFinishPlaying(note: NSNotification){
-        confugireVideo()
+        player?.seek(to: .zero)
+        player?.play()
     }
-
 }
 
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4

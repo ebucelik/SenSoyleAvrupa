@@ -135,15 +135,15 @@ class EditProfileController: UIViewController {
         
         
         bigCircle.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: nil, trailing: nil,padding: .init(top: 20, left: 0, bottom: 0, right: 0))
-        bigCircle.merkezXSuperView()
+        bigCircle.centerXAtSuperView()
         
-        profilImage.doldurSuperView()
+        profilImage.addToSuperViewAnchors()
         
         editImage.anchor(top: littleCircle.topAnchor, bottom: littleCircle.bottomAnchor, leading: littleCircle.leadingAnchor, trailing: littleCircle.trailingAnchor)
         
         stackView.anchor(top: profilImage.bottomAnchor, bottom: nil, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 10, left: 20, bottom: 0, right: 20))
         
-        loadingView.doldurSuperView()
+        loadingView.addToSuperViewAnchors()
         
         loadingView.isHidden = true
         

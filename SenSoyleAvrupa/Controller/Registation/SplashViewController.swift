@@ -52,7 +52,7 @@ class SplashViewController: UIViewController {
         
         view.addSubview(imgLogo)
         
-        imgLogo.merkezKonumlamdirmaSuperView()
+        imgLogo.centerViewAtSuperView()
     }
     
     func pullData() {
@@ -73,37 +73,33 @@ class SplashViewController: UIViewController {
             let parameters : Parameters = ["email":email]
             
             AF.request("\(NetworkManager.url)/api/user",method: .get,parameters: parameters).responseJSON { [self] response in
-                
+
                 print("response: \(response)")
-                
+
                 if let data = response.data {
                     do {
                         let answer = try JSONDecoder().decode(User.self, from: data)
-                       
+
                         print("splash email \(email)")
                         CacheUser.email = email
                         if answer.pp == "\(NetworkManager.url)/pp" {
-                            perform(#selector(actionChooseProfilImage), with: nil,afterDelay: 1)
-                        }else{
-                            perform(#selector(actionTabBar), with: nil,afterDelay: 1)
+                            perform(#selector(actionChooseProfilImage), with: nil, afterDelay: 1)
+                        } else {
+                            perform(#selector(actionTabBar), with: nil, afterDelay: 1)
                         }
-                        
                     }catch{
                         makeAlert(tittle: "Error Localized Description", message: "\(error.localizedDescription)")
                     }
                 }
-                
             }
-            
         }
-        
     }
     
     @objc func actionTabBar() {
         let vc = CustomTabbar()
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
-       present(navigationVC, animated: true, completion: nil)
+        present(navigationVC, animated: true, completion: nil)
     }
     
     @objc func actionWelcomePage() {

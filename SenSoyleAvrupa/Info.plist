@@ -2,36 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>SKAdNetworkItems</key>
-    <array>
-    <dict>
-    <key>SKAdNetworkIdentifier</key>
-    <string>cstr6suwn9.skadnetwork</string>
-    </dict>
-    </array>
-    <key>NSUserTrackingUsageDescription</key>
-    <string>This identifier will be used to deliver personalized ads to you.</string>
-    <key>GADApplicationIdentifier</key>
-    <string>ca-app-pub-3940256099942544~1458002511</string>
-    <key>GADIsAdManagerApp</key>
-    <true/>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-    </dict>
-      <key>BGTaskSchedulerPermittedIdentifiers</key>
-      <array>
-          <string>com.sensoyleavrupa.appName</string>
-      </array>
-	<key>NSCameraUsageDescription</key>
-	<string>This app wants to take pictures &amp; videos.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app wants to record sound.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app wants to use your picture &amp; video library.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This app wants to save pictures &amp; videos to your library.</string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.sensoyleavrupa.appName</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -48,8 +22,34 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<key>GADIsAdManagerApp</key>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>This app wants to take pictures &amp; videos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app wants to record sound.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app wants to save pictures &amp; videos to your library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app wants to use your picture &amp; video library.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to deliver personalized ads to you.</string>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

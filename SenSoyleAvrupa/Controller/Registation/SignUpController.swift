@@ -64,7 +64,7 @@ class SignUpController: UITableViewController {
     }()
     
     let imgProfile : UIImageView = {
-       let img = UIImageView(image: UIImage(named: ""))
+        let img = UIImageView(image: UIImage(named: ""))
         img.heightAnchor.constraint(equalToConstant: 50).isActive = true
         img.widthAnchor.constraint(equalToConstant: 50).isActive = true
         img.layer.cornerRadius = 5
@@ -83,7 +83,7 @@ class SignUpController: UITableViewController {
     }()
     
     let txtMail : UITextField = {
-       let textField = CustomTextField()
+        let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
         textField.backgroundColor = .customBackgorundButton()
         textField.placeholder = ""
@@ -103,7 +103,7 @@ class SignUpController: UITableViewController {
     }()
     
     let txtNickName : UITextField = {
-       let textField = CustomTextField()
+        let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
         textField.backgroundColor = .customBackgorundButton()
         textField.placeholder = ""
@@ -123,7 +123,7 @@ class SignUpController: UITableViewController {
     }()
     
     let txtPassword : UITextField = {
-       let textField = CustomTextField()
+        let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
         textField.backgroundColor = .customBackgorundButton()
         textField.placeholder = ""
@@ -136,13 +136,13 @@ class SignUpController: UITableViewController {
     }()
     
     lazy var privacyPolciySwitchView : UIView = {
-       let view = UIView()
+        let view = UIView()
         view.heightAnchor.constraint(equalToConstant: 30).isActive = true
         return view
     }()
     
     let lblPrivacyPolicy : UILabel = {
-       let lbl = UILabel()
+        let lbl = UILabel()
         let attributed = NSMutableAttributedString(string: " Gizlilik Politikası ve Hizmet Şartları", attributes: [.font : UIFont.systemFont(ofSize: 12,weight: .heavy),.foregroundColor : UIColor.black])
         attributed.append(NSAttributedString(string: "'nı okudum ve kabul ediyorum.", attributes: [.font : UIFont.systemFont(ofSize: 12),.foregroundColor : UIColor.black]))
         lbl.attributedText = attributed
@@ -189,7 +189,7 @@ class SignUpController: UITableViewController {
         return btn
     }()
     
-   
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -247,16 +247,16 @@ class SignUpController: UITableViewController {
         
         privacyPolciySwitchView.addSubview(lblPrivacyPolicy)
         
-       
+
         flatSwitch.anchor(top: nil, bottom: nil, leading: privacyPolciySwitchView.leadingAnchor ,trailing: nil,padding: .init(top: 0, left: 5, bottom: 0, right: 5))
-        flatSwitch.merkezYSuperView()
+        flatSwitch.centerYAtSuperView()
         
         
         lblPrivacyPolicy.anchor(top: nil, bottom: nil, leading: flatSwitch.trailingAnchor, trailing: privacyPolciySwitchView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 5))
         
-        lblPrivacyPolicy.merkezYSuperView()
+        lblPrivacyPolicy.centerYAtSuperView()
         
-        loadingView.doldurSuperView()
+        loadingView.addToSuperViewAnchors()
         
         let gestureSwitch = UITapGestureRecognizer(target: self, action: #selector(actionPrivacyPolicy))
         lblPrivacyPolicy.addGestureRecognizer(gestureSwitch)
@@ -302,24 +302,24 @@ class SignUpController: UITableViewController {
 
         loadingView.isHidden = false
 
-        let parameters : Parameters = ["username" : nickname,"email":email,"password":password]
+        let parameters : Parameters = ["username": nickname, "email": email, "password": password]
         
-        AF.request("\(NetworkManager.url)/api/register",method: .post,parameters: parameters).responseString { [self] response in
+        AF.request("\(NetworkManager.url)/api/register", method: .post, parameters: parameters).responseString { [self] response in
             print(response)
             if let data = response.data {
                 do {
                     let answer = try JSONDecoder().decode(SignUp.self, from: data)
-                    
-                    if answer.status == true {
+
+                    if let status = answer.status, status {
                         let user = UserData(context: context)
                         user.email = email
                         appDelegate.saveContext()
-                      
+
                         let vc = SplashViewController()
                         let navigationVC = UINavigationController(rootViewController: vc)
                         navigationVC.modalPresentationStyle = .fullScreen
                         present(navigationVC, animated: true, completion: nil)
-                    }else{
+                    } else {
                         loadingView.isHidden = true
                         self.makeAlert(tittle: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(answer.message ?? "")")
                     }
@@ -329,10 +329,7 @@ class SignUpController: UITableViewController {
                     makeAlert(tittle: "Error Localized Description", message: "\(error.localizedDescription)")
                 }
             }
-
         }
-        
-
     }
     
     @objc func actionSignIn() {
@@ -345,8 +342,9 @@ class SignUpController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-     return allView
+        return allView
     }
+
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return view.frame.size.height
     }

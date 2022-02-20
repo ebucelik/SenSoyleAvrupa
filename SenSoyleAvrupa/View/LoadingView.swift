@@ -27,12 +27,12 @@ class LoadingView : UIView {
         
         addSubview(effectView)
         
-        effectView.doldurSuperView()
+        effectView.addToSuperViewAnchors()
       
         
         addSubview(activityIndicator)
         
-        activityIndicator.merkezKonumlamdirmaSuperView()
+        activityIndicator.centerViewAtSuperView()
     }
     
     override func draw(_ rect: CGRect) {

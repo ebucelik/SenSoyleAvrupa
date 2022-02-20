@@ -12,309 +12,317 @@ import NVActivityIndicatorView
 import Alamofire
 
 class HomeCell: UITableViewCell {
-    
-    let activityIndicator : NVActivityIndicatorView = {
+
+    // MARK: Variables
+    var player: AVPlayer?
+
+    private var model: Home? {
+        didSet {
+            profilImage.sd_setImage(with: URL(string: "\(NetworkManager.url)/pp/\(model?.pp ?? "")"), completed: nil)
+            labelStar.text = "\(model?.likes ?? 0)"
+            labelComment.text = "\(model?.comment ?? 0)"
+            labelName.text = model?.username
+            labelStatus.text = model?.status
+        }
+    }
+
+    private(set) var isPlaying = true
+
+    //Action
+    var buttonProfileImageAction: (() -> (Void))?
+    var buttonCommentAction: (() -> (Void))?
+    var buttonSpamAction: (() -> (Void))?
+    var buttonSendPoint: (() -> (Void))?
+
+    let ratingView = RatingView()
+
+    let alphaBackgroundColor: UIColor = .white.withAlphaComponent(0.3)
+
+    // MARK: Views
+    let activityIndicator: NVActivityIndicatorView = {
         let view = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 30, height: 30), type: .ballClipRotatePulse, color: .customTintColor(), padding: nil)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    let profilImage : UIImageView = {
-        let btn = UIImageView(image: UIImage(named: "emojiman"))
-        btn.tintColor = .customTintColor()
-        btn.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        btn.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        //btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
-        btn.layer.cornerRadius = 25
-        btn.backgroundColor = .customBackgorund()
-        btn.layer.borderWidth = 1
-        btn.layer.borderColor = UIColor.customTintColor().cgColor
-        btn.clipsToBounds = true
-        btn.isUserInteractionEnabled = true
-        return btn
+    let profilImage: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "emojiman"))
+        imageView.tintColor = .customTintColor()
+        imageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        imageView.layer.cornerRadius = 25
+        imageView.backgroundColor = .customBackgorund()
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.customTintColor().cgColor
+        imageView.clipsToBounds = true
+        imageView.isUserInteractionEnabled = true
+        return imageView
     }()
     
-    let btnStar : UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "star"), for: .normal)
-        btn.tintColor = .customTintColor()
-        btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        //btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
-        btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
-        return btn
+    let buttonStar: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(named: "star"), for: .normal)
+        button.tintColor = .customTintColor()
+        button.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 36).isActive = true
+        button.layer.cornerRadius = 18
+        button.backgroundColor = .customBackgorundButton()
+        return button
     }()
     
-    let lblStar : UILabel = {
-        let lbl = UILabel()
-        lbl.textColor = .customLabelColor()
-        lbl.text = ""
-        lbl.textAlignment = .center
-        lbl.textColor = .black
-        return lbl
+    let labelStar: UILabel = {
+        let label = UILabel()
+        label.textColor = .customLabelColor()
+        label.text = ""
+        label.textAlignment = .center
+        label.textColor = .black
+        return label
     }()
     
-    let btnComment : UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "message"), for: .normal)
-        btn.tintColor = .customTintColor()
-        btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        //btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
-        btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
-        return btn
+    let buttonComment: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "message"), for: .normal)
+        button.tintColor = .customTintColor()
+        button.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 36).isActive = true
+        button.layer.cornerRadius = 18
+        button.backgroundColor = .customBackgorundButton()
+        return button
     }()
     
-    let lblComment : UILabel = {
-        let lbl = UILabel()
-        lbl.textColor = .customLabelColor()
-        lbl.text = ""
-        lbl.textAlignment = .center
-        return lbl
+    let labelComment: UILabel = {
+        let label = UILabel()
+        label.textColor = .customLabelColor()
+        label.text = ""
+        label.textAlignment = .center
+        return label
     }()
     
-    let btnSpam : UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "arrow.uturn.right"), for: .normal)
-        btn.tintColor = .customTintColor()
-        btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        //btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
-        btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
-        return btn
+    let buttonSpam: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "arrow.uturn.right"), for: .normal)
+        button.tintColor = .customTintColor()
+        button.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 36).isActive = true
+        button.layer.cornerRadius = 18
+        button.backgroundColor = .customBackgorundButton()
+        return button
     }()
     
-    let lblName : UILabel = {
-        let lbl = UILabel()
-        lbl.textColor = .customLabelColor()
-        lbl.text = ""
-        lbl.textAlignment = .left
-        lbl.numberOfLines = 0
-        lbl.font = .boldSystemFont(ofSize: 18)
-        return lbl
+    let labelName: UILabel = {
+        let label = UILabel()
+        label.textColor = .customLabelColor()
+        label.text = ""
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.font = .boldSystemFont(ofSize: 18)
+        return label
     }()
     
-    let lblStatus : UILabel = {
-        let lbl = UILabel()
-        lbl.textColor = .customLabelColor()
-        lbl.text = ""
-        lbl.numberOfLines = 0
-        lbl.textAlignment = .left
-        return lbl
+    let labelStatus: UILabel = {
+        let label = UILabel()
+        label.textColor = .customLabelColor()
+        label.text = ""
+        label.numberOfLines = 0
+        label.textAlignment = .left
+        return label
     }()
     
-    let imgPause : UIImageView = {
-        let img = UIImageView(image: UIImage(systemName: "play.fill")?.withRenderingMode(.alwaysOriginal).withTintColor(.white))
-        img.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        img.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        img.alpha = 0
-        return img
+    let imageViewPause: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "play.fill")?.withRenderingMode(.alwaysOriginal).withTintColor(.white))
+        imageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        imageView.alpha = 0
+        return imageView
     }()
-    
-    var player: AVPlayer?
-    
-    private var model : Home?
-    
-    private(set) var isPlaying = false
-    
-    
-    //Action
-    var btnProfileImageAction : (()->())?
-    var btnCommentAction : (()->())?
-    var btnSpamAction : (()->())?
-    var btnSendPoint : (()->())?
-    var userid = 0
-    
-    let ratingView = RatingView()
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         backgroundColor = .white
-        
         selectionStyle = .none
         
-        let stackViewStar = UIStackView(arrangedSubviews: [btnStar,lblStar])
+        let stackViewStar = UIStackView(arrangedSubviews: [buttonStar, labelStar])
         stackViewStar.axis = .vertical
         stackViewStar.spacing = 1
         
-        let stackViewComment = UIStackView(arrangedSubviews: [btnComment,lblComment])
+        let stackViewComment = UIStackView(arrangedSubviews: [buttonComment, labelComment])
         stackViewComment.axis = .vertical
         stackViewComment.spacing = 1
-        
-        let stackView = UIStackView(arrangedSubviews: [stackViewStar,stackViewComment,btnSpam])
+
+        let stackViewSpam = UIStackView(arrangedSubviews: [buttonSpam])
+        stackViewComment.axis = .vertical
+        stackViewComment.spacing = 1
+
+        let stackViewButtonComponents = UIStackView(arrangedSubviews: [stackViewStar, stackViewComment, stackViewSpam])
+        stackViewButtonComponents.axis = .vertical
+        stackViewButtonComponents.spacing = 15
+        stackViewButtonComponents.layoutMargins = UIEdgeInsets(all: 5)
+        stackViewButtonComponents.isLayoutMarginsRelativeArrangement = true
+
+        let stackViewWithBackground = UIStackView(arrangedSubviews: [stackViewButtonComponents])
+        stackViewWithBackground.axis = .vertical
+        stackViewWithBackground.backgroundColor = alphaBackgroundColor
+        stackViewWithBackground.roundCorners(.allCorners, radius: 8)
+
+        let stackView = UIStackView(arrangedSubviews: [profilImage, stackViewWithBackground])
         stackView.axis = .vertical
         stackView.spacing = 15
-        
-        let stackViewLbl = UIStackView(arrangedSubviews: [lblName,lblStatus])
-        stackViewLbl.axis = .vertical
-        stackViewLbl.spacing = 10
-        
-        addSubview(profilImage)
+
+        let stackViewLabelComponents = UIStackView(arrangedSubviews: [labelName, labelStatus])
+        stackViewLabelComponents.axis = .vertical
+        stackViewLabelComponents.spacing = 10
+        stackViewLabelComponents.layoutMargins = UIEdgeInsets(all: 5)
+        stackViewLabelComponents.isLayoutMarginsRelativeArrangement = true
+
+        let stackViewLabelWithBackground = UIStackView(arrangedSubviews: [stackViewLabelComponents])
+        stackViewLabelWithBackground.axis = .vertical
+        stackViewLabelWithBackground.backgroundColor = alphaBackgroundColor
+        stackViewLabelWithBackground.roundCorners(.allCorners, radius: 8)
+
+        let stackViewLabel = UIStackView(arrangedSubviews: [stackViewLabelWithBackground])
+        stackViewLabel.axis = .vertical
+
         addSubview(stackView)
-        addSubview(stackViewLbl)
-        
-        addSubview(imgPause)
-        
+        addSubview(stackViewLabel)
+        addSubview(imageViewPause)
         addSubview(activityIndicator)
-        
         addSubview(ratingView)
         
-        activityIndicator.merkezKonumlamdirmaSuperView()
+        activityIndicator.centerViewAtSuperView()
+        
+        stackView.anchor(bottom: safeAreaLayoutGuide.bottomAnchor,
+                         trailing: trailingAnchor,
+                         padding: .init(top: 0, left: 0, bottom: 16, right: 16))
 
-        profilImage.anchor(top: nil, bottom: stackView.topAnchor, leading: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 15, right: 14))
+        stackViewLabel.anchor(bottom: safeAreaLayoutGuide.bottomAnchor,
+                              leading: leadingAnchor,
+                              padding: .init(top: 0, left: 16, bottom: 16, right: 0))
         
-        
-        stackView.anchor(top: nil, bottom: bottomAnchor, leading: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 50, right: 20))
-        
-        stackViewLbl.anchor(top: nil, bottom: safeAreaLayoutGuide.bottomAnchor, leading: leadingAnchor, trailing: stackView.leadingAnchor,padding: .init(top: 0, left: 20, bottom: 20, right: 0))
-        
-        imgPause.merkezKonumlamdirmaSuperView()
-     
+        imageViewPause.centerViewAtSuperView()
+
         let gesture = UITapGestureRecognizer(target: self, action: #selector(actionPlayPause))
         addGestureRecognizer(gesture)
         
-        //Action
-        //profilImage.addTarget(self, action: #selector(profileImageAction), for: .touchUpInside)
-        
         let gestureImage = UITapGestureRecognizer(target: self, action: #selector(profileImageAction))
         profilImage.addGestureRecognizer(gestureImage)
-        btnStar.addTarget(self, action: #selector(starAction), for: .touchUpInside)
-        btnComment.addTarget(self, action: #selector(commentAction), for: .touchUpInside)
-        btnSpam.addTarget(self, action: #selector(spamAction), for: .touchUpInside)
+
+        buttonStar.addTarget(self, action: #selector(showRatingView), for: .touchUpInside)
+        buttonComment.addTarget(self, action: #selector(commentAction), for: .touchUpInside)
+        buttonSpam.addTarget(self, action: #selector(spamAction), for: .touchUpInside)
         
-        ratingView.doldurSuperView()
+        ratingView.addToSuperViewAnchors()
         editRatingView()
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        resetViewsForReuse()
+    }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        imageViewPause.alpha = 0
+        isPlaying = true
     }
     
     func editRatingView() {
         ratingView.isHidden = true
         
-        ratingView.btnLeft.addTarget(self, action: #selector(actionRatingViewLeft), for: .touchUpInside)
+        ratingView.buttonLeft.addTarget(self, action: #selector(hideRatingView), for: .touchUpInside)
         
-        ratingView.btnSend.addTarget(self, action: #selector(actionRatingViewSend), for: .touchUpInside)
+        ratingView.buttonSend.addTarget(self, action: #selector(actionRatingViewSend), for: .touchUpInside)
         
-        ratingView.ratingView.didTouchCosmos = { Rating in
-            self.ratingView.lblTop.text = String(Int(Rating))
-        }
-    }
-    
-    @objc func actionRatingViewSend() {
-        btnSendPoint?()
-    }
-    
-    @objc func actionRatingViewLeft() {
-        ratingView.isHidden = true
-    }
-    
-    @objc func profileImageAction() {
-        btnProfileImageAction?()
-    }
-    
-    @objc func starAction() {
-        ratingView.isHidden = false
-    }
-    
-    @objc func commentAction() {
-        btnCommentAction?()
-    }
-    
-    @objc func spamAction() {
-        btnSpamAction?()
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        //player.cancelAllLoadingRequest()
-        resetViewsForReuse()
-    }
-    
-    @objc func actionPlayPause() {
-        
-        if !isPlaying {
-            UIView.animate(withDuration: 0.075, delay: 0, options: .curveEaseIn, animations: { [weak self] in
-                guard let self = self else { return }
-                self.imgPause.alpha = 0.50
-                self.imgPause.transform = CGAffineTransform.init(scaleX: 0.45, y: 0.45)
-            }, completion: { [weak self] _ in
-                self?.player?.pause()
-                self?.isPlaying = true
-                return
-            })
-            
-        }
-        
-        if isPlaying {
-            
-            UIView.animate(withDuration: 0.075, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
-                guard let self = self else { return }
-                self.imgPause.alpha = 0
-            }, completion: { [weak self] _ in
-                self?.player?.play()
-                self?.isPlaying = false
-                self?.imgPause.transform = .identity
-                return
-                
-            })
-            
+        ratingView.ratingView.didTouchCosmos = { rating in
+            self.ratingView.labelTop.text = String(Int(rating))
         }
     }
     
     func resetViewsForReuse(){
-        imgPause.alpha = 0
+        imageViewPause.alpha = 0
+        player?.pause()
+        player = nil
     }
-    
-    
-    public func configure(with model:Home) {
+
+    public func configure(with model: Home) {
         self.model = model
-        confugireVideo()
-        
+        configureVideo()
     }
-    
-    func confugireVideo() {
-        profilImage.sd_setImage(with: URL(string: "\(NetworkManager.url)/pp/\(model?.pp ?? "")"), completed: nil)
-        lblStar.text = "\(model?.likes ?? 0)"
-        lblComment.text = "\(model?.comment ?? 0)"
-        lblName.text = model?.username
-        lblStatus.text = model?.status
-        
-        lblStatus.text = model?.status
-        
-        guard let url = URL(string: "\(NetworkManager.url)/video/\(model?.video ?? "")") else {
-            return
-        }
+
+    func configureVideo() {
+        guard let url = URL(string: "\(NetworkManager.url)/video/\(model?.video ?? "")") else { return }
         
         player = AVPlayer(url: url)
-    
+
         let playerView = AVPlayerLayer()
         playerView.backgroundColor = UIColor.customBackgorund().cgColor
         playerView.player = player
         playerView.frame = contentView.bounds
         playerView.videoGravity = .resize
         contentView.layer.addSublayer(playerView)
-        //player?.volume = 0
-        NotificationCenter.default.addObserver(self, selector:#selector(self.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
-        player?.play()
+
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(self.playerDidFinishPlaying(note:)),
+                                               name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
+                                               object: player?.currentItem)
     }
-    
-    
-   @objc func playerDidFinishPlaying(note: NSNotification){
+
+    func animate(options: UIView.AnimationOptions, animations: @escaping () -> Void, completion: ((Bool) -> (Void))? = nil) {
+        UIView.animate(withDuration: 0.075, delay: 0, options: options, animations: animations, completion: completion)
+    }
+
+    @objc func actionRatingViewSend() {
+        buttonSendPoint?()
+    }
+
+    @objc func hideRatingView() {
+        ratingView.isHidden = true
+    }
+
+    @objc func profileImageAction() {
+        buttonProfileImageAction?()
+    }
+
+    @objc func showRatingView() {
+        ratingView.isHidden = false
+    }
+
+    @objc func commentAction() {
+        buttonCommentAction?()
+    }
+
+    @objc func spamAction() {
+        buttonSpamAction?()
+    }
+
+    @objc func actionPlayPause() {
+        isPlaying = !isPlaying
+
+        if !isPlaying {
+            animate(options: .curveEaseIn, animations: { [weak self] in
+                guard let self = self else { return }
+                self.imageViewPause.alpha = 0.50
+                self.imageViewPause.transform = CGAffineTransform.init(scaleX: 0.45, y: 0.45)
+            }, completion: { [weak self] _ in
+                self?.player?.pause()
+                return
+            })
+        }
+
+        if isPlaying {
+            animate(options: .curveEaseInOut, animations: { [weak self] in
+                guard let self = self else { return }
+                self.imageViewPause.alpha = 0
+            }, completion: { [weak self] _ in
+                self?.imageViewPause.transform = .identity
+                self?.player?.play()
+                return
+            })
+        }
+    }
+
+    @objc func playerDidFinishPlaying(note: NSNotification){
         player?.seek(to: CMTime.zero)
         player?.play()
-        //confugireVideo()
     }
-    
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
-    }
-    
-    
 }
-
-

@@ -17,7 +17,7 @@ class CommentController: UIViewController {
         lblComment.text = "Yorumlar"
         lblComment.font = .boldSystemFont(ofSize: 19)
         view.addSubview(lblComment)
-        lblComment.merkezKonumlamdirmaSuperView()
+        lblComment.centerViewAtSuperView()
         view.heightAnchor.constraint(equalToConstant: 50).isActive = true
         return view
     }()
@@ -65,7 +65,7 @@ class CommentController: UIViewController {
         btnYorumGonder.addTarget(self, action: #selector(actionGonder), for: .touchUpInside)
         
         
-        btnYorumGonder.anchor(top: containerView.safeAreaLayoutGuide.topAnchor, bottom: containerView.safeAreaLayoutGuide.bottomAnchor, leading: nil, trailing: containerView.trailingAnchor,padding: .init(top: 0, left: 15, bottom: 0, right: 15),boyut: .init(width: 80, height: 80))
+        btnYorumGonder.anchor(top: containerView.safeAreaLayoutGuide.topAnchor, bottom: containerView.safeAreaLayoutGuide.bottomAnchor, leading: nil, trailing: containerView.trailingAnchor,padding: .init(top: 0, left: 15, bottom: 0, right: 15),size: .init(width: 80, height: 80))
         
         
         txtYorum.textColor = .black

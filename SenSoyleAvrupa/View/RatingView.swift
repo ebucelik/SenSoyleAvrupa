@@ -24,7 +24,7 @@ class RatingView : UIView {
         return view
     }()
     
-    let btnLeft : UIButton = {
+    let buttonLeft : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "xmark"), for: .normal)
         btn.tintColor = .customTintColor()
@@ -40,6 +40,7 @@ class RatingView : UIView {
         cosmosView.settings.fillMode = .full
         cosmosView.settings.starSize = 30
         cosmosView.settings.starMargin = 5
+        cosmosView.settings.updateOnTouch = true
         cosmosView.settings.filledColor = UIColor.orange
         cosmosView.settings.emptyBorderColor = UIColor.orange
         cosmosView.settings.filledBorderColor = UIColor.orange
@@ -49,7 +50,7 @@ class RatingView : UIView {
         return cosmosView
     }()
     
-    let lblTop : UILabel = {
+    let labelTop : UILabel = {
         let lbl = UILabel()
         lbl.text = "0"
         lbl.textColor = .customLabelColor()
@@ -59,7 +60,7 @@ class RatingView : UIView {
         return lbl
     }()
     
-    let btnSend : UIButton = {
+    let buttonSend : UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Send", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -79,29 +80,29 @@ class RatingView : UIView {
         
         allView.addSubview(centerView)
         
-        centerView.addSubview(btnLeft)
+        centerView.addSubview(buttonLeft)
         
-        centerView.addSubview(lblTop)
+        centerView.addSubview(labelTop)
         
         centerView.addSubview(ratingView)
         
-        centerView.addSubview(btnSend)
+        centerView.addSubview(buttonSend)
         
         
         
-        allView.doldurSuperView()
+        allView.addToSuperViewAnchors()
         
         centerView.anchor(top: nil, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
-        centerView.merkezKonumlamdirmaSuperView()
+        centerView.centerViewAtSuperView()
         
-        btnLeft.anchor(top: centerView.topAnchor, bottom: nil, leading: centerView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+        buttonLeft.anchor(top: centerView.topAnchor, bottom: nil, leading: centerView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
-        lblTop.anchor(top: btnLeft.bottomAnchor, bottom: nil, leading: centerView.leadingAnchor, trailing: centerView.trailingAnchor,padding: .init(top: 5, left: 20, bottom: 0, right: 20))
+        labelTop.anchor(top: buttonLeft.bottomAnchor, bottom: nil, leading: centerView.leadingAnchor, trailing: centerView.trailingAnchor,padding: .init(top: 5, left: 20, bottom: 0, right: 20))
         
-        ratingView.anchor(top: lblTop.bottomAnchor, bottom: nil, leading: nil, trailing: nil,padding: .init(top: 15, left: 0, bottom: 0, right: 0))
-        ratingView.merkezXSuperView()
+        ratingView.anchor(top: labelTop.bottomAnchor, bottom: nil, leading: nil, trailing: nil,padding: .init(top: 15, left: 0, bottom: 0, right: 0))
+        ratingView.centerXAtSuperView()
         
-        btnSend.anchor(top: ratingView.bottomAnchor, bottom: centerView.bottomAnchor, leading: centerView.leadingAnchor, trailing: centerView.trailingAnchor,padding: .init(top: 15, left: 20, bottom: 20, right: 20))
+        buttonSend.anchor(top: ratingView.bottomAnchor, bottom: centerView.bottomAnchor, leading: centerView.leadingAnchor, trailing: centerView.trailingAnchor,padding: .init(top: 15, left: 20, bottom: 20, right: 20))
         
        
       

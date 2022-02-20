@@ -79,12 +79,12 @@ class NoInternetController: UIViewController {
         
         view.addSubview(btnTryAgain)
 
-        imgEmoji.merkezKonumlamdirmaSuperView()
+        imgEmoji.centerViewAtSuperView()
 
         stactView.anchor(top: imgEmoji.bottomAnchor, bottom: nil, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 20, left: 30, bottom: 0, right: 30))
         
         btnTryAgain.anchor(top: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: nil, trailing: nil,padding: .init(top: 20, left: 85, bottom: 30, right: 85))
-        btnTryAgain.merkezXSuperView()
+        btnTryAgain.centerXAtSuperView()
     }
     
 

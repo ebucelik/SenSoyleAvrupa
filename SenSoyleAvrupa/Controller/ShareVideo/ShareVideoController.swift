@@ -173,7 +173,7 @@ class ShareVideoController: UITableViewController {
         videoView.addGestureRecognizer(gestureVideoView)
         
         allView.addSubview(loadingView)
-        loadingView.doldurSuperView()
+        loadingView.addToSuperViewAnchors()
         loadingView.isHidden = true
     }
     

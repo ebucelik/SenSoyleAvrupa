@@ -36,9 +36,9 @@ class MessageCell: UITableViewCell {
         
         allView.addSubview(lblMessage)
         
-        allView.doldurSuperView(padding: .init(top: 10, left: 30, bottom: 10, right: 10))
+        allView.addToSuperViewAnchors(padding: .init(top: 10, left: 30, bottom: 10, right: 10))
         
-        lblMessage.doldurSuperView(padding: .init(top: 10, left: 10, bottom: 10, right: 10))
+        lblMessage.addToSuperViewAnchors(padding: .init(top: 10, left: 10, bottom: 10, right: 10))
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

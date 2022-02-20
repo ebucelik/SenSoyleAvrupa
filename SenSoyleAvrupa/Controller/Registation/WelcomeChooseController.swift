@@ -101,7 +101,7 @@ class WelcomeChooseController: UIViewController {
         
         view.addSubview(btnStackView)
         
-        imgLogo.merkezKonumlamdirmaSuperView()
+        imgLogo.centerViewAtSuperView()
         
         stackView.anchor(top: imgLogo.bottomAnchor, bottom: nil, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 20, left: 30, bottom: 0, right: 30))
         

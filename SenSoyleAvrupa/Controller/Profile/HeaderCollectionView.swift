@@ -180,7 +180,7 @@ class HeaderCollectionView: UICollectionReusableView {
       
         stackViewAllView.anchor(top: nil, bottom: nil, leading: leadingAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
 
-        stackViewAllView.merkezKonumlamdirmaSuperView()
+        stackViewAllView.centerViewAtSuperView()
         imgProfile.anchor(top: topView.topAnchor, bottom: topView.bottomAnchor, leading: topView.leadingAnchor, trailing: nil,padding: .init(top: 10, left: 10, bottom: 10, right: 0))
         
         stackView.anchor(top: imgProfile.topAnchor, bottom: topView.bottomAnchor, leading: imgProfile.trailingAnchor, trailing: topView.trailingAnchor,padding: .init(top: 0, left: 10, bottom: 15, right: 10))
@@ -190,9 +190,9 @@ class HeaderCollectionView: UICollectionReusableView {
         lblCoinView.addSubview(lblCoinCount)
         lblVideoView.addSubview(lblVideoCount)
         lblPuanView.addSubview(lblPuahCount)
-        lblCoinCount.doldurSuperView(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
-        lblVideoCount.doldurSuperView(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
-        lblPuahCount.doldurSuperView(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
+        lblCoinCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
+        lblVideoCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
+        lblPuahCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
         
        
       

@@ -44,8 +44,7 @@ class SignInController: UITableViewController {
         lbl.numberOfLines = 0
         return lbl
     }()
-    
-    
+
     let lblYourMail : UILabel = {
         let lbl = UILabel()
         lbl.text = "E-Postanız"
@@ -55,7 +54,7 @@ class SignInController: UITableViewController {
     }()
     
     let txtMail : UITextField = {
-       let textField = CustomTextField()
+        let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
         textField.backgroundColor = .customBackgorundButton()
         textField.placeholder = ""
@@ -75,7 +74,7 @@ class SignInController: UITableViewController {
     }()
     
     let txtPassword : UITextField = {
-       let textField = CustomTextField()
+        let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
         textField.backgroundColor = .customBackgorundButton()
         textField.placeholder = ""
@@ -157,15 +156,10 @@ class SignInController: UITableViewController {
         stackView.anchor(top: lblTop.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
         
         stackViewBtn.anchor(top: stackView.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-        
-        
-        
-        loadingView.doldurSuperView()
-        
-      
-        
+
+        loadingView.addToSuperViewAnchors()
+
         loadingView.isHidden = true
-        
     }
     
     func editTableView() {
@@ -192,9 +186,9 @@ class SignInController: UITableViewController {
         
         loadingView.isHidden = false
         
-        let parameters : Parameters = ["email":email,"password":password]
-     
-        AF.request("\(NetworkManager.url)/api/login",method: .get,parameters: parameters).responseJSON { [self] response in
+        let parameters : Parameters = ["email": email, "password": password]
+
+        AF.request("\(NetworkManager.url)/api/login",method: .get, parameters: parameters).responseJSON { [self] response in
             
             print("response: \(response)")
             
@@ -207,7 +201,7 @@ class SignInController: UITableViewController {
                         user.email = email
                         print("Save Core Data Email \(email)")
                         appDelegate.saveContext()
-                      
+
                         let vc = SplashViewController()
                         let navigationVC = UINavigationController(rootViewController: vc)
                         navigationVC.modalPresentationStyle = .fullScreen
@@ -236,10 +230,10 @@ class SignInController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-     return allView
+        return allView
     }
+
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return view.frame.size.height
     }
-
 }

@@ -155,16 +155,16 @@ class ChooseProfileImageController: UIViewController {
         
         lblTop.anchor(top: btnLeft.bottomAnchor, bottom: nil, leading: view.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
-        profilImage.doldurSuperView()
+        profilImage.addToSuperViewAnchors()
         
         editImage.anchor(top: littleCircle.topAnchor, bottom: littleCircle.bottomAnchor, leading: littleCircle.leadingAnchor, trailing: littleCircle.trailingAnchor)
         
-        bigCircle.merkezKonumlamdirmaSuperView()
+        bigCircle.centerViewAtSuperView()
         
         btnNext.anchor(top: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 20, right: 20))
         
         
-        loadingView.doldurSuperView()
+        loadingView.addToSuperViewAnchors()
         
         loadingView.isHidden = true
         

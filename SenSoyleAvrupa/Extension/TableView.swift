@@ -12,7 +12,8 @@ extension UITableView {
         let contentOffset = CGFloat(floor(self.contentOffset.x + self.bounds.size.width))
         self.moveToFrame(contentOffset: contentOffset)
     }
+
     func moveToFrame(contentOffset : CGFloat) {
-            self.setContentOffset(CGPoint(x: contentOffset, y: self.contentOffset.y), animated: true)
-        }
+        self.setContentOffset(CGPoint(x: contentOffset, y: self.contentOffset.y), animated: true)
+    }
 }

@@ -48,7 +48,7 @@ class PurchaseCell: UICollectionViewCell {
         addSubview(stackView)
         
         stackView.anchor(top: nil, bottom: nil, leading: leadingAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
-        stackView.merkezKonumlamdirmaSuperView()
+        stackView.centerViewAtSuperView()
         
 //        addSubview(imgCoin)
 //

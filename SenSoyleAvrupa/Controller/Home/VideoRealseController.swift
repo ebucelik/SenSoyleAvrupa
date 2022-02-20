@@ -33,7 +33,7 @@ class VideoRealseController: UIViewController {
         
         if let cell = tableView.visibleCells.first as? HomeCell {
             cell.player?.play()
-            cell.imgPause.alpha = 0
+            cell.imageViewPause.alpha = 0
         }
     }
     
@@ -59,7 +59,7 @@ class VideoRealseController: UIViewController {
         view.backgroundColor = .white
         
         view.addSubview(tableView)
-        tableView.doldurSuperView()
+        tableView.addToSuperViewAnchors()
         
     }
     
@@ -122,7 +122,7 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath) as! HomeCell
         let model = arrayCollectionView[indexPath.row]
         cell.configure(with: model)
-        cell.btnProfileImageAction = { [self]
+        cell.buttonProfileImageAction = { [self]
             () in
             print("Go to profile account")
            
@@ -132,17 +132,17 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
-        cell.btnSendPoint = { [self]
+        cell.buttonSendPoint = { [self]
             () in
             print()
            print("Send point")
-            givePoin(ID: model.id ?? 0, point: Int(cell.ratingView.lblTop.text!) ?? 0, email: model.email ?? "")
+            givePoin(ID: model.id ?? 0, point: Int(cell.ratingView.labelTop.text!) ?? 0, email: model.email ?? "")
             cell.ratingView.ratingView.rating = 0
-            cell.ratingView.lblTop.text = "0"
+            cell.ratingView.labelTop.text = "0"
             cell.ratingView.isHidden = true
         }
         
-        cell.btnCommentAction = {
+        cell.buttonCommentAction = {
             () in
             print("Comment")
             let vc = CommentController()
@@ -151,7 +151,7 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
             self.presentPanModal(vc)
         }
         
-        cell.btnSpamAction = {
+        cell.buttonSpamAction = {
             () in
             self.id = model.id ?? 0
             let alert = UIAlertController(title: "Bildiri", message: "Bir sebep seçin", preferredStyle: .actionSheet)

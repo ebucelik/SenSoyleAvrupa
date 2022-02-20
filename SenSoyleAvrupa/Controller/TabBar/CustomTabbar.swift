@@ -20,7 +20,6 @@ class CustomTabbar: UITabBarController{
         delegate = self
         
         tabBar.isTranslucent = false
-        
     }
     
     func editTabBar() {

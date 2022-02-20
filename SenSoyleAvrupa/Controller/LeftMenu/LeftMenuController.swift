@@ -67,7 +67,7 @@ class LeftMenuController: UITableViewController {
        
        
        
-        profilImage.merkezKonumlamdirmaSuperView()
+        profilImage.centerViewAtSuperView()
         
         
     }

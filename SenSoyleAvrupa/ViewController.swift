@@ -44,7 +44,7 @@ class ViewController: UIViewController {
         view.addSubview(stackView)
         
         stackView.anchor(top: nil, bottom: nil, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
-        stackView.merkezKonumlamdirmaSuperView()
+        stackView.centerViewAtSuperView()
         
         ratingView.didTouchCosmos = { Rating in
             self.lbl.text = String(Int(Rating))
