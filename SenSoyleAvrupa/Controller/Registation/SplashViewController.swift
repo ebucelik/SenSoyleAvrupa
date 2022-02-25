@@ -30,9 +30,7 @@ class SplashViewController: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
         
-        if CheckInternet.Connection() {
-            
-        }else{
+        if !CheckInternet.Connection() {
             let vc = NoInternetController()
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
@@ -58,7 +56,6 @@ class SplashViewController: UIViewController {
     func pullData() {
         do{
             userArray = try context.fetch(UserData.fetchRequest())
-            
         }catch{
             print("Error Pull Data")
         }

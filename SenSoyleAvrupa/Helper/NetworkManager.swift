@@ -8,5 +8,6 @@
 import Foundation
 
 class NetworkManager {
+    // xlm.sensoyleavrupa.com
     static let url: String = "https://deneme.mukomedia.at"
 }

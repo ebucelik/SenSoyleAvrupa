@@ -12,54 +12,50 @@ import AVKit
 class ProfileVideoCell: UICollectionViewCell {
     
     var player: AVPlayer?
-    
-    private var model : Home?
-    
-    let playerView = AVPlayerLayer()
+
+    var playerView: PlayerView = {
+        let playerView = PlayerView()
+        playerView.backgroundColor = UIColor.customBackground()
+        return playerView
+    }()
 
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        backgroundColor =  .customBackgorund()
+        backgroundColor = .customBackground()
         layer.masksToBounds = false
         layer.cornerRadius = 20
         clipsToBounds = true
-        
-//        let gesture = UITapGestureRecognizer(target: self, action: #selector(actionGesture))
-//        addGestureRecognizer(gesture)
+
+        addSubview(playerView)
+
+        playerView.addToSuperViewAnchors()
     }
-    
-//    @objc func actionGesture() {
-//        print("123")
-//    }
-    
-    
-    public func configure(with model:Home) {
-        self.model = model
-        confugireVideo()
-    }
-    
-    func confugireVideo() {
-        guard let url = URL(string: "cknuls.gq/video/\(model?.video ?? "")") else {
+
+    func configureVideo(model: VideoDataModel) {
+        guard let url = URL(string: "\(NetworkManager.url)/video/\(model.video ?? "")") else {
             return
         }
+
         player = AVPlayer(url: url)
-        
-        
-        playerView.backgroundColor = UIColor.customBackgorund().cgColor
-        playerView.player = player
-       
-        playerView.videoGravity = .resizeAspectFill
-        contentView.layer.addSublayer(playerView)
+
+        /*if let isPlaying = model.isPlaying, isPlaying {
+            player?.playImmediately(atRate: 1)
+        } else {
+            player?.pause()
+        }*/
+
+        playerView.playerLayer.player = player
+        playerView.playerLayer.videoGravity = .resizeAspectFill
         //player?.volume = 0
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        playerView.frame = contentView.bounds
+
+    func playVideo() {
+        playerView.playerLayer.player?.play()
     }
-    
-   
+
+    func pauseVideo() {
+        playerView.playerLayer.player?.pause()
+    }
 }
 

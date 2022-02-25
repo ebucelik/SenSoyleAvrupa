@@ -30,7 +30,7 @@ class ProfileController: UIViewController {
     var pp = ""
     var id = 0
     
-    var arrayCollectionView = [Home]()
+    var videoDataModel = [VideoDataModel]()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -38,29 +38,24 @@ class ProfileController: UIViewController {
         
         navigationController?.navigationBar.isHidden = false
         
-        if CheckInternet.Connection() {
-            
-        }else{
+        if !CheckInternet.Connection() {
             let vc = NoInternetController()
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
         }
     }
-    
-   
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         pullData()
-        
-       
-        editLayot()
+
+        editLayout()
         
         editCollectionView()
     }
     
-    func editLayot() {
+    func editLayout() {
         
         view.backgroundColor = .white
         
@@ -81,16 +76,9 @@ class ProfileController: UIViewController {
         collectionView.delegate = self
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(UINib(nibName: "ProfileVideoCell", bundle: nil), forCellWithReuseIdentifier: "ProfileVideoCell")
-        
         collectionView.register(HeaderCollectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionView.identifer)
-        
-//        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-//            layout.itemSize = CGSize(width: view.frame.size.width / 1.2, height: view.frame.size.width / 2.2)
-//            layout.minimumLineSpacing = 20
-//            layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-//        }
-        
+        collectionView.register(UINib(nibName: "ProfileVideoCell", bundle: nil), forCellWithReuseIdentifier: "ProfileVideoCell")
+
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.itemSize = CGSize(width: view.frame.width / 3.2, height: view.frame.width / 3.2)
             layout.minimumLineSpacing = 6
@@ -155,7 +143,7 @@ class ProfileController: UIViewController {
                          
                          if let data = response.data {
                              do {
-                                 self.arrayCollectionView = try JSONDecoder().decode([Home].self, from: data)
+                                 self.videoDataModel = try JSONDecoder().decode([VideoDataModel].self, from: data)
 
                                  
                                  DispatchQueue.main.async { [self] in
@@ -181,37 +169,32 @@ class ProfileController: UIViewController {
             
         }
     }
-    
-    
-   
-    
-   
 }
 
 
 extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return arrayCollectionView.count
+        return videoDataModel.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileVideoCell", for: indexPath) as! ProfileVideoCell
-        let model = arrayCollectionView[indexPath.row]
-        cell.configure(with: model)
+        let model = videoDataModel[indexPath.row]
+        cell.configureVideo(model: model)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+        // TODO: Check how to stop the video when playing or remove this feature
+        videoDataModel[indexPath.row].isPlaying = !(videoDataModel[indexPath.row].isPlaying ?? false)
+        collectionView.reloadItems(at: [indexPath])
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionView.identifer, for: indexPath) as! HeaderCollectionView
         header.btnEditProfile.addTarget(self, action: #selector(actionEditProfile), for: .touchUpInside)
         
-        if pp == "\(NetworkManager.url)/public/pp" {
-            
-        }else{
+        if pp != "\(NetworkManager.url)/public/pp" {
             header.imgProfile.sd_setImage(with: URL(string: pp), completed: nil)
         }
         
@@ -219,7 +202,7 @@ extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegat
         header.lblPuahCount.text = "\(puanCount)"
         header.lblName.text = name
         header.lblMail.text = CacheUser.email
-        header.lblVideoCount.text = "\(arrayCollectionView.count)"
+        header.lblVideoCount.text = "\(videoDataModel.count)"
         return header
     }
     

@@ -30,7 +30,7 @@ class OtherProfileController: UIViewController {
     var pp = ""
     var id = 0
     
-    var arrayCollectionView = [Home]()
+    var arrayCollectionView = [VideoDataModel]()
     
     var userid = 0
     override func viewWillAppear(_ animated: Bool) {
@@ -148,7 +148,7 @@ class OtherProfileController: UIViewController {
                          
                          if let data = response.data {
                              do {
-                                 self.arrayCollectionView = try JSONDecoder().decode([Home].self, from: data)
+                                 self.arrayCollectionView = try JSONDecoder().decode([VideoDataModel].self, from: data)
 
                                  DispatchQueue.main.async { [self] in
                                      self.collectionView.reloadData()
@@ -188,7 +188,7 @@ extension OtherProfileController : UICollectionViewDataSource,UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileVideoCell", for: indexPath) as! ProfileVideoCell
         let model = arrayCollectionView[indexPath.row]
-        cell.configure(with: model)
+        cell.configureVideo(model: model)
         return cell
     }
     

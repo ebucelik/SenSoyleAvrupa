@@ -14,7 +14,7 @@ class HeaderCollectionView: UICollectionReusableView {
     
     let topView : UIView = {
         let view = UIView()
-        view.backgroundColor = .customBackgorund()
+        view.backgroundColor = .customBackground()
         view.layer.cornerRadius = 15
         return view
     }()
@@ -63,7 +63,7 @@ class HeaderCollectionView: UICollectionReusableView {
         let view  = UIView()
         view.layer.cornerRadius = 5
        
-        view.backgroundColor = .customBackgorund()
+        view.backgroundColor = .customBackground()
         return view
     }()
     
@@ -71,14 +71,14 @@ class HeaderCollectionView: UICollectionReusableView {
         let view  = UIView()
         view.layer.cornerRadius = 5
       
-        view.backgroundColor = .customBackgorund()
+        view.backgroundColor = .customBackground()
         return view
     }()
     
     let lblPuanView : UIView = {
         let view  = UIView()
         view.layer.cornerRadius = 5
-        view.backgroundColor = .customBackgorund()
+        view.backgroundColor = .customBackground()
         return view
     }()
     
@@ -193,16 +193,5 @@ class HeaderCollectionView: UICollectionReusableView {
         lblCoinCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
         lblVideoCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
         lblPuahCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
-        
-       
-      
-        
     }
-    
-   
-    
-    
-    
-   
-    
 }

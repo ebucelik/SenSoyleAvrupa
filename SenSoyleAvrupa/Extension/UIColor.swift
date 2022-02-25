@@ -25,7 +25,7 @@ extension UIColor {
 
 //F7F8FA
 extension UIColor {
-    class func customBackgorund() -> UIColor {
+    class func customBackground() -> UIColor {
         return UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1)
     }
 }

@@ -66,7 +66,7 @@ class ReklamController: UIViewController {
         player = AVPlayer(url: url)
 
         let playerView = AVPlayerLayer()
-        playerView.backgroundColor = UIColor.customBackgorund().cgColor
+        playerView.backgroundColor = UIColor.customBackground().cgColor
         playerView.player = player
         playerView.frame = view.bounds
         playerView.videoGravity = .resize

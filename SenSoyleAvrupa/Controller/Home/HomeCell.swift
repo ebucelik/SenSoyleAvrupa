@@ -14,15 +14,19 @@ import Alamofire
 class HomeCell: UITableViewCell {
 
     // MARK: Variables
-    var player: AVPlayer?
+    private var player: AVPlayer?
 
-    private var model: Home? {
+    private var model: VideoDataModel? {
         didSet {
-            profilImage.sd_setImage(with: URL(string: "\(NetworkManager.url)/pp/\(model?.pp ?? "")"), completed: nil)
-            labelStar.text = "\(model?.likes ?? 0)"
-            labelComment.text = "\(model?.comment ?? 0)"
-            labelName.text = model?.username
-            labelStatus.text = model?.status
+            guard let model = model else {
+                return
+            }
+
+            profilImage.sd_setImage(with: URL(string: "\(NetworkManager.url)/pp/\(model.pp ?? "")"), completed: nil)
+            labelStar.text = "\(model.likes ?? 0)"
+            labelComment.text = "\(model.comment ?? 0)"
+            labelName.text = "@\(model.username ?? "")"
+            labelStatus.text = model.status
         }
     }
 
@@ -39,6 +43,13 @@ class HomeCell: UITableViewCell {
     let alphaBackgroundColor: UIColor = .white.withAlphaComponent(0.3)
 
     // MARK: Views
+    var playerView: PlayerView = {
+        let playerView = PlayerView()
+        playerView.backgroundColor = UIColor.customBackground()
+        playerView.isUserInteractionEnabled = true
+        return playerView
+    }()
+
     let activityIndicator: NVActivityIndicatorView = {
         let view = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 30, height: 30), type: .ballClipRotatePulse, color: .customTintColor(), padding: nil)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -48,10 +59,10 @@ class HomeCell: UITableViewCell {
     let profilImage: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "emojiman"))
         imageView.tintColor = .customTintColor()
-        imageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        imageView.layer.cornerRadius = 25
-        imageView.backgroundColor = .customBackgorund()
+        imageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        imageView.layer.cornerRadius = 20
+        imageView.backgroundColor = .customBackground()
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.customTintColor().cgColor
         imageView.clipsToBounds = true
@@ -63,9 +74,9 @@ class HomeCell: UITableViewCell {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "star"), for: .normal)
         button.tintColor = .customTintColor()
-        button.heightAnchor.constraint(equalToConstant: 36).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        button.layer.cornerRadius = 18
+        button.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        button.layer.cornerRadius = 15
         button.backgroundColor = .customBackgorundButton()
         return button
     }()
@@ -75,7 +86,6 @@ class HomeCell: UITableViewCell {
         label.textColor = .customLabelColor()
         label.text = ""
         label.textAlignment = .center
-        label.textColor = .black
         return label
     }()
     
@@ -83,9 +93,9 @@ class HomeCell: UITableViewCell {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "message"), for: .normal)
         button.tintColor = .customTintColor()
-        button.heightAnchor.constraint(equalToConstant: 36).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        button.layer.cornerRadius = 18
+        button.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        button.layer.cornerRadius = 15
         button.backgroundColor = .customBackgorundButton()
         return button
     }()
@@ -102,9 +112,9 @@ class HomeCell: UITableViewCell {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "arrow.uturn.right"), for: .normal)
         button.tintColor = .customTintColor()
-        button.heightAnchor.constraint(equalToConstant: 36).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        button.layer.cornerRadius = 18
+        button.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        button.layer.cornerRadius = 15
         button.backgroundColor = .customBackgorundButton()
         return button
     }()
@@ -113,9 +123,9 @@ class HomeCell: UITableViewCell {
         let label = UILabel()
         label.textColor = .customLabelColor()
         label.text = ""
-        label.textAlignment = .left
         label.numberOfLines = 0
-        label.font = .boldSystemFont(ofSize: 18)
+        label.textAlignment = .left
+        label.font = .boldSystemFont(ofSize: 12)
         return label
     }()
     
@@ -169,9 +179,9 @@ class HomeCell: UITableViewCell {
         stackView.axis = .vertical
         stackView.spacing = 15
 
-        let stackViewLabelComponents = UIStackView(arrangedSubviews: [labelName, labelStatus])
+        let stackViewLabelComponents = UIStackView(arrangedSubviews: [labelStatus, labelName])
         stackViewLabelComponents.axis = .vertical
-        stackViewLabelComponents.spacing = 10
+        stackViewLabelComponents.spacing = 5
         stackViewLabelComponents.layoutMargins = UIEdgeInsets(all: 5)
         stackViewLabelComponents.isLayoutMarginsRelativeArrangement = true
 
@@ -183,12 +193,14 @@ class HomeCell: UITableViewCell {
         let stackViewLabel = UIStackView(arrangedSubviews: [stackViewLabelWithBackground])
         stackViewLabel.axis = .vertical
 
+        addSubview(playerView)
         addSubview(stackView)
         addSubview(stackViewLabel)
         addSubview(imageViewPause)
         addSubview(activityIndicator)
         addSubview(ratingView)
-        
+
+        playerView.addToSuperViewAnchors()
         activityIndicator.centerViewAtSuperView()
         
         stackView.anchor(bottom: safeAreaLayoutGuide.bottomAnchor,
@@ -202,7 +214,7 @@ class HomeCell: UITableViewCell {
         imageViewPause.centerViewAtSuperView()
 
         let gesture = UITapGestureRecognizer(target: self, action: #selector(actionPlayPause))
-        addGestureRecognizer(gesture)
+        playerView.addGestureRecognizer(gesture)
         
         let gestureImage = UITapGestureRecognizer(target: self, action: #selector(profileImageAction))
         profilImage.addGestureRecognizer(gestureImage)
@@ -225,7 +237,7 @@ class HomeCell: UITableViewCell {
         imageViewPause.alpha = 0
         isPlaying = true
     }
-    
+
     func editRatingView() {
         ratingView.isHidden = true
         
@@ -240,11 +252,11 @@ class HomeCell: UITableViewCell {
     
     func resetViewsForReuse(){
         imageViewPause.alpha = 0
-        player?.pause()
-        player = nil
+        playerView.player?.pause()
+        playerView.player = nil
     }
 
-    public func configure(with model: Home) {
+    public func configure(with model: VideoDataModel) {
         self.model = model
         configureVideo()
     }
@@ -254,17 +266,13 @@ class HomeCell: UITableViewCell {
         
         player = AVPlayer(url: url)
 
-        let playerView = AVPlayerLayer()
-        playerView.backgroundColor = UIColor.customBackgorund().cgColor
         playerView.player = player
-        playerView.frame = contentView.bounds
-        playerView.videoGravity = .resize
-        contentView.layer.addSublayer(playerView)
+        playerView.playerLayer.videoGravity = .resize
 
         NotificationCenter.default.addObserver(self,
                                                selector:#selector(self.playerDidFinishPlaying(note:)),
                                                name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
-                                               object: player?.currentItem)
+                                               object: playerView.player?.currentItem)
     }
 
     func animate(options: UIView.AnimationOptions, animations: @escaping () -> Void, completion: ((Bool) -> (Void))? = nil) {
@@ -304,7 +312,7 @@ class HomeCell: UITableViewCell {
                 self.imageViewPause.alpha = 0.50
                 self.imageViewPause.transform = CGAffineTransform.init(scaleX: 0.45, y: 0.45)
             }, completion: { [weak self] _ in
-                self?.player?.pause()
+                self?.playerView.player?.pause()
                 return
             })
         }
@@ -315,14 +323,14 @@ class HomeCell: UITableViewCell {
                 self.imageViewPause.alpha = 0
             }, completion: { [weak self] _ in
                 self?.imageViewPause.transform = .identity
-                self?.player?.play()
+                self?.playerView.player?.play()
                 return
             })
         }
     }
 
     @objc func playerDidFinishPlaying(note: NSNotification){
-        player?.seek(to: CMTime.zero)
-        player?.play()
+        playerView.player?.seek(to: CMTime.zero)
+        playerView.player?.play()
     }
 }

@@ -20,7 +20,7 @@ class MessageController: UITableViewController {
         tableView.backgroundColor = .white
         tableView.register(UINib(nibName: "MessageCell", bundle: nil), forCellReuseIdentifier: "MessageCell")
         tableView.separatorColor = .clear
-        tableView.backgroundColor = .customBackgorund()
+        tableView.backgroundColor = .customBackground()
         
         pullControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
         tableView.addSubview(pullControl)

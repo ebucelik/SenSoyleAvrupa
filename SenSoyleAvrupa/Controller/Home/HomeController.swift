@@ -35,7 +35,7 @@ class HomeController: UIViewController {
         }
         
         if let cell = tableView.visibleCells.first as? HomeCell {
-            cell.player?.play()
+            cell.playerView.player?.play()
             cell.imageViewPause.alpha = 0
         }
     }
@@ -43,7 +43,7 @@ class HomeController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if let cell = tableView.visibleCells.first as? HomeCell {
-            cell.player?.pause()
+            cell.playerView.player?.pause()
         }
     }
     
@@ -137,7 +137,7 @@ class HomeController: UIViewController {
         print("send")
     }
     
-    var home = [Home]()
+    var home = [VideoDataModel]()
 
     func pullData() {
         let parameters : Parameters = ["email": CacheUser.email]
@@ -146,7 +146,7 @@ class HomeController: UIViewController {
             print(response)
             if let data = response.data {
                 do {
-                    self.home = try JSONDecoder().decode([Home].self, from: data)
+                    self.home = try JSONDecoder().decode([VideoDataModel].self, from: data)
 
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
@@ -310,14 +310,14 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
         // If the cell will be displayed, pause the video until the drag on the scroll view is ended
         guard let homeCell = cell as? HomeCell else { return }
 
-        homeCell.player?.play()
+        homeCell.playerView.player?.play()
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // Pause the video if the cell is ended displaying
         guard let homeCell = cell as? HomeCell else { return }
 
-        homeCell.player?.pause()
+        homeCell.playerView.player?.pause()
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {

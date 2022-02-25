@@ -20,7 +20,7 @@ class CommentCell: UITableViewCell {
     
     let commentView : UIView = {
        let view = UIView()
-        view.backgroundColor = .customBackgorund()
+        view.backgroundColor = .customBackground()
         view.layer.cornerRadius = 15
         return view
     }()

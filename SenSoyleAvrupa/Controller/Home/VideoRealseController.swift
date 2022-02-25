@@ -23,16 +23,14 @@ class VideoRealseController: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
         
-        if CheckInternet.Connection() {
-            
-        }else{
+        if !CheckInternet.Connection() {
             let vc = NoInternetController()
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
         }
         
         if let cell = tableView.visibleCells.first as? HomeCell {
-            cell.player?.play()
+            cell.playerView.player?.play()
             cell.imageViewPause.alpha = 0
         }
     }
@@ -40,7 +38,7 @@ class VideoRealseController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if let cell = tableView.visibleCells.first as? HomeCell {
-            cell.player?.pause()
+            cell.playerView.player?.pause()
         }
     }
     
@@ -82,7 +80,7 @@ class VideoRealseController: UIViewController {
         print("send")
     }
     
-    var arrayCollectionView = [Home]()
+    var arrayCollectionView = [VideoDataModel]()
     func pullData() {
         let parameters : Parameters = ["email":CacheUser.email]
         
@@ -91,7 +89,7 @@ class VideoRealseController: UIViewController {
                 print(response)
                 if let data = response.data {
                     do {
-                        self.arrayCollectionView = try JSONDecoder().decode([Home].self, from: data)
+                        self.arrayCollectionView = try JSONDecoder().decode([VideoDataModel].self, from: data)
                      
                         DispatchQueue.main.async {
                             
@@ -242,7 +240,7 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // Pause the video if the cell is ended displaying
         if let cell = cell as? HomeCell {
-            cell.player?.pause()
+            cell.playerView.player?.pause()
         }
     }
     
