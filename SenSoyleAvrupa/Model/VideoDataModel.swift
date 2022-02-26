@@ -7,7 +7,7 @@
 
 import UIKit
 
-class VideoDataModel: Codable {
+class VideoDataModel: Codable, Equatable {
     var comment: Int?
     var date: String?
     var email: String?
@@ -19,10 +19,8 @@ class VideoDataModel: Codable {
     var user: Int?
     var username: String?
     var video: String?
-    var isPlaying: Bool? // TODO: Remove this variable when not needed
-   
 
-    init(comment: Int,date: String,email: String,id: Int,likes: Int,pp: String,spam: Int,status: String,user: Int,username: String,video: String, isPlaying: Bool = false) {
+    init(comment: Int, date: String, email: String, id: Int, likes: Int, pp: String, spam: Int, status: String, user: Int, username: String, video: String) {
         self.comment = comment
         self.date = date
         self.email = email
@@ -34,11 +32,20 @@ class VideoDataModel: Codable {
         self.user = user
         self.username = username
         self.video = video
-        self.isPlaying = isPlaying
-        
-       
-       
     }
-    
+
+    static func == (lhs: VideoDataModel, rhs: VideoDataModel) -> Bool {
+        return lhs.comment == rhs.comment &&
+        lhs.date == rhs.date &&
+        lhs.email == rhs.email &&
+        lhs.id == rhs.id &&
+        lhs.likes == rhs.likes &&
+        lhs.pp == rhs.pp &&
+        lhs.spam == rhs.spam &&
+        lhs.status == rhs.status &&
+        lhs.user == rhs.user &&
+        lhs.username == rhs.username &&
+        lhs.video == rhs.video
+    }
 }
 

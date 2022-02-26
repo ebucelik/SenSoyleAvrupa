@@ -28,22 +28,18 @@ class HomeController: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
         
-        if !CheckInternet.Connection() {
-            let vc = NoInternetController()
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
+        checkInternetConnection()
         
         if let cell = tableView.visibleCells.first as? HomeCell {
-            cell.playerView.player?.play()
-            cell.imageViewPause.alpha = 0
+            cell.homeView.playerView.player?.play()
+            cell.homeView.imageViewPause.alpha = 0
         }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if let cell = tableView.visibleCells.first as? HomeCell {
-            cell.playerView.player?.pause()
+            cell.homeView.playerView.player?.pause()
         }
     }
     
@@ -137,16 +133,16 @@ class HomeController: UIViewController {
         print("send")
     }
     
-    var home = [VideoDataModel]()
+    var videoDataModel = [VideoDataModel]()
 
     func pullData() {
-        let parameters : Parameters = ["email": CacheUser.email]
+        let parameters: Parameters = ["email": CacheUser.email]
         
-        AF.request("\(NetworkManager.url)/api/videos", method: .get,parameters: parameters,encoding: URLEncoding.default).responseJSON { response in
+        AF.request("\(NetworkManager.url)/api/videos", method: .get,parameters: parameters, encoding: URLEncoding.default).responseJSON { response in
             print(response)
             if let data = response.data {
                 do {
-                    self.home = try JSONDecoder().decode([VideoDataModel].self, from: data)
+                    self.videoDataModel = try JSONDecoder().decode([VideoDataModel].self, from: data)
 
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
@@ -163,7 +159,7 @@ class HomeController: UIViewController {
 
 extension HomeController:  UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return home.count
+        return videoDataModel.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -184,29 +180,28 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
         }*/
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath) as! HomeCell
-        let model = home[indexPath.row]
-        cell.configure(with: model)
-        cell.buttonProfileImageAction = { [self]
+        let model = videoDataModel[indexPath.row]
+        cell.homeView.configure(with: model)
+        cell.homeView.buttonProfileImageAction = { [self]
             () in
             print("Go to profile account")
 
-            let vc = OtherProfileController()
-            vc.id = model.id ?? 0
-            vc.email = model.email ?? ""
+            let vc = ProfileController(userModel: UserModel(coin: 0, id: model.id ?? 0, points: 0, pp: model.pp ?? "", username: model.username ?? ""),
+                                       email: model.email ?? "")
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
-        cell.buttonSendPoint = { [self]
+        cell.homeView.buttonSendPoint = { [self]
             () in
             print()
             print("Send point")
-            givePoin(ID: model.id ?? 0, point: Int(cell.ratingView.labelTop.text!) ?? 0, email: model.email ?? "")
-            cell.ratingView.ratingView.rating = 0
-            cell.ratingView.labelTop.text = "0"
-            cell.ratingView.isHidden = true
+            givePoin(ID: model.id ?? 0, point: Int(cell.homeView.ratingView.labelTop.text!) ?? 0, email: model.email ?? "")
+            cell.homeView.ratingView.ratingView.rating = 0
+            cell.homeView.ratingView.labelTop.text = "0"
+            cell.homeView.ratingView.isHidden = true
         }
         
-        cell.buttonCommentAction = {
+        cell.homeView.buttonCommentAction = {
             () in
             print("Comment")
             let vc = CommentController()
@@ -215,7 +210,7 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
             self.presentPanModal(vc)
         }
         
-        cell.buttonSpamAction = {
+        cell.homeView.buttonSpamAction = {
             () in
             self.id = model.id ?? 0
             let alert = UIAlertController(title: "Bildiri", message: "Bir sebep seçin", preferredStyle: .actionSheet)
@@ -251,9 +246,9 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
     }
     
     func spamPost(type: Int) {
-        let parameters : Parameters = ["email":CacheUser.email,
-                                       "video":id,
-                                       "type":type]
+        let parameters : Parameters = ["email": CacheUser.email,
+                                       "video": id,
+                                       "type": type]
         
         AF.request("\(NetworkManager.url)/api/spam", method: .post,parameters: parameters,encoding: URLEncoding.default)
             .responseJSON { response in
@@ -267,7 +262,7 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
                             self.makeAlert(tittle: "Hata", message: answer.message ?? "")
                         }
                     }catch{
-                        print("ErrrorJson \(error.localizedDescription)")
+                        print("JSON Error: \(error.localizedDescription)")
                     }
                     
                 }
@@ -291,15 +286,13 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
                             self.makeAlert(tittle: "Hata", message: answer.message ?? "")
                         }
                     }catch{
-                        print("ErrrorJson \(error.localizedDescription)")
+                        print("JSON Error: \(error.localizedDescription)")
                     }
                     
                 }
                 
             }
     }
-    
-
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return tableView.frame.height
@@ -310,14 +303,14 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
         // If the cell will be displayed, pause the video until the drag on the scroll view is ended
         guard let homeCell = cell as? HomeCell else { return }
 
-        homeCell.playerView.player?.play()
+        homeCell.homeView.playerView.player?.play()
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // Pause the video if the cell is ended displaying
         guard let homeCell = cell as? HomeCell else { return }
 
-        homeCell.playerView.player?.pause()
+        homeCell.homeView.playerView.player?.pause()
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {

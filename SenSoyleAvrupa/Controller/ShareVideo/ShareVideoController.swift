@@ -193,15 +193,15 @@ class ShareVideoController: UITableViewController {
     }
     
     func pullDataUser() {
-        let parameters : Parameters = ["email":CacheUser.email]
+        let parameters : Parameters = ["email": CacheUser.email]
         
-        AF.request("\(NetworkManager.url)/api/user",method: .get,parameters: parameters).responseJSON { [self] response in
+        AF.request("\(NetworkManager.url)/api/user", method: .get, parameters: parameters).responseJSON { [self] response in
             
             print("response: \(response)")
             
             if let data = response.data {
                 do {
-                    let answer = try JSONDecoder().decode(User.self, from: data)
+                    let answer = try JSONDecoder().decode(UserModel.self, from: data)
                     
                     lblMyCoinCount.text = "\(answer.coin ?? 0)"
                   
@@ -215,7 +215,7 @@ class ShareVideoController: UITableViewController {
     
     func pullDataCoinCount() {
         
-        AF.request("\(NetworkManager.url)/api/coin-settings",method: .get).responseJSON { [self] response in
+        AF.request("\(NetworkManager.url)/api/coin-settings", method: .get).responseJSON { [self] response in
             
             print("response: \(response)")
             
@@ -225,7 +225,7 @@ class ShareVideoController: UITableViewController {
                     
                     coin = answer.first_coin ?? 0
                     
-                    lblVideoCoinCount.text = "İlk video paylaşımı için video başına \(answer.first_coin ?? 0) coin,diğer videolar için ise video başına \(answer.coin ?? 0) coin bakiyenizden çıkılıcaktır"
+                    lblVideoCoinCount.text = "İlk video paylaşımı için video başına \(answer.first_coin ?? 0) coin, diğer videolar için ise video başına \(answer.coin ?? 0) coin bakiyenizden çıkılıcaktır"
                 }catch{
                     print("Error Localized Description \(error.localizedDescription)")
                 }
@@ -259,9 +259,8 @@ class ShareVideoController: UITableViewController {
             
             loadingView.isHidden = false
             
-            let parameters = ["email" : CacheUser.email,
-                              "status" : txtComment.text!
-            ]
+            let parameters = ["email": CacheUser.email,
+                              "status": txtComment.text!]
 
             AF.upload(multipartFormData: { multipartFormData in
 
@@ -273,15 +272,12 @@ class ShareVideoController: UITableViewController {
                     print(URL)
                     multipartFormData.append(URL, withName: "file", fileName: "file", mimeType: "video/mp4")
                 }
-            }, to: "\(NetworkManager.url)/api/upload-vid")
-            .response { [self] response in
+            }, to: "\(NetworkManager.url)/api/upload-vid").response { [self] response in
                 print(response)
                 if response.response?.statusCode == 200 {
                     print("OK. Done")
                     loadingView.isHidden = true
-                    let vc = CustomTabbar()
-                    vc.modalPresentationStyle = .fullScreen
-                    self.present(vc, animated: true, completion: nil)
+                    dismiss(animated: true)
                 }
             }
             return
@@ -298,7 +294,7 @@ class ShareVideoController: UITableViewController {
     }
     
     @objc func actionLeft() {
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
     }
     
 

@@ -75,7 +75,7 @@ class SplashViewController: UIViewController {
 
                 if let data = response.data {
                     do {
-                        let answer = try JSONDecoder().decode(User.self, from: data)
+                        let answer = try JSONDecoder().decode(UserModel.self, from: data)
 
                         print("splash email \(email)")
                         CacheUser.email = email

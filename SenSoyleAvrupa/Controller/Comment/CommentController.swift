@@ -10,7 +10,7 @@ import PanModal
 import Alamofire
 
 class CommentController: UIViewController {
-    
+
     let topView : UIView = {
        let view = UIView()
         let lblComment = UILabel()
@@ -183,7 +183,7 @@ class CommentController: UIViewController {
     
 }
 
-extension CommentController : UITableViewDataSource,UITableViewDelegate {
+extension CommentController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return commentArray.count
     }

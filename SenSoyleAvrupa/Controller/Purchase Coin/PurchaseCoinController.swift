@@ -145,7 +145,7 @@ class PurchaseCoinController: UIViewController {
             
             if let data = response.data {
                 do {
-                    let answer = try JSONDecoder().decode(User.self, from: data)
+                    let answer = try JSONDecoder().decode(UserModel.self, from: data)
                     
                     lblMyCoinCount.text = "\(answer.coin ?? 0)"
                    

@@ -10,7 +10,26 @@ import SideMenu
 import Alamofire
 
 class ProfileController: UIViewController {
-    
+
+    struct State {
+        private(set) var oldVideoDataModel: [VideoDataModel]
+    }
+
+    let email: String
+    let isOwnUserProfile: Bool
+    var state: State
+
+    // MARK: Models
+    var userModel: UserModel?
+    var videoDataModel = [VideoDataModel]() {
+        didSet {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
+
+    // MARK: Views
     private let refreshControl = UIRefreshControl()
   
     let collectionView : UICollectionView = {
@@ -21,28 +40,28 @@ class ProfileController: UIViewController {
         cv.backgroundColor = .white
         return cv
     }()
-    
-    var name = ""
-    var email = ""
-    var videoCount = 0
-    var puanCount = 0
-    var cointCount = 0
-    var pp = ""
-    var id = 0
-    
-    var videoDataModel = [VideoDataModel]()
-    
+
+    init(userModel: UserModel? = nil, email: String, isOwnUserProfile: Bool = false) {
+        self.userModel = userModel
+        self.email = email
+        self.isOwnUserProfile = isOwnUserProfile
+        self.state = State(oldVideoDataModel: videoDataModel)
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        
+
         navigationController?.navigationBar.isHidden = false
-        
-        if !CheckInternet.Connection() {
-            let vc = NoInternetController()
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
+
+        checkInternetConnection()
+
+        didPullToRefresh(self)
     }
 
     override func viewDidLoad() {
@@ -54,7 +73,7 @@ class ProfileController: UIViewController {
         
         editCollectionView()
     }
-    
+
     func editLayout() {
         
         view.backgroundColor = .white
@@ -62,13 +81,14 @@ class ProfileController: UIViewController {
         view.addSubview(collectionView)
         
         collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 5, left: 0, bottom: 0, right: 0))
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"), style: .done, target: self, action: #selector(actionLeftMenu))
-        navigationItem.leftBarButtonItem?.tintColor = .customTintColor()
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "video.badge.plus"), style: .done, target: self, action: #selector(actionAddVideo))
-        navigationItem.rightBarButtonItem?.tintColor = .customTintColor()
-        
+
+        if isOwnUserProfile {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"), style: .done, target: self, action: #selector(actionLeftMenu))
+            navigationItem.leftBarButtonItem?.tintColor = .customTintColor()
+
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "video.badge.plus"), style: .done, target: self, action: #selector(actionAddVideo))
+            navigationItem.rightBarButtonItem?.tintColor = .customTintColor()
+        }
     }
     
     func editCollectionView() {
@@ -109,64 +129,38 @@ class ProfileController: UIViewController {
         SideMenuManager.default.addPanGestureToPresent(toView: self.view)
         present(menu!, animated: true, completion: nil)
     }
-    
+
     @objc func actionAddVideo() {
         let vc = ShareVideoController()
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true, completion: nil)
-        //navigationController?.pushViewController(vc, animated: true)
     }
-    
-    func pullData() {
-        let parameters : Parameters = ["email":CacheUser.email]
-        
-        AF.request("\(NetworkManager.url)/api/user",method: .get,parameters: parameters).responseJSON { [self] response in
-            
-            print("response: \(response)")
-            
-            if let data = response.data {
-                do {
-                    let answer = try JSONDecoder().decode(User.self, from: data)
-                    
-                    pp = answer.pp ?? ""
-                    name = answer.username ?? ""
-                    puanCount = answer.points ?? 0
-                    cointCount = answer.coin ?? 0
-                  
-                     let parameters : Parameters = ["email":CacheUser.email,
-                                                    "user" :  answer.id ?? 0]
-                     
-                     AF.request("\(NetworkManager.url)/api/profile",method: .get,parameters: parameters).responseJSON { [self] response in
-                         
-                         print("responseDataVideo: \(response)")
-                         
-                         if let data = response.data {
-                             do {
-                                 self.videoDataModel = try JSONDecoder().decode([VideoDataModel].self, from: data)
 
-                                 
-                                 DispatchQueue.main.async { [self] in
-                                     self.collectionView.reloadData()
-                                 }
-                                 
-                                
-                             }catch{
-                                 print("Error Localized Description \(error.localizedDescription)")
-                             }
-                         }
-                         
-                     }
-                    
-                    
-                }catch{
-                    print("Error Localized Description \(error.localizedDescription)")
-                }
-                DispatchQueue.main.async { [self] in
-                    self.collectionView.reloadData()
+    func pullData() {
+        let userParameters: Parameters = ["email": email]
+
+        NetworkManager.call(endpoint: "/api/user", method: .get, parameters: userParameters) { [self] (result: Result<UserModel, Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+            case let .success(userModel):
+                self.userModel = userModel
+
+                let profileParameters: Parameters = ["email": email, "user": userModel.id ?? 0]
+
+                NetworkManager.call(endpoint: "/api/profile", method: .get, parameters: profileParameters) { (result: Result<[VideoDataModel], Error>) in
+                    switch result {
+                    case let .failure(error):
+                        print("Network request error: \(error)")
+                    case let .success(videoDataModel):
+                        if state.oldVideoDataModel != videoDataModel {
+                            state = State(oldVideoDataModel: videoDataModel)
+                            self.videoDataModel = videoDataModel
+                        }
+                    }
                 }
             }
-            
         }
     }
 }
@@ -185,24 +179,32 @@ extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO: Check how to stop the video when playing or remove this feature
-        videoDataModel[indexPath.row].isPlaying = !(videoDataModel[indexPath.row].isPlaying ?? false)
-        collectionView.reloadItems(at: [indexPath])
+        let model = videoDataModel[indexPath.row]
+
+        if model.email == nil {
+            model.email = email
+        }
+
+        let videoController = VideoController(model: model)
+        present(videoController, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionView.identifer, for: indexPath) as! HeaderCollectionView
         header.btnEditProfile.addTarget(self, action: #selector(actionEditProfile), for: .touchUpInside)
-        
-        if pp != "\(NetworkManager.url)/public/pp" {
+        header.lblMail.text = email
+        header.lblVideoCount.text = "\(videoDataModel.count)"
+
+        guard let userModel = userModel else { return header }
+
+        if let pp = userModel.pp, pp != "\(NetworkManager.url)/public/pp" {
             header.imgProfile.sd_setImage(with: URL(string: pp), completed: nil)
         }
-        
-        header.lblCoinCount.text = "\(cointCount)"
-        header.lblPuahCount.text = "\(puanCount)"
-        header.lblName.text = name
-        header.lblMail.text = CacheUser.email
-        header.lblVideoCount.text = "\(videoDataModel.count)"
+
+        header.lblCoinCount.text = "\(userModel.coin ?? 0)"
+        header.lblPuahCount.text = "\(userModel.points ?? 0)"
+        header.lblName.text = userModel.username
+
         return header
     }
     

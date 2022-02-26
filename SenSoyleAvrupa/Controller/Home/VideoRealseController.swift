@@ -30,15 +30,15 @@ class VideoRealseController: UIViewController {
         }
         
         if let cell = tableView.visibleCells.first as? HomeCell {
-            cell.playerView.player?.play()
-            cell.imageViewPause.alpha = 0
+            cell.homeView.playerView.player?.play()
+            cell.homeView.imageViewPause.alpha = 0
         }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if let cell = tableView.visibleCells.first as? HomeCell {
-            cell.playerView.player?.pause()
+            cell.homeView.playerView.player?.pause()
         }
     }
     
@@ -119,28 +119,27 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath) as! HomeCell
         let model = arrayCollectionView[indexPath.row]
-        cell.configure(with: model)
-        cell.buttonProfileImageAction = { [self]
+        cell.homeView.configure(with: model)
+        cell.homeView.buttonProfileImageAction = { [self]
             () in
             print("Go to profile account")
            
-            let vc = OtherProfileController()
-            vc.id = model.id ?? 0
-            vc.email = model.email ?? ""
+            let vc = ProfileController(userModel: UserModel(coin: 0, id: model.id ?? 0, points: 0, pp: model.pp ?? "", username: model.username ?? ""),
+                                       email: model.email ?? "")
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
-        cell.buttonSendPoint = { [self]
+        cell.homeView.buttonSendPoint = { [self]
             () in
             print()
            print("Send point")
-            givePoin(ID: model.id ?? 0, point: Int(cell.ratingView.labelTop.text!) ?? 0, email: model.email ?? "")
-            cell.ratingView.ratingView.rating = 0
-            cell.ratingView.labelTop.text = "0"
-            cell.ratingView.isHidden = true
+            givePoin(ID: model.id ?? 0, point: Int(cell.homeView.ratingView.labelTop.text!) ?? 0, email: model.email ?? "")
+            cell.homeView.ratingView.ratingView.rating = 0
+            cell.homeView.ratingView.labelTop.text = "0"
+            cell.homeView.ratingView.isHidden = true
         }
         
-        cell.buttonCommentAction = {
+        cell.homeView.buttonCommentAction = {
             () in
             print("Comment")
             let vc = CommentController()
@@ -149,7 +148,7 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
             self.presentPanModal(vc)
         }
         
-        cell.buttonSpamAction = {
+        cell.homeView.buttonSpamAction = {
             () in
             self.id = model.id ?? 0
             let alert = UIAlertController(title: "Bildiri", message: "Bir sebep seçin", preferredStyle: .actionSheet)
@@ -240,7 +239,7 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // Pause the video if the cell is ended displaying
         if let cell = cell as? HomeCell {
-            cell.playerView.player?.pause()
+            cell.homeView.playerView.player?.pause()
         }
     }
     

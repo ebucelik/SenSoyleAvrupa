@@ -1,5 +1,5 @@
 //
-//  User.swift
+//  UserModel.swift
 //  SenSoyleAvrupa
 //
 //  Created by ilyas abiyev on 25.04.21.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class User: Codable {
+class UserModel: Codable {
     
     var coin: Int?
     var id: Int?
