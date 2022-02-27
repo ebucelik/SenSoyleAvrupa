@@ -123,13 +123,13 @@ class CommentController: UIViewController {
                 print("response comment \(response)")
                 if let data = response.data {
                     do {
-                        let answer = try JSONDecoder().decode(SignUp.self, from: data)
+                        let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
                         
                         if answer.status == true {
                             txtYorum.text = ""
                             pullData()
                         }else{
-                            makeAlert(tittle: "Uyarı", message: "Yorum yaparken bir hata oldu")
+                            makeAlert(title: "Uyarı", message: "Yorum yaparken bir hata oldu")
                         }
                      
                         DispatchQueue.main.async {

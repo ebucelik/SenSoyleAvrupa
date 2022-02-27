@@ -85,7 +85,7 @@ class SplashViewController: UIViewController {
                             perform(#selector(actionTabBar), with: nil, afterDelay: 1)
                         }
                     }catch{
-                        makeAlert(tittle: "Error Localized Description", message: "\(error.localizedDescription)")
+                        makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
                     }
                 }
             }

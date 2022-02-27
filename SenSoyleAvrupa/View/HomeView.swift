@@ -14,8 +14,9 @@ import Alamofire
 class HomeView: UIView {
 
     // MARK: Variables
-    private var player: AVPlayer?
+    private(set) var isPlaying = true
 
+    // MARK: Models
     private var userModel: UserModel? = nil {
         didSet {
             guard let userModel = userModel else {
@@ -51,19 +52,17 @@ class HomeView: UIView {
         }
     }
 
-    private(set) var isPlaying = true
-
     //Action
     var buttonProfileImageAction: (() -> (Void))?
     var buttonCommentAction: (() -> (Void))?
     var buttonSpamAction: (() -> (Void))?
     var buttonSendPoint: (() -> (Void))?
 
-    let ratingView = RatingView()
-
     let alphaBackgroundColor: UIColor = .white.withAlphaComponent(0.3)
 
     // MARK: Views
+    let ratingView = RatingView()
+
     var playerView: PlayerView = {
         let playerView = PlayerView()
         playerView.backgroundColor = UIColor.customBackground()
@@ -269,17 +268,17 @@ class HomeView: UIView {
         playerView.player = nil
     }
 
-    public func configure(with model: VideoDataModel) {
+    func configure(with model: VideoDataModel) {
         self.model = model
-        configureVideo()
-        fetchUserDataWhenNeeded()
     }
 
-    func configureVideo() {
+    func downloadVideo() {
         guard let url = URL(string: "\(NetworkManager.url)/video/\(model?.video ?? "")") else { return }
 
-        player = AVPlayer(url: url)
+        setPlayerView(player: AVPlayer(url: url))
+    }
 
+    func setPlayerView(player: AVPlayer?) {
         playerView.player = player
         playerView.playerLayer.videoGravity = .resize
 
@@ -287,6 +286,8 @@ class HomeView: UIView {
                                                selector:#selector(self.playerDidFinishPlaying(note:)),
                                                name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
                                                object: playerView.player?.currentItem)
+
+        fetchUserDataWhenNeeded()
     }
 
     func fetchUserDataWhenNeeded() {

@@ -12,16 +12,33 @@ import SwiftyJSON
 import GoogleMobileAds
 import AppTrackingTransparency
 import AdSupport
+import AVFoundation
 
 class HomeController: UIViewController {
-    
-    private var interstitial: GADInterstitialAd?
-    
-    private var data = [VideoModel]()
-    
-    let tableView = UITableView()
 
-    var id = 0
+    private struct State {
+        private(set) var oldVideoDataModel: [VideoDataModel]
+    }
+
+    // MARK: Variables
+    private var id = 0
+    private var state: State = State(oldVideoDataModel: [])
+    private var prefetchedPlayer: [[String: AVPlayer]] = []
+
+    private var interstitial: GADInterstitialAd?
+
+
+    // MARK: Models
+    private var videoDataModel = [VideoDataModel]() {
+        didSet {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
+
+    // MARK: Views
+    let tableView = UITableView()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -29,7 +46,9 @@ class HomeController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         
         checkInternetConnection()
-        
+
+        pullData()
+
         if let cell = tableView.visibleCells.first as? HomeCell {
             cell.homeView.playerView.player?.play()
             cell.homeView.imageViewPause.alpha = 0
@@ -127,37 +146,28 @@ class HomeController: UIViewController {
         tableView.register(UINib(nibName: "HomeCell", bundle: nil), forCellReuseIdentifier: "HomeCell")
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.prefetchDataSource = self
     }
-
-    @objc func actionRatingViewSend() {
-        print("send")
-    }
-    
-    var videoDataModel = [VideoDataModel]()
 
     func pullData() {
         let parameters: Parameters = ["email": CacheUser.email]
-        
-        AF.request("\(NetworkManager.url)/api/videos", method: .get,parameters: parameters, encoding: URLEncoding.default).responseJSON { response in
-            print(response)
-            if let data = response.data {
-                do {
-                    self.videoDataModel = try JSONDecoder().decode([VideoDataModel].self, from: data)
 
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
-                }catch{
-                    print("ErrrorJson \(error.localizedDescription)")
+        NetworkManager.call(endpoint: "/api/videos", method: .get, parameters: parameters) { (result: Result<[VideoDataModel], Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+            case let .success(videoDataModel):
+                if self.state.oldVideoDataModel != videoDataModel {
+                    self.prefetchedPlayer.removeAll()
+                    self.state = State(oldVideoDataModel: videoDataModel)
+                    self.videoDataModel = videoDataModel
                 }
             }
         }
     }
 }
 
-
-
-extension HomeController:  UITableViewDelegate,UITableViewDataSource {
+extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return videoDataModel.count
     }
@@ -182,27 +192,32 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath) as! HomeCell
         let model = videoDataModel[indexPath.row]
         cell.homeView.configure(with: model)
-        cell.homeView.buttonProfileImageAction = { [self]
-            () in
+
+        /// Use prefetched videos to increase the usability.
+        let player = prefetchedPlayer.compactMap { $0.compactMap { $0.key == "\(indexPath.row)" ? $0.value : nil }.first }.first
+        player != nil ? cell.homeView.setPlayerView(player: player) : cell.homeView.downloadVideo()
+
+        cell.homeView.buttonProfileImageAction = { [self] in
             print("Go to profile account")
 
-            let vc = ProfileController(userModel: UserModel(coin: 0, id: model.id ?? 0, points: 0, pp: model.pp ?? "", username: model.username ?? ""),
+            let vc = ProfileController(userModel: UserModel(coin: 0,
+                                                            id: model.id ?? 0,
+                                                            points: 0,
+                                                            pp: model.pp ?? "",
+                                                            username: model.username ?? ""),
                                        email: model.email ?? "")
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
-        cell.homeView.buttonSendPoint = { [self]
-            () in
-            print()
+        cell.homeView.buttonSendPoint = { [self] in
             print("Send point")
-            givePoin(ID: model.id ?? 0, point: Int(cell.homeView.ratingView.labelTop.text!) ?? 0, email: model.email ?? "")
+            sendPoints(videoId: model.id ?? 0, point: Int(cell.homeView.ratingView.labelTop.text!) ?? 0, email: model.email ?? "")
             cell.homeView.ratingView.ratingView.rating = 0
             cell.homeView.ratingView.labelTop.text = "0"
             cell.homeView.ratingView.isHidden = true
         }
         
         cell.homeView.buttonCommentAction = {
-            () in
             print("Comment")
             let vc = CommentController()
             vc.videoid = model.id ?? 0
@@ -211,7 +226,6 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
         }
         
         cell.homeView.buttonSpamAction = {
-            () in
             self.id = model.id ?? 0
             let alert = UIAlertController(title: "Bildiri", message: "Bir sebep seçin", preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "Spam veya kötüye kullanım", style: .default, handler: { (_) in
@@ -246,52 +260,43 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
     }
     
     func spamPost(type: Int) {
-        let parameters : Parameters = ["email": CacheUser.email,
-                                       "video": id,
-                                       "type": type]
-        
-        AF.request("\(NetworkManager.url)/api/spam", method: .post,parameters: parameters,encoding: URLEncoding.default)
-            .responseJSON { response in
-                print(response)
-                if let data = response.data {
-                    do {
-                        let answer = try JSONDecoder().decode(SignUp.self, from: data)
-                        if answer.status == true {
-                            self.makeAlert(tittle: "Başarılı", message: "Bildiriniz bizim için çok önemli.Teşekkürler")
-                        }else{
-                            self.makeAlert(tittle: "Hata", message: answer.message ?? "")
-                        }
-                    }catch{
-                        print("JSON Error: \(error.localizedDescription)")
-                    }
-                    
+        let parameters: Parameters = ["email": CacheUser.email,
+                                      "video": id,
+                                      "type": type]
+
+        NetworkManager.call(endpoint: "/api/spam", method: .post, parameters: parameters) { (result: Result<SignUpModel, Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+            case let .success(signUpModel):
+                if let status = signUpModel.status, status {
+                    self.makeAlert(title: "Başarılı", message: "Bildiriniz bizim için çok önemli. Teşekkürler")
+                    self.pullData()
+                } else {
+                    self.makeAlert(title: "Hata", message: signUpModel.message ?? "")
                 }
-                
             }
+        }
     }
-    
-    func givePoin(ID: Int,point:Int,email:String) {
-        let parameters : Parameters = ["email":email,
-                                       "video":ID,"point":point]
-        
-        AF.request("\(NetworkManager.url)/api/like-vid", method: .post,parameters: parameters,encoding: URLEncoding.default)
-            .responseJSON { response in
-                print(response)
-                if let data = response.data {
-                    do {
-                        let answer = try JSONDecoder().decode(SignUp.self, from: data)
-                        if answer.status == true {
-                            self.makeAlert(tittle: "Başarılı", message: "Puan verdiğiniz için teşekkürler")
-                        }else{
-                            self.makeAlert(tittle: "Hata", message: answer.message ?? "")
-                        }
-                    }catch{
-                        print("JSON Error: \(error.localizedDescription)")
-                    }
-                    
+
+    func sendPoints(videoId: Int, point:Int, email:String) {
+        let parameters: Parameters = ["email": email,
+                                      "video": videoId,
+                                      "point": point]
+
+        NetworkManager.call(endpoint: "/api/like-vid", method: .post, parameters: parameters) { (result: Result<SignUpModel, Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+            case let .success(signUpModel):
+                if let status = signUpModel.status, status {
+                    self.makeAlert(title: "Başarılı", message: "Puan verdiğiniz için teşekkürler")
+                    self.pullData()
+                }else{
+                    self.makeAlert(title: "Hata", message: signUpModel.message ?? "")
                 }
-                
             }
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -312,14 +317,15 @@ extension HomeController:  UITableViewDelegate,UITableViewDataSource {
 
         homeCell.homeView.playerView.player?.pause()
     }
-    
+
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        //        for indexPath in indexPaths {
-        //            print(indexPath.row)
-        //        }
+        indexPaths.forEach {
+            guard let url = URL(string: "\(NetworkManager.url)/video/\(videoDataModel[$0.row].video ?? "")") else { return }
+
+            prefetchedPlayer.appendIfNotContains(key: "\($0.row)", value: ["\($0.row)": AVPlayer(url: url)])
+        }
     }
 }
-
 
 extension HomeController : GADFullScreenContentDelegate{
     /// Tells the delegate that the ad failed to present full screen content.

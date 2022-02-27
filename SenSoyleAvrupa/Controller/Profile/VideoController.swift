@@ -7,17 +7,21 @@
 
 import Foundation
 import UIKit
+import AVFoundation
 
 class VideoController: UIViewController {
 
     private let homeView: HomeView
     private let model: VideoDataModel
+    private var player: AVPlayer?
 
     init(model: VideoDataModel) {
         self.homeView = HomeView(frame: .zero)
         self.model = model
 
         super.init(nibName: nil, bundle: nil)
+
+        self.configureCommentButtonAction()
     }
 
     required init?(coder: NSCoder) {
@@ -26,6 +30,9 @@ class VideoController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         checkInternetConnection()
+
+        homeView.setPlayerView(player: player)
+        homeView.playerView.player?.play()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -37,6 +44,18 @@ class VideoController: UIViewController {
 
         homeView.addToSuperViewAnchors()
         homeView.configure(with: model)
+        homeView.downloadVideo()
         homeView.playerView.player?.play()
+        player = homeView.playerView.player
+    }
+
+    func configureCommentButtonAction() {
+        homeView.buttonCommentAction = { [self] in
+            print("Comment")
+            let vc = CommentController()
+            vc.videoid = model.id ?? 0
+            vc.email = model.email ?? ""
+            self.presentPanModal(vc)
+        }
     }
 }

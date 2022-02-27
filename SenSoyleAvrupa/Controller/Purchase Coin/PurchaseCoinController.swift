@@ -168,16 +168,16 @@ class PurchaseCoinController: UIViewController {
             print("response: \(response)")
             if let data = response.data {
                 do {
-                    let answer = try JSONDecoder().decode(SignUp.self, from: data)
+                    let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
 
                     if answer.status == true {
                         pullData()
                     }else{
-                        self.makeAlert(tittle: "Hata", message: "Coin alme işlemi yaparken bir hata oluştu: \(answer.message ?? "")")
+                        self.makeAlert(title: "Hata", message: "Coin alme işlemi yaparken bir hata oluştu: \(answer.message ?? "")")
                     }
 
                 }catch{
-                    makeAlert(tittle: "Error Localized Description", message: "\(error.localizedDescription)")
+                    makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
                 }
             }
 

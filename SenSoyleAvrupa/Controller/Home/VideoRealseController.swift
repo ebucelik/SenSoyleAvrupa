@@ -193,11 +193,11 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
                 print(response)
                 if let data = response.data {
                     do {
-                        let answer = try JSONDecoder().decode(SignUp.self, from: data)
+                        let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
                         if answer.status == true {
-                            self.makeAlert(tittle: "Başarılı", message: "Bildiriniz bizim için çok önemli.Teşekkürler")
+                            self.makeAlert(title: "Başarılı", message: "Bildiriniz bizim için çok önemli.Teşekkürler")
                         }else{
-                            self.makeAlert(tittle: "Hata", message: answer.message ?? "")
+                            self.makeAlert(title: "Hata", message: answer.message ?? "")
                         }
                     }catch{
                         print("ErrrorJson \(error.localizedDescription)")
@@ -217,11 +217,11 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
                 print(response)
                 if let data = response.data {
                     do {
-                        let answer = try JSONDecoder().decode(SignUp.self, from: data)
+                        let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
                         if answer.status == true {
-                            self.makeAlert(tittle: "Başarılı", message: "Puan verdiğiniz için teşekkürler")
+                            self.makeAlert(title: "Başarılı", message: "Puan verdiğiniz için teşekkürler")
                         }else{
-                            self.makeAlert(tittle: "Hata", message: answer.message ?? "")
+                            self.makeAlert(title: "Hata", message: answer.message ?? "")
                         }
                     }catch{
                         print("ErrrorJson \(error.localizedDescription)")

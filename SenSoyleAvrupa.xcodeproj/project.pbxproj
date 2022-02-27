@@ -11,6 +11,7 @@
 		712FA80E27CA2CF10020CAAB /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */; };
 		712FA81027CA30840020CAAB /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA80F27CA30840020CAAB /* HomeView.swift */; };
 		712FA81227CA352A0020CAAB /* VideoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA81127CA352A0020CAAB /* VideoController.swift */; };
+		714A4DB327CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */; };
 		717D3B9F27C2693200501FF1 /* VideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717D3B9E27C2693200501FF1 /* VideoModel.swift */; };
 		717D3BA127C26FD000501FF1 /* UIEdgeInsets+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717D3BA027C26FD000501FF1 /* UIEdgeInsets+Extension.swift */; };
 		7183D5CE27BEB5C0009626D2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7183D5CD27BEB5C0009626D2 /* NetworkManager.swift */; };
@@ -42,7 +43,7 @@
 		E462A67A262A453B008F191B /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E462A679262A453B008F191B /* VideoView.swift */; };
 		E47D7C222637056500FE3405 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E47D7C212637056500FE3405 /* StoreKit.framework */; };
 		E47D7C2526370B3200FE3405 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = E47D7C2426370B3200FE3405 /* Configuration.storekit */; };
-		E48E3C8D262DCE1C001C4C54 /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E3C8C262DCE1C001C4C54 /* SignUp.swift */; };
+		E48E3C8D262DCE1C001C4C54 /* SignUpModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E3C8C262DCE1C001C4C54 /* SignUpModel.swift */; };
 		E49762D0263C860000BE3E16 /* VideoRealseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49762CF263C860000BE3E16 /* VideoRealseController.swift */; };
 		E49762D3263C86EC00BE3E16 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49762D2263C86EC00BE3E16 /* TableView.swift */; };
 		E4B666452635890D0017E2D0 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B666442635890D0017E2D0 /* UserModel.swift */; };
@@ -85,6 +86,7 @@
 		712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		712FA80F27CA30840020CAAB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		712FA81127CA352A0020CAAB /* VideoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoController.swift; sourceTree = "<group>"; };
+		714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RangeReplaceableCollection+Extension.swift"; sourceTree = "<group>"; };
 		717D3B9E27C2693200501FF1 /* VideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoModel.swift; sourceTree = "<group>"; };
 		717D3BA027C26FD000501FF1 /* UIEdgeInsets+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Extension.swift"; sourceTree = "<group>"; };
 		7183D5CD27BEB5C0009626D2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -116,7 +118,7 @@
 		E462A679262A453B008F191B /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		E47D7C212637056500FE3405 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		E47D7C2426370B3200FE3405 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
-		E48E3C8C262DCE1C001C4C54 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
+		E48E3C8C262DCE1C001C4C54 /* SignUpModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpModel.swift; sourceTree = "<group>"; };
 		E49762CF263C860000BE3E16 /* VideoRealseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoRealseController.swift; sourceTree = "<group>"; };
 		E49762D2263C86EC00BE3E16 /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		E4B666442635890D0017E2D0 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
@@ -232,7 +234,7 @@
 		E452251B2624F7A8001ACD0A /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				E48E3C8C262DCE1C001C4C54 /* SignUp.swift */,
+				E48E3C8C262DCE1C001C4C54 /* SignUpModel.swift */,
 				E4B666442635890D0017E2D0 /* UserModel.swift */,
 				E4F78BC92635C9AE00AAE321 /* CoinCount.swift */,
 				E4F78BCC2635D10800AAE321 /* Message.swift */,
@@ -343,6 +345,7 @@
 				E49762D2263C86EC00BE3E16 /* TableView.swift */,
 				717D3BA027C26FD000501FF1 /* UIEdgeInsets+Extension.swift */,
 				712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */,
+				714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -523,6 +526,7 @@
 				E452252A2624F833001ACD0A /* ForgotPasswordController.swift in Sources */,
 				E452252D2624F89F001ACD0A /* NoInternetController.swift in Sources */,
 				E45F817A262AF3E3001F7979 /* EditProfileController.swift in Sources */,
+				714A4DB327CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift in Sources */,
 				E4F75083263AAC4A00A5457F /* Trim.swift in Sources */,
 				E4F959C82626390600DC5960 /* PrivacyPolicyController.swift in Sources */,
 				E4E860B72624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodeld in Sources */,
@@ -572,7 +576,7 @@
 				E45225312624FD34001ACD0A /* CustomTextField.swift in Sources */,
 				E40735E02638819400A21E3D /* Comment.swift in Sources */,
 				7113785627C9689000C23710 /* PlayerView.swift in Sources */,
-				E48E3C8D262DCE1C001C4C54 /* SignUp.swift in Sources */,
+				E48E3C8D262DCE1C001C4C54 /* SignUpModel.swift in Sources */,
 				E462A673262A41AD008F191B /* ShareVideoController.swift in Sources */,
 				E4C3BC7A2631C1980038F411 /* MessageController.swift in Sources */,
 				E45F817E262AF6B3001F7979 /* PurchaseCoinController.swift in Sources */,

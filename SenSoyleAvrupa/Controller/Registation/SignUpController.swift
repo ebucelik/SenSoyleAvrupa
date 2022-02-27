@@ -308,7 +308,7 @@ class SignUpController: UITableViewController {
             print(response)
             if let data = response.data {
                 do {
-                    let answer = try JSONDecoder().decode(SignUp.self, from: data)
+                    let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
 
                     if let status = answer.status, status {
                         let user = UserData(context: context)
@@ -321,12 +321,12 @@ class SignUpController: UITableViewController {
                         present(navigationVC, animated: true, completion: nil)
                     } else {
                         loadingView.isHidden = true
-                        self.makeAlert(tittle: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(answer.message ?? "")")
+                        self.makeAlert(title: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(answer.message ?? "")")
                     }
                     
                 }catch{
                     loadingView.isHidden = true
-                    makeAlert(tittle: "Error Localized Description", message: "\(error.localizedDescription)")
+                    makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
                 }
             }
         }

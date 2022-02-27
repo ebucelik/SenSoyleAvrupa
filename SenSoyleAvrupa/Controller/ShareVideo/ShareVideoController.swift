@@ -252,7 +252,7 @@ class ShareVideoController: UITableViewController {
         }else{
         
         if txtComment.text == "" {
-            makeAlert(tittle: "Uyarı", message: "Paylaşımınız için yorum yazınız lütfen")
+            makeAlert(title: "Uyarı", message: "Paylaşımınız için yorum yazınız lütfen")
             return
         }
         if urlLocal  != nil   {
@@ -283,7 +283,7 @@ class ShareVideoController: UITableViewController {
             return
         }else{
             loadingView.isHidden = true
-            makeAlert(tittle: "Uyarı", message: "Video Seçilmedi")
+            makeAlert(title: "Uyarı", message: "Video Seçilmedi")
             return
         }
         }

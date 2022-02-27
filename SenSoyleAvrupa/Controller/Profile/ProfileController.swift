@@ -11,17 +11,18 @@ import Alamofire
 
 class ProfileController: UIViewController {
 
-    struct State {
+    private struct State {
         private(set) var oldVideoDataModel: [VideoDataModel]
     }
 
-    let email: String
-    let isOwnUserProfile: Bool
-    var state: State
+    // MARK: Variables
+    private let email: String
+    private let isOwnUserProfile: Bool
+    private var state: State
 
     // MARK: Models
-    var userModel: UserModel?
-    var videoDataModel = [VideoDataModel]() {
+    private var userModel: UserModel?
+    private var videoDataModel = [VideoDataModel]() {
         didSet {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
@@ -147,7 +148,8 @@ class ProfileController: UIViewController {
             case let .success(userModel):
                 self.userModel = userModel
 
-                let profileParameters: Parameters = ["email": email, "user": userModel.id ?? 0]
+                let profileParameters: Parameters = ["email": email,
+                                                     "user": userModel.id ?? 0]
 
                 NetworkManager.call(endpoint: "/api/profile", method: .get, parameters: profileParameters) { (result: Result<[VideoDataModel], Error>) in
                     switch result {

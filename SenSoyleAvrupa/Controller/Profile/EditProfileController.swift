@@ -211,7 +211,7 @@ class EditProfileController: UIViewController {
     
     @objc func actionNext() {
         if txtNickName.text == "" {
-            makeAlert(tittle: "Hata", message: "Kullanıcı adı kısmını boş bırakmayınız")
+            makeAlert(title: "Hata", message: "Kullanıcı adı kısmını boş bırakmayınız")
             return
         }
         
@@ -226,20 +226,20 @@ class EditProfileController: UIViewController {
                 
                 if let data = response.data {
                     do {
-                        let answer = try JSONDecoder().decode(SignUp.self, from: data)
+                        let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
                        
                         if answer.status == true {
                             loadingView.isHidden = true
                             pullData()
-                            makeAlert(tittle: "Başarılı", message: "Kullanıcı adınız başarıyla güncellendi")
+                            makeAlert(title: "Başarılı", message: "Kullanıcı adınız başarıyla güncellendi")
                         }else{
                             loadingView.isHidden = true
-                            makeAlert(tittle: "Uyarı", message: answer.message ?? "")
+                            makeAlert(title: "Uyarı", message: answer.message ?? "")
                         }
                         
                     }catch{
                         loadingView.isHidden = true
-                        makeAlert(tittle: "Error Localized Description", message: "\(error.localizedDescription)")
+                        makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
                     }
                 }
                 
@@ -254,7 +254,7 @@ class EditProfileController: UIViewController {
                 
                 if let data = response.data {
                     do {
-                        let answer = try JSONDecoder().decode(SignUp.self, from: data)
+                        let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
                        
                         if answer.status == true {
                             let parametersPhoto = ["email" : CacheUser.email
@@ -276,16 +276,16 @@ class EditProfileController: UIViewController {
                                     print("OK. Done")
                                     loadingView.isHidden = true
                                     pullData()
-                                    makeAlert(tittle: "Başarılı", message: "Profil bilgileriniz başarıyla düzenlendi")
+                                    makeAlert(title: "Başarılı", message: "Profil bilgileriniz başarıyla düzenlendi")
                                 }
                             }
                            
                         }else{
-                            makeAlert(tittle: "Uyarı", message: answer.message ?? "")
+                            makeAlert(title: "Uyarı", message: answer.message ?? "")
                         }
                         
                     }catch{
-                        makeAlert(tittle: "Error Localized Description", message: "\(error.localizedDescription)")
+                        makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
                     }
                 }
                 
