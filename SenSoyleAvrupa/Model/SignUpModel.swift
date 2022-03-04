@@ -7,8 +7,7 @@
 
 import UIKit
 
-
-class SignUpModel: Codable {
+public class SignUpModel: Codable {
     var status: Bool?
     var message: String?
 

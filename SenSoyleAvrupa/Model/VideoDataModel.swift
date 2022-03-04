@@ -7,7 +7,7 @@
 
 import UIKit
 
-class VideoDataModel: Codable, Equatable {
+public class VideoDataModel: Codable, Equatable {
     var comment: Int?
     var date: String?
     var email: String?
@@ -34,7 +34,7 @@ class VideoDataModel: Codable, Equatable {
         self.video = video
     }
 
-    static func == (lhs: VideoDataModel, rhs: VideoDataModel) -> Bool {
+    public static func == (lhs: VideoDataModel, rhs: VideoDataModel) -> Bool {
         return lhs.comment == rhs.comment &&
         lhs.date == rhs.date &&
         lhs.email == rhs.email &&

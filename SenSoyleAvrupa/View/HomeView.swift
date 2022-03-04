@@ -93,17 +93,15 @@ class HomeView: UIView {
     let buttonStar: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "star"), for: .normal)
-        button.tintColor = .customTintColor()
         button.heightAnchor.constraint(equalToConstant: 30).isActive = true
         button.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        button.layer.cornerRadius = 15
-        button.backgroundColor = .customBackgorundButton()
         return button
     }()
 
     let labelStar: UILabel = {
         let label = UILabel()
-        label.textColor = .customLabelColor()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .bold)
         label.text = ""
         label.textAlignment = .center
         return label
@@ -111,18 +109,17 @@ class HomeView: UIView {
 
     let buttonComment: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "message"), for: .normal)
-        button.tintColor = .customTintColor()
+        button.setImage(UIImage(systemName: "text.bubble.fill"), for: .normal)
+        button.tintColor = .white
         button.heightAnchor.constraint(equalToConstant: 30).isActive = true
         button.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        button.layer.cornerRadius = 15
-        button.backgroundColor = .customBackgorundButton()
         return button
     }()
 
     let labelComment: UILabel = {
         let label = UILabel()
-        label.textColor = .customLabelColor()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .bold)
         label.text = ""
         label.textAlignment = .center
         return label
@@ -130,18 +127,16 @@ class HomeView: UIView {
 
     let buttonSpam: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "arrow.uturn.right"), for: .normal)
-        button.tintColor = .customTintColor()
+        button.setImage(UIImage(systemName: "ellipsis.circle.fill"), for: .normal)
+        button.tintColor = .white
         button.heightAnchor.constraint(equalToConstant: 30).isActive = true
         button.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        button.layer.cornerRadius = 15
-        button.backgroundColor = .customBackgorundButton()
         return button
     }()
 
     let labelName: UILabel = {
         let label = UILabel()
-        label.textColor = .customLabelColor()
+        label.textColor = .white
         label.text = ""
         label.numberOfLines = 0
         label.textAlignment = .left
@@ -151,7 +146,8 @@ class HomeView: UIView {
 
     let labelStatus: UILabel = {
         let label = UILabel()
-        label.textColor = .customLabelColor()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .bold)
         label.text = ""
         label.numberOfLines = 0
         label.textAlignment = .left
@@ -189,12 +185,7 @@ class HomeView: UIView {
         stackViewButtonComponents.layoutMargins = UIEdgeInsets(all: 5)
         stackViewButtonComponents.isLayoutMarginsRelativeArrangement = true
 
-        let stackViewWithBackground = UIStackView(arrangedSubviews: [stackViewButtonComponents])
-        stackViewWithBackground.axis = .vertical
-        stackViewWithBackground.backgroundColor = alphaBackgroundColor
-        stackViewWithBackground.roundCorners(.allCorners, radius: 8)
-
-        let stackView = UIStackView(arrangedSubviews: [profilImage, stackViewWithBackground])
+        let stackView = UIStackView(arrangedSubviews: [profilImage, stackViewButtonComponents])
         stackView.axis = .vertical
         stackView.spacing = 15
 
@@ -204,12 +195,7 @@ class HomeView: UIView {
         stackViewLabelComponents.layoutMargins = UIEdgeInsets(all: 5)
         stackViewLabelComponents.isLayoutMarginsRelativeArrangement = true
 
-        let stackViewLabelWithBackground = UIStackView(arrangedSubviews: [stackViewLabelComponents])
-        stackViewLabelWithBackground.axis = .vertical
-        stackViewLabelWithBackground.backgroundColor = alphaBackgroundColor
-        stackViewLabelWithBackground.roundCorners(.allCorners, radius: 8)
-
-        let stackViewLabel = UIStackView(arrangedSubviews: [stackViewLabelWithBackground])
+        let stackViewLabel = UIStackView(arrangedSubviews: [stackViewLabelComponents])
         stackViewLabel.axis = .vertical
 
         addSubview(playerView)
@@ -270,6 +256,7 @@ class HomeView: UIView {
 
     func configure(with model: VideoDataModel) {
         self.model = model
+        fetchUserDataWhenNeeded()
     }
 
     func downloadVideo() {
@@ -286,8 +273,6 @@ class HomeView: UIView {
                                                selector:#selector(self.playerDidFinishPlaying(note:)),
                                                name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
                                                object: playerView.player?.currentItem)
-
-        fetchUserDataWhenNeeded()
     }
 
     func fetchUserDataWhenNeeded() {

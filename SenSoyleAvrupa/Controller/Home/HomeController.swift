@@ -21,7 +21,7 @@ class HomeController: UIViewController {
     }
 
     // MARK: Variables
-    private var id = 0
+    private let service: VideoControllerServiceProtocol
     private var state: State = State(oldVideoDataModel: [])
     private var prefetchedPlayer: [[String: AVPlayer]] = []
 
@@ -39,7 +39,17 @@ class HomeController: UIViewController {
 
     // MARK: Views
     let tableView = UITableView()
-    
+
+    init(service: VideoControllerService) {
+        self.service = service
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -150,18 +160,11 @@ class HomeController: UIViewController {
     }
 
     func pullData() {
-        let parameters: Parameters = ["email": CacheUser.email]
-
-        NetworkManager.call(endpoint: "/api/videos", method: .get, parameters: parameters) { (result: Result<[VideoDataModel], Error>) in
-            switch result {
-            case let .failure(error):
-                print("Network request error: \(error)")
-            case let .success(videoDataModel):
-                if self.state.oldVideoDataModel != videoDataModel {
-                    self.prefetchedPlayer.removeAll()
-                    self.state = State(oldVideoDataModel: videoDataModel)
-                    self.videoDataModel = videoDataModel
-                }
+        service.pullVideoData(email: CacheUser.email) { [self] videoDataModels in
+            if state.oldVideoDataModel != videoDataModels {
+                prefetchedPlayer.removeAll()
+                state = State(oldVideoDataModel: videoDataModels)
+                videoDataModel = videoDataModels
             }
         }
     }
@@ -211,7 +214,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
         
         cell.homeView.buttonSendPoint = { [self] in
             print("Send point")
-            sendPoints(videoId: model.id ?? 0, point: Int(cell.homeView.ratingView.labelTop.text!) ?? 0, email: model.email ?? "")
+            sendPoints(email: model.email ?? "", videoId: model.id ?? 0, point: Int(cell.homeView.ratingView.labelTop.text!) ?? 0)
             cell.homeView.ratingView.ratingView.rating = 0
             cell.homeView.ratingView.labelTop.text = "0"
             cell.homeView.ratingView.isHidden = true
@@ -226,31 +229,31 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
         }
         
         cell.homeView.buttonSpamAction = {
-            self.id = model.id ?? 0
+            let id = model.id ?? 0
             let alert = UIAlertController(title: "Bildiri", message: "Bir sebep seçin", preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "Spam veya kötüye kullanım", style: .default, handler: { (_) in
-                self.spamPost(type: 1)
+                self.spamPost(type: 1, id: id)
             }))
             alert.addAction(UIAlertAction(title: "Yanıltıcı bilgi", style: .default, handler: { (_) in
-                self.spamPost(type: 2)
+                self.spamPost(type: 2, id: id)
             }))
             alert.addAction(UIAlertAction(title: "Tehlikeli kuruluşlar ve kişiler", style: .default, handler: { (_) in
-                self.spamPost(type: 3)
+                self.spamPost(type: 3, id: id)
             }))
             alert.addAction(UIAlertAction(title: "Yasadışı faaliyetler", style: .default, handler: { (_) in
-                self.spamPost(type: 4)
+                self.spamPost(type: 4, id: id)
             }))
             alert.addAction(UIAlertAction(title: "Dolandırıcılık", style: .default, handler: { (_) in
-                self.spamPost(type: 5)
+                self.spamPost(type: 5, id: id)
             }))
             alert.addAction(UIAlertAction(title: "Şiddet içeren ve sansürlenmemiş içerik", style: .default, handler: { (_) in
-                self.spamPost(type: 6)
+                self.spamPost(type: 6, id: id)
             }))
             alert.addAction(UIAlertAction(title: "Hayvan zulümü", style: .default, handler: { (_) in
-                self.spamPost(type: 7)
+                self.spamPost(type: 7, id: id)
             }))
             alert.addAction(UIAlertAction(title: "Nefret söylemi", style: .default, handler: { (_) in
-                self.spamPost(type: 8)
+                self.spamPost(type: 8, id: id)
             }))
             alert.addAction(UIAlertAction(title: "İptal et", style: .cancel))
 
@@ -259,42 +262,24 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
         return cell
     }
     
-    func spamPost(type: Int) {
-        let parameters: Parameters = ["email": CacheUser.email,
-                                      "video": id,
-                                      "type": type]
-
-        NetworkManager.call(endpoint: "/api/spam", method: .post, parameters: parameters) { (result: Result<SignUpModel, Error>) in
-            switch result {
-            case let .failure(error):
-                print("Network request error: \(error)")
-            case let .success(signUpModel):
-                if let status = signUpModel.status, status {
-                    self.makeAlert(title: "Başarılı", message: "Bildiriniz bizim için çok önemli. Teşekkürler")
-                    self.pullData()
-                } else {
-                    self.makeAlert(title: "Hata", message: signUpModel.message ?? "")
-                }
+    func spamPost(type: Int, id: Int) {
+        service.spamPost(type: type, id: id) { [self] in
+            if let status = $0.status, status {
+                makeAlert(title: "Başarılı", message: "Bildiriniz bizim için çok önemli. Teşekkürler")
+                pullData()
+            } else {
+                makeAlert(title: "Hata", message: $0.message ?? "")
             }
         }
     }
 
-    func sendPoints(videoId: Int, point:Int, email:String) {
-        let parameters: Parameters = ["email": email,
-                                      "video": videoId,
-                                      "point": point]
-
-        NetworkManager.call(endpoint: "/api/like-vid", method: .post, parameters: parameters) { (result: Result<SignUpModel, Error>) in
-            switch result {
-            case let .failure(error):
-                print("Network request error: \(error)")
-            case let .success(signUpModel):
-                if let status = signUpModel.status, status {
-                    self.makeAlert(title: "Başarılı", message: "Puan verdiğiniz için teşekkürler")
-                    self.pullData()
-                }else{
-                    self.makeAlert(title: "Hata", message: signUpModel.message ?? "")
-                }
+    func sendPoints(email: String, videoId: Int, point: Int) {
+        service.sendPoints(email: email, videoId: videoId, point: point) { [self] in
+            if let status = $0.status, status {
+                makeAlert(title: "Başarılı", message: "Puan verdiğiniz için teşekkürler")
+                pullData()
+            } else {
+                makeAlert(title: "Hata", message: $0.message ?? "")
             }
         }
     }

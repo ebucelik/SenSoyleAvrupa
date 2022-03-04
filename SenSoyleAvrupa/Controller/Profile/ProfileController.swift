@@ -167,7 +167,6 @@ class ProfileController: UIViewController {
     }
 }
 
-
 extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return videoDataModel.count
@@ -187,7 +186,13 @@ extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegat
             model.email = email
         }
 
-        let videoController = VideoController(model: model)
+        let videoController = VideoController(model: model, service: VideoControllerService())
+        videoController.onDismiss = { modelDidChanged in
+            if modelDidChanged {
+                self.pullData()
+            }
+        }
+
         present(videoController, animated: true)
     }
     
@@ -218,5 +223,4 @@ extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegat
       let vc = EditProfileController()
         navigationController?.pushViewController(vc, animated: true)
     }
-    
 }

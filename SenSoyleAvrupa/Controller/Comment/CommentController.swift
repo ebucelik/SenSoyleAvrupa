@@ -40,7 +40,12 @@ class CommentController: UIViewController {
             containerView.frame = CGRect(x: 0, y: 0, width: 150, height: 50)
             return containerView
         }()
-    
+
+    private var modelDidChanged = false
+
+    // MARK: Actions
+    var onDismiss: ((Bool) -> Void)? = nil
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -53,7 +58,13 @@ class CommentController: UIViewController {
         editTxtandButton()
     
     }
-    
+
+    override func viewWillDisappear(_ animated: Bool) {
+        guard let onDismiss = onDismiss else { return }
+
+        onDismiss(modelDidChanged)
+    }
+
     func editTxtandButton() {
         
         containerView.addSubview(btnYorumGonder)
@@ -128,6 +139,7 @@ class CommentController: UIViewController {
                         if answer.status == true {
                             txtYorum.text = ""
                             pullData()
+                            modelDidChanged = true
                         }else{
                             makeAlert(title: "Uyarı", message: "Yorum yaparken bir hata oldu")
                         }
