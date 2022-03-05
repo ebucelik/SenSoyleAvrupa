@@ -61,12 +61,19 @@ class HomeView: UIView {
     let alphaBackgroundColor: UIColor = .white.withAlphaComponent(0.3)
 
     // MARK: Views
+    let loadingView: LoadingView = {
+        let loadingView = LoadingView()
+        loadingView.isHidden = true
+        return loadingView
+    }()
+
     let ratingView = RatingView()
 
     var playerView: PlayerView = {
         let playerView = PlayerView()
         playerView.backgroundColor = UIColor.customBackground()
         playerView.isUserInteractionEnabled = true
+        playerView.playerLayer.videoGravity = .resize
         return playerView
     }()
 
@@ -104,6 +111,7 @@ class HomeView: UIView {
         label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .bold)
         label.text = ""
         label.textAlignment = .center
+        label.addShadow(opacity: 0.75, radius: 1)
         return label
     }()
 
@@ -111,8 +119,7 @@ class HomeView: UIView {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "text.bubble.fill"), for: .normal)
         button.tintColor = .white
-        button.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        button.addShadow(opacity: 0.75, radius: 1)
         return button
     }()
 
@@ -122,6 +129,7 @@ class HomeView: UIView {
         label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .bold)
         label.text = ""
         label.textAlignment = .center
+        label.addShadow(opacity: 0.75, radius: 1)
         return label
     }()
 
@@ -129,18 +137,18 @@ class HomeView: UIView {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "ellipsis.circle.fill"), for: .normal)
         button.tintColor = .white
-        button.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        button.addShadow(opacity: 0.75, radius: 1)
         return button
     }()
 
     let labelName: UILabel = {
         let label = UILabel()
         label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 12)
         label.text = ""
         label.numberOfLines = 0
         label.textAlignment = .left
-        label.font = .boldSystemFont(ofSize: 12)
+        label.addShadow(opacity: 0.75, radius: 1)
         return label
     }()
 
@@ -151,6 +159,7 @@ class HomeView: UIView {
         label.text = ""
         label.numberOfLines = 0
         label.textAlignment = .left
+        label.addShadow(opacity: 0.75, radius: 1)
         return label
     }()
 
@@ -159,6 +168,7 @@ class HomeView: UIView {
         imageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         imageView.alpha = 0
+        imageView.addShadow(opacity: 1, radius: 10)
         return imageView
     }()
 
@@ -204,6 +214,7 @@ class HomeView: UIView {
         addSubview(imageViewPause)
         addSubview(activityIndicator)
         addSubview(ratingView)
+        addSubview(loadingView)
 
         playerView.addToSuperViewAnchors()
         activityIndicator.centerViewAtSuperView()
@@ -230,6 +241,8 @@ class HomeView: UIView {
 
         ratingView.addToSuperViewAnchors()
         editRatingView()
+
+        loadingView.addToSuperViewAnchors()
     }
 
     required init?(coder: NSCoder) {
@@ -267,7 +280,6 @@ class HomeView: UIView {
 
     func setPlayerView(player: AVPlayer?) {
         playerView.player = player
-        playerView.playerLayer.videoGravity = .resize
 
         NotificationCenter.default.addObserver(self,
                                                selector:#selector(self.playerDidFinishPlaying(note:)),
@@ -350,7 +362,9 @@ class HomeView: UIView {
     }
 
     @objc func playerDidFinishPlaying(note: NSNotification){
-        playerView.player?.seek(to: CMTime.zero)
-        playerView.player?.play()
+        DispatchQueue.main.async { [weak self] in
+            self?.playerView.player?.seek(to: CMTime.zero)
+            self?.playerView.player?.play()
+        }
     }
 }

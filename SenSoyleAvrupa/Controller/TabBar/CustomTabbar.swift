@@ -24,7 +24,7 @@ class CustomTabbar: UITabBarController{
     
     func editTabBar() {
         
-        let homeController = navControllerOlustur(rootViewController: HomeController(service: VideoControllerService()),
+        let homeController = navControllerOlustur(rootViewController: HomeController(service: ViewControllerService()),
                                                   seciliOlmayanIcon: UIImage(systemName: "music.note.house") ?? UIImage(),
                                                   title: "Ana sayfa")
         

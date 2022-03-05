@@ -1,7 +1,11 @@
 {
+  "identifier" : "20DB3E73",
+  "nonRenewingSubscriptions" : [
+
+  ],
   "products" : [
     {
-      "displayPrice" : "0.99",
+      "displayPrice" : "10.0",
       "familyShareable" : false,
       "internalID" : "D38EC9F2",
       "localizations" : [
@@ -11,12 +15,12 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "diamond_100",
-      "referenceName" : "100 Diamond",
+      "productID" : "diamond_10_initial",
+      "referenceName" : "10 Diamond Initial",
       "type" : "Consumable"
     },
     {
-      "displayPrice" : "0.99",
+      "displayPrice" : "5",
       "familyShareable" : false,
       "internalID" : "B13950F0",
       "localizations" : [
@@ -26,8 +30,8 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "diamond_200",
-      "referenceName" : "200 Diamond",
+      "productID" : "diamond_10",
+      "referenceName" : "10 Diamond",
       "type" : "Consumable"
     }
   ],
@@ -39,6 +43,6 @@
   ],
   "version" : {
     "major" : 1,
-    "minor" : 0
+    "minor" : 1
   }
 }

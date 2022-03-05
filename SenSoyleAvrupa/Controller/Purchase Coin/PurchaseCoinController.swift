@@ -14,8 +14,17 @@ extension Notification.Name {
 }
 
 class PurchaseCoinController: UIViewController {
-    
-    
+
+    struct State {
+        var initialVideoPurchased: Bool
+    }
+
+    // MARK: Variables
+    private var state: State
+
+    private var purchaseArray = [PurchaseModel]()
+    private var indexCoin = 0
+
     let btnLeft : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
@@ -65,19 +74,24 @@ class PurchaseCoinController: UIViewController {
         return lbl
     }()
     
-      let collectionView : UICollectionView = {
-          let layout = UICollectionViewFlowLayout()
-          layout.scrollDirection = .vertical
-          let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-          cv.translatesAutoresizingMaskIntoConstraints = false
-          cv.backgroundColor = .white
-          return cv
-      }()
-    
-    var purchaseArray = [Purchase]()
-    
- 
-    var indexCoin = 0
+    let collectionView : UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.translatesAutoresizingMaskIntoConstraints = false
+        cv.backgroundColor = .white
+        return cv
+    }()
+
+    init() {
+        self.state = State(initialVideoPurchased: false)
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,7 +107,7 @@ class PurchaseCoinController: UIViewController {
         title = "Satın Al"
         view.backgroundColor = .white
         
-       let stackView = UIStackView(arrangedSubviews: [lblMyCoin,lblMyCoinCount,lblBuyCoin,collectionView])
+        let stackView = UIStackView(arrangedSubviews: [lblMyCoin,lblMyCoinCount,lblBuyCoin,collectionView])
         stackView.axis = .vertical
         stackView.spacing = 10
         
@@ -104,13 +118,13 @@ class PurchaseCoinController: UIViewController {
         btnLeft.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: view.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
         
-        stackView.anchor(top: btnLeft.bottomAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
+        stackView.anchor(top: btnLeft.bottomAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
         
-        purchaseArray.append(Purchase(coin: 100, price: 10,handler: {
-            IAPManager.shared.purchase(product: .diamond_100)
+        purchaseArray.append(PurchaseModel(coin: 10, price: 10, handler: {
+            IAPManager.shared.purchase(product: .diamond_10_initial)
         }))
-        purchaseArray.append(Purchase(coin: 200, price: 15,handler: {
-            IAPManager.shared.purchase(product: .diamond_200)
+        purchaseArray.append(PurchaseModel(coin: 10, price: 5, handler: {
+            IAPManager.shared.purchase(product: .diamond_10)
         }))
         
         NotificationCenter.default.addObserver(self, selector: #selector(saveDateCoin), name: .notificationName, object: nil)
@@ -129,7 +143,6 @@ class PurchaseCoinController: UIViewController {
             layout.minimumLineSpacing = 20
             layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         }
-        
     }
     
     @objc func actionLeft() {
@@ -137,7 +150,7 @@ class PurchaseCoinController: UIViewController {
     }
     
     func pullData() {
-        let parameters : Parameters = ["email":CacheUser.email]
+        let parameters : Parameters = ["email": CacheUser.email]
         
         AF.request("\(NetworkManager.url)/api/user",method: .get,parameters: parameters).responseJSON { [self] response in
             
@@ -148,7 +161,7 @@ class PurchaseCoinController: UIViewController {
                     let answer = try JSONDecoder().decode(UserModel.self, from: data)
                     
                     lblMyCoinCount.text = "\(answer.coin ?? 0)"
-                   
+
                 }catch{
                     print("Error Localized Description \(error.localizedDescription)")
                 }
@@ -160,8 +173,8 @@ class PurchaseCoinController: UIViewController {
     @objc func saveDateCoin() {
         print("Coin alindi")
         print("index coin \(indexCoin)")
-        let parameters : Parameters = ["email":CacheUser.email,
-                                       "coin" : indexCoin]
+        let parameters: Parameters = ["email": CacheUser.email,
+                                      "coin": indexCoin]
 
         AF.request("\(NetworkManager.url)/api/order",method: .post,parameters: parameters).responseJSON { [self] response in
 
@@ -180,52 +193,44 @@ class PurchaseCoinController: UIViewController {
                     makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
                 }
             }
-
         }
+
+        state = State(initialVideoPurchased: true)
+        collectionView.reloadData()
     }
-    
 }
 
 extension PurchaseCoinController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return purchaseArray.count
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PurchaseCell", for: indexPath) as! PurchaseCell
-        let indexArray = purchaseArray[indexPath.row]
+        let indexArray = purchaseArray[state.initialVideoPurchased ? 1 : 0]
         cell.lblCoin.text = "\(indexArray.coin)"
-        cell.lblPrice.text = "\(indexArray.price) ₺"
+        cell.lblPrice.text = "\(indexArray.price) €"
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let indexArray = purchaseArray[indexPath.row]
+        let indexArray = purchaseArray[state.initialVideoPurchased ? 1 : 0]
         print("did select")
         indexCoin = indexArray.coin
         indexArray.handler()
     }
-    
 }
 
-
-struct Purchase {
-    var coin : Int
-    var price : Int
-    var handler: (() -> Void)
-}
-
-final class IAPManager : NSObject,SKProductsRequestDelegate,SKPaymentTransactionObserver {
+final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
     static let shared = IAPManager()
-    
     var products = [SKProduct]()
     
-    enum Product: String,CaseIterable{
-        case diamond_100
-        case diamond_200
+    enum Product: String, CaseIterable {
+        case diamond_10_initial
+        case diamond_10
     }
-    
+
     public func fetchProducts() {
         let request = SKProductsRequest(productIdentifiers: Set(Product.allCases.compactMap({$0.rawValue})))
         request.delegate = self
@@ -237,7 +242,7 @@ final class IAPManager : NSObject,SKProductsRequestDelegate,SKPaymentTransaction
         self.products = response.products
     }
     
-    public func purchase(product : Product) {
+    public func purchase(product: Product) {
         guard SKPaymentQueue.canMakePayments() else{
             return
         }
@@ -260,7 +265,6 @@ final class IAPManager : NSObject,SKProductsRequestDelegate,SKPaymentTransaction
             case .purchased:
                 print("purchased")
                 NotificationCenter.default.post(name: .notificationName, object: nil, userInfo: nil)
-//                print("Notification gonderildi")
                 break
             case .failed:
                 break

@@ -9,9 +9,16 @@ import UIKit
 import Alamofire
 
 class EditProfileController: UIViewController {
-    
-    
-    
+
+    struct State {
+        var oldUsername: String
+        var oldProfilePicture: UIImage
+    }
+
+    // MARK: Variables
+    private var state: State
+    private let service: ViewControllerServiceProtocol
+
     var bigCircle: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -65,7 +72,7 @@ class EditProfileController: UIViewController {
         btn.titleLabel?.font = .systemFont(ofSize: 17, weight: .heavy)
         btn.layer.cornerRadius = 15
         btn.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        btn.addTarget(self, action: #selector(actionNext), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(updateProfile), for: .touchUpInside)
         return btn
     }()
 
@@ -87,7 +94,18 @@ class EditProfileController: UIViewController {
     }()
     
     let loadingView = LoadingView()
-    
+
+    init(service: ViewControllerServiceProtocol) {
+        self.state = State(oldUsername: txtNickName.text!, oldProfilePicture: profilImage.image ?? UIImage())
+        self.service = service
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -95,15 +113,11 @@ class EditProfileController: UIViewController {
         
         navigationController?.navigationBar.isHidden = false
         
-        if CheckInternet.Connection() {
-            
-        }else{
+        if !CheckInternet.Connection() {
             let vc = NoInternetController()
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
         }
-        
-       
     }
 
     override func viewDidLoad() {
@@ -147,7 +161,7 @@ class EditProfileController: UIViewController {
         
         loadingView.isHidden = true
         
-        let gestureEdit = UITapGestureRecognizer(target: self, action: #selector(actionEdit))
+        let gestureEdit = UITapGestureRecognizer(target: self, action: #selector(selectProfileImage))
         littleCircle.addGestureRecognizer(gestureEdit)
         
         let (hMult, vMult) = computeMultipliers(angle: 45)
@@ -164,8 +178,7 @@ class EditProfileController: UIViewController {
         
         return (h, v)
     }
-    
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -176,146 +189,89 @@ class EditProfileController: UIViewController {
         
     }
     
-    @objc func actionEdit() {
+    @objc func selectProfileImage() {
         let imgPickerController = UIImagePickerController()
         imgPickerController.delegate = self
-        present(imgPickerController, animated: true, completion: nil)
+        present(imgPickerController, animated: true)
     }
     
     func pullData() {
-        let parameters : Parameters = ["email":CacheUser.email]
-        
-        AF.request("\(NetworkManager.url)/api/user",method: .get,parameters: parameters).responseJSON { [self] response in
-            
-            print("response: \(response)")
-            
-            if let data = response.data {
-                do {
-                    let answer = try JSONDecoder().decode(UserModel.self, from: data)
-                    
-                    txtNickName.text = answer.username
-                    
-                    if answer.pp == "\(NetworkManager.url)/pp" {
-                        
-                    }else{
-                        profilImage.sd_setImage(with: URL(string: answer.pp ?? ""), completed: nil)
-                    }
-                    
-                }catch{
-                    print("Error Localized Description \(error.localizedDescription)")
-                }
+        service.pullUserData(email: CacheUser.email) { [self] userModel in
+            txtNickName.text = userModel.username
+
+            if userModel.pp != "\(NetworkManager.url)/pp" {
+                profilImage.sd_setImage(with: URL(string: userModel.pp ?? ""), completed: nil)
             }
-            
+
+            state = State(oldUsername: userModel.username ?? "", oldProfilePicture: profilImage.image ?? UIImage())
         }
     }
     
-    @objc func actionNext() {
-        if txtNickName.text == "" {
+    @objc func updateProfile() {
+        let username = txtNickName.text ?? ""
+        let profilePicture = profilImage.image ?? UIImage()
+
+        if username == "" {
             makeAlert(title: "Hata", message: "Kullanıcı adı kısmını boş bırakmayınız")
             return
         }
         
         loadingView.isHidden = false
-        if profilImage.image == UIImage(named: "emojiman") {
-            let parameters : Parameters = ["email":CacheUser.email,
-                                           "newUsername" : txtNickName.text!]
-            
-            AF.request("\(NetworkManager.url)/api/change-username",method: .post,parameters: parameters).responseJSON { [self] response in
-                
-                print("response: \(response)")
-                
-                if let data = response.data {
-                    do {
-                        let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
-                       
-                        if answer.status == true {
-                            loadingView.isHidden = true
-                            pullData()
-                            makeAlert(title: "Başarılı", message: "Kullanıcı adınız başarıyla güncellendi")
-                        }else{
-                            loadingView.isHidden = true
-                            makeAlert(title: "Uyarı", message: answer.message ?? "")
-                        }
-                        
-                    }catch{
-                        loadingView.isHidden = true
-                        makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
-                    }
-                }
-                
-            }
-        }else{
-            let parameters : Parameters = ["email":CacheUser.email,
-                                           "newUsername" : txtNickName.text!]
-            
-            AF.request("\(NetworkManager.url)/api/change-username",method: .post,parameters: parameters).responseJSON { [self] response in
-                
-                print("response: \(response)")
-                
-                if let data = response.data {
-                    do {
-                        let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
-                       
-                        if answer.status == true {
-                            let parametersPhoto = ["email" : CacheUser.email
-                            ]
-                            
-                            AF.upload(multipartFormData: { multipartFormData in
-                                
-                                for (key, value) in parametersPhoto {
-                                    multipartFormData.append(value.data(using: .utf8)!, withName: key)
-                                }
-                                
-                                if let jpegData = self.profilImage.image!.jpegData(compressionQuality: 1.0) {
-                                    multipartFormData.append(jpegData, withName: "file", fileName: "file", mimeType: ".png")
-                                }
-                            }, to: "\(NetworkManager.url)/api/change-pp")
-                            .response { response in
-                                print(response)
-                                if response.response?.statusCode == 200 {
-                                    print("OK. Done")
-                                    loadingView.isHidden = true
-                                    pullData()
-                                    makeAlert(title: "Başarılı", message: "Profil bilgileriniz başarıyla düzenlendi")
-                                }
-                            }
-                           
-                        }else{
-                            makeAlert(title: "Uyarı", message: answer.message ?? "")
-                        }
-                        
-                    }catch{
-                        makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
-                    }
-                }
-                
-            }
-        }
-        
-        
-        
-        
-        
-        
-    }
-    
-    func updateImage() {
-        
-    }
-    
 
+        if state.oldUsername != username {
+            service.changeUsername(email: CacheUser.email, username: username, onError: {
+                self.loadingView.isHidden = true
+            }) { [self] signUpModel in
+                if let status = signUpModel.status, status {
+                    state.oldUsername = username
+                    pullData()
+                    makeAlert(title: "Başarılı", message: "Kullanıcı adınız başarıyla güncellendi")
+                } else {
+                    makeAlert(title: "Uyarı", message: signUpModel.message ?? "")
+                }
+
+                loadingView.isHidden = true
+            }
+        } else if state.oldProfilePicture != profilePicture {
+            let parametersPhoto = ["email": CacheUser.email]
+
+            AF.upload(multipartFormData: { multipartFormData in
+                for (key, value) in parametersPhoto {
+                    multipartFormData.append(value.data(using: .utf8)!, withName: key)
+                }
+
+                if let jpegData = self.profilImage.image!.jpegData(compressionQuality: 1.0) {
+                    multipartFormData.append(jpegData, withName: "file", fileName: "file", mimeType: ".png")
+                }
+            }, to: "\(NetworkManager.url)/api/change-pp").response { [self] response in
+                print(response)
+                if response.response?.statusCode == 200 {
+                    print("OK. Done")
+                    loadingView.isHidden = true
+                    pullData()
+                    makeAlert(title: "Başarılı", message: "Profil resminiz başarıyla düzenlendi")
+                } else {
+                    loadingView.isHidden = true
+                    makeAlert(title: "Uyarı", message: "Profil resminiz düzenmede hata olustu")
+                }
+            }
+        } else {
+            loadingView.isHidden = true
+            makeAlert(title: "Uyarı", message: "Profiliniz'de bi degisim fark edilmedi")
+        }
+    }
 }
 
 extension EditProfileController : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let imgSecilen = info[.originalImage] as? UIImage
-        self.profilImage.image = imgSecilen?.withRenderingMode(.alwaysOriginal)
+        let selectedImage = info[.originalImage] as? UIImage
+        self.profilImage.image = selectedImage?.withRenderingMode(.alwaysOriginal)
         profilImage.layer.masksToBounds = true
         profilImage.contentMode = .scaleAspectFill
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
     }
 }

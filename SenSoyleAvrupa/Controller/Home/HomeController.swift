@@ -21,7 +21,7 @@ class HomeController: UIViewController {
     }
 
     // MARK: Variables
-    private let service: VideoControllerServiceProtocol
+    private let service: ViewControllerServiceProtocol
     private var state: State = State(oldVideoDataModel: [])
     private var prefetchedPlayer: [[String: AVPlayer]] = []
 
@@ -40,7 +40,7 @@ class HomeController: UIViewController {
     // MARK: Views
     let tableView = UITableView()
 
-    init(service: VideoControllerService) {
+    init(service: ViewControllerService) {
         self.service = service
 
         super.init(nibName: nil, bundle: nil)

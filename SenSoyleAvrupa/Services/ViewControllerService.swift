@@ -1,5 +1,5 @@
 //
-//  VideoControllerService.swift
+//  ViewControllerService.swift
 //  SenSoyleAvrupa
 //
 //  Created by Ing. Ebu Celik on 04.03.22.
@@ -8,14 +8,16 @@
 import Foundation
 import Alamofire
 
-public protocol VideoControllerServiceProtocol {
+public protocol ViewControllerServiceProtocol {
     func pullVideoData(email: String, block: @escaping ([VideoDataModel]) -> Void)
-    func pullProfileData(email: String, block: @escaping ([VideoDataModel]) -> Void)
+    func pullUserData(email: String, block: @escaping (UserModel) -> Void)
+    func pullProfileData(email: String, userId: Int, block: @escaping ([VideoDataModel]) -> Void)
     func sendPoints(email: String, videoId: Int, point: Int, block: @escaping (SignUpModel) -> Void)
     func spamPost(type: Int, id: Int, block: @escaping (SignUpModel) -> Void)
+    func changeUsername(email: String, username: String, onError: (() -> Void)?, block: @escaping (SignUpModel) -> Void)
 }
 
-public final class VideoControllerService: VideoControllerServiceProtocol {
+public final class ViewControllerService: ViewControllerServiceProtocol {
 
     public func pullVideoData(email: String, block: @escaping ([VideoDataModel]) -> Void) {
         let parameters: Parameters = ["email": email]
@@ -30,25 +32,29 @@ public final class VideoControllerService: VideoControllerServiceProtocol {
         }
     }
 
-    public func pullProfileData(email: String, block: @escaping ([VideoDataModel]) -> Void) {
-        let userParameters: Parameters = ["email": email]
+    public func pullUserData(email: String, block: @escaping (UserModel) -> Void) {
+        let parameters: Parameters = ["email": email]
 
-        NetworkManager.call(endpoint: "/api/user", method: .get, parameters: userParameters) { (result: Result<UserModel, Error>) in
+        NetworkManager.call(endpoint: "/api/user", method: .get, parameters: parameters) { (result: Result<UserModel, Error>) in
             switch result {
             case let .failure(error):
                 print("Network request error: \(error)")
             case let .success(userModel):
-                let profileParameters: Parameters = ["email": email,
-                                                     "user": userModel.id ?? 0]
+                block(userModel)
+            }
+        }
+    }
 
-                NetworkManager.call(endpoint: "/api/profile", method: .get, parameters: profileParameters) { (result: Result<[VideoDataModel], Error>) in
-                    switch result {
-                    case let .failure(error):
-                        print("Network request error: \(error)")
-                    case let .success(videoDataModels):
-                        block(videoDataModels)
-                    }
-                }
+    public func pullProfileData(email: String, userId: Int, block: @escaping ([VideoDataModel]) -> Void) {
+        let parameters: Parameters = ["email": email,
+                                             "user": userId]
+
+        NetworkManager.call(endpoint: "/api/profile", method: .get, parameters: parameters) { (result: Result<[VideoDataModel], Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+            case let .success(videoDataModels):
+                block(videoDataModels)
             }
         }
     }
@@ -77,6 +83,26 @@ public final class VideoControllerService: VideoControllerServiceProtocol {
             switch result {
             case let .failure(error):
                 print("Network request error: \(error)")
+            case let .success(signUpModel):
+                block(signUpModel)
+            }
+        }
+    }
+
+    public func changeUsername(email: String, username: String, onError: (() -> Void)? = nil, block: @escaping (SignUpModel) -> Void) {
+        let parameters: Parameters = ["email": email,
+                                      "newUsername": username]
+
+        NetworkManager.call(endpoint: "/api/change-username", method: .post, parameters: parameters) { (result: Result<SignUpModel, Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+
+                guard let onError = onError else {
+                    return
+                }
+
+                onError()
             case let .success(signUpModel):
                 block(signUpModel)
             }

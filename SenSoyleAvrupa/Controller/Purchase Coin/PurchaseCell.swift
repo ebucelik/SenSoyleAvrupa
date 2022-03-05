@@ -10,14 +10,14 @@ import UIKit
 class PurchaseCell: UICollectionViewCell {
 
     
-    let imgCoin : UIImageView = {
+    let imgCoin: UIImageView = {
         let img = UIImageView(image: UIImage(named: "coin"))
         img.heightAnchor.constraint(equalToConstant: 50).isActive = true
         img.widthAnchor.constraint(equalToConstant: 50).isActive = true
         return img
     }()
     
-    let lblCoin : UILabel = {
+    let lblCoin: UILabel = {
         let lbl = UILabel()
         lbl.text = ""
         lbl.numberOfLines = 0
@@ -28,7 +28,7 @@ class PurchaseCell: UICollectionViewCell {
         return lbl
     }()
     
-    let lblPrice : UILabel = {
+    let lblPrice: UILabel = {
         let lbl = UILabel()
         lbl.text = ""
         lbl.textColor = .lightGray

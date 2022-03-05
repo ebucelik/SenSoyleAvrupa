@@ -186,7 +186,7 @@ extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegat
             model.email = email
         }
 
-        let videoController = VideoController(model: model, service: VideoControllerService())
+        let videoController = VideoController(model: model, service: ViewControllerService())
         videoController.onDismiss = { modelDidChanged in
             if modelDidChanged {
                 self.pullData()
@@ -220,7 +220,7 @@ extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegat
     }
     
     @objc func actionEditProfile() {
-      let vc = EditProfileController()
+        let vc = EditProfileController(service: ViewControllerService())
         navigationController?.pushViewController(vc, animated: true)
     }
 }

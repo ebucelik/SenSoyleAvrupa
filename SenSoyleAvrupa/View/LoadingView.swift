@@ -8,7 +8,7 @@
 import UIKit
 import NVActivityIndicatorView
 
-class LoadingView : UIView {
+class LoadingView: UIView {
   
     lazy var blurEffect = UIBlurEffect(style: .light)
     lazy var effectView = UIVisualEffectView(effect: blurEffect)
@@ -28,8 +28,7 @@ class LoadingView : UIView {
         addSubview(effectView)
         
         effectView.addToSuperViewAnchors()
-      
-        
+
         addSubview(activityIndicator)
         
         activityIndicator.centerViewAtSuperView()
@@ -37,10 +36,6 @@ class LoadingView : UIView {
     
     override func draw(_ rect: CGRect) {
         super.draw(rect)
-        
-      
-        
-        
     }
     
     required init?(coder: NSCoder) {

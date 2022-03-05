@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UserModel: Codable {
+public class UserModel: Codable {
     
     var coin: Int?
     var id: Int?

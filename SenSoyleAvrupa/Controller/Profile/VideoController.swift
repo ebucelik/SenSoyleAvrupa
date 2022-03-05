@@ -15,14 +15,14 @@ class VideoController: UIViewController {
     // MARK: Variables
     private let homeView: HomeView
     private let model: VideoDataModel
-    private let service: VideoControllerServiceProtocol
+    private let service: ViewControllerServiceProtocol
     private var modelDidChanged: Bool = false
     private var player: AVPlayer?
 
     // MARK: Actions
     var onDismiss: ((Bool) -> Void)? = nil
 
-    init(model: VideoDataModel, service: VideoControllerServiceProtocol) {
+    init(model: VideoDataModel, service: ViewControllerServiceProtocol) {
         self.homeView = HomeView(frame: .zero)
         self.model = model
         self.service = service
@@ -151,13 +151,15 @@ class VideoController: UIViewController {
     }
 
     func pullData() {
-        service.pullProfileData(email: model.email ?? "") { videoDataModels in
-            videoDataModels.forEach { [self] in
-                if $0.id == model.id {
-                    model.likes = $0.likes
-                    model.comment = $0.comment
-                    modelDidChanged = true
-                    homeView.configure(with: model)
+        service.pullUserData(email: model.email ?? "") { [self] userModel in
+            service.pullProfileData(email: model.email ?? "", userId: userModel.id ?? 0) { videoDataModels in
+                videoDataModels.forEach { [self] in
+                    if $0.id == model.id {
+                        model.likes = $0.likes
+                        model.comment = $0.comment
+                        modelDidChanged = true
+                        homeView.configure(with: model)
+                    }
                 }
             }
         }
