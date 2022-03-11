@@ -7,7 +7,6 @@
 
 import UIKit
 import Alamofire
-import StoreKit
 
 extension Notification.Name {
     static let notificationName = Notification.Name("Coin")
@@ -21,33 +20,25 @@ class PurchaseCoinController: UIViewController {
 
     // MARK: Variables
     private var state: State
+    private let service: ViewControllerServiceProtocol
+    private let userDefaultsKey = "initialVideoPurchased"
+    private var purchaseModels = [PurchaseModel]()
+    private var purchasedCoins = 0
 
-    private var purchaseArray = [PurchaseModel]()
-    private var indexCoin = 0
-
-    let btnLeft : UIButton = {
+    // MARK: Views
+    let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
         btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
         btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
+        btn.backgroundColor = .customBackgroundColor()
         return btn
     }()
     
-    let lblTop : UILabel = {
-        let lbl = UILabel()
-        lbl.text = "Coin Bakiyeniz:"
-        lbl.textColor = .customLabelColor()
-        lbl.textAlignment = .left
-        lbl.font = .systemFont(ofSize: 30, weight: .heavy)
-        lbl.numberOfLines = 0
-        return lbl
-    }()
-    
-    let lblMyCoin : UILabel = {
+    let labelCoinsTitle: UILabel = {
         let lbl = UILabel()
         lbl.text = "Coin Bakiyeniz:"
         lbl.textColor = .black
@@ -55,7 +46,7 @@ class PurchaseCoinController: UIViewController {
         return lbl
     }()
     
-    let lblMyCoinCount : UILabel = {
+    let labelCoins: UILabel = {
         let lbl = UILabel()
         lbl.text = ""
         lbl.textColor = .customTintColor()
@@ -65,26 +56,30 @@ class PurchaseCoinController: UIViewController {
         return lbl
     }()
     
-    let lblBuyCoin : UILabel = {
+    let labelBuyCoin: UILabel = {
         let lbl = UILabel()
-        lbl.text = "Coin paketleri"
+        lbl.text = "Coin paketi"
         lbl.textColor = .black
         lbl.font = .boldSystemFont(ofSize: 15)
         lbl.textAlignment = .left
         return lbl
     }()
     
-    let collectionView : UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.translatesAutoresizingMaskIntoConstraints = false
-        cv.backgroundColor = .white
-        return cv
+    let purchaseView: PurchaseView = {
+        let purchaseView = PurchaseView()
+        purchaseView.isUserInteractionEnabled = true
+        return purchaseView
     }()
 
-    init() {
+    let loadingView: LoadingView = {
+        let loadingView = LoadingView()
+        loadingView.isHidden = true
+        return loadingView
+    }()
+
+    init(service: ViewControllerService) {
         self.state = State(initialVideoPurchased: false)
+        self.service = service
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -95,189 +90,103 @@ class PurchaseCoinController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        if let initialVideoPurchased = UserDefaults.standard.object(forKey: userDefaultsKey) as? Bool {
+            state = State(initialVideoPurchased: initialVideoPurchased)
+        }
+
         pullData()
 
-        editLayout()
-        
-        collectionViewEdit()
+        setupView()
+
+        setupPurchaseView()
     }
     
-    func editLayout() {
+    func setupView() {
         title = "Satın Al"
         view.backgroundColor = .white
         
-        let stackView = UIStackView(arrangedSubviews: [lblMyCoin,lblMyCoinCount,lblBuyCoin,collectionView])
+        let stackView = UIStackView(arrangedSubviews: [labelCoinsTitle, labelCoins, labelBuyCoin, purchaseView])
         stackView.axis = .vertical
         stackView.spacing = 10
         
-        view.addSubview(btnLeft)
-        
+        view.addSubview(buttonDismiss)
         view.addSubview(stackView)
+        view.addSubview(loadingView)
         
-        btnLeft.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: view.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+        buttonDismiss.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+
+        stackView.anchor(top: buttonDismiss.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
+
+        loadingView.addToSuperViewAnchors()
         
-        
-        stackView.anchor(top: btnLeft.bottomAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-        
-        purchaseArray.append(PurchaseModel(coin: 10, price: 10, handler: {
-            IAPManager.shared.purchase(product: .diamond_10_initial)
+        purchaseModels.append(PurchaseModel(coin: 10, price: 9.99, handler: {
+            self.loadingView.isHidden = false
+
+            IAPManager.shared.purchase(product: .diamond_10_initial, completion: {
+                self.state = State(initialVideoPurchased: true)
+                UserDefaults.standard.set(true, forKey: self.userDefaultsKey)
+            }, purchaseCanceled: {
+                self.loadingView.isHidden = true
+            })
         }))
-        purchaseArray.append(PurchaseModel(coin: 10, price: 5, handler: {
-            IAPManager.shared.purchase(product: .diamond_10)
+
+        purchaseModels.append(PurchaseModel(coin: 10, price: 4.99, handler: {
+            self.loadingView.isHidden = false
+
+            IAPManager.shared.purchase(product: .diamond_10, purchaseCanceled: {
+                self.loadingView.isHidden = true
+            })
         }))
         
-        NotificationCenter.default.addObserver(self, selector: #selector(saveDateCoin), name: .notificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(savePurchasedCoins), name: .notificationName, object: nil)
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(purchaseViewSelected))
+        purchaseView.addGestureRecognizer(tapGesture)
     }
-    
-    func collectionViewEdit() {
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.register(UINib(nibName: "PurchaseCell", bundle: nil), forCellWithReuseIdentifier: "PurchaseCell")
-        collectionView.showsVerticalScrollIndicator = false
-        
-        
-        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.itemSize = CGSize(width: view.frame.size.width / 1.2, height: view.frame.size.width / 4.0)
-            layout.minimumLineSpacing = 20
-            layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+
+    func setupPurchaseView() {
+        let purchaseModel = purchaseModels[state.initialVideoPurchased ? 1 : 0]
+        purchaseView.configure(model: purchaseModel)
+    }
+
+    func pullData() {
+        service.pullUserData(email: CacheUser.email) {
+            self.labelCoins.text = "\($0.coin ?? 0)"
+            self.loadingView.isHidden = true
         }
     }
-    
-    @objc func actionLeft() {
+
+    @objc func dismissViewController() {
         navigationController?.popViewController(animated: true)
     }
-    
-    func pullData() {
-        let parameters : Parameters = ["email": CacheUser.email]
-        
-        AF.request("\(NetworkManager.url)/api/user",method: .get,parameters: parameters).responseJSON { [self] response in
-            
-            print("response: \(response)")
-            
-            if let data = response.data {
-                do {
-                    let answer = try JSONDecoder().decode(UserModel.self, from: data)
-                    
-                    lblMyCoinCount.text = "\(answer.coin ?? 0)"
 
-                }catch{
-                    print("Error Localized Description \(error.localizedDescription)")
-                }
-            }
-            
-        }
+    @objc func purchaseViewSelected() {
+        let purchaseModel = purchaseModels[state.initialVideoPurchased ? 1 : 0]
+        purchasedCoins = purchaseModel.coin
+        purchaseModel.handler()
     }
     
-    @objc func saveDateCoin() {
-        print("Coin alindi")
-        print("index coin \(indexCoin)")
+    @objc func savePurchasedCoins() {
+        print("Purchased Coins: \(purchasedCoins)")
+
         let parameters: Parameters = ["email": CacheUser.email,
-                                      "coin": indexCoin]
+                                      "coin": purchasedCoins]
 
-        AF.request("\(NetworkManager.url)/api/order",method: .post,parameters: parameters).responseJSON { [self] response in
-
-            print("response: \(response)")
-            if let data = response.data {
-                do {
-                    let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
-
-                    if answer.status == true {
-                        pullData()
-                    }else{
-                        self.makeAlert(title: "Hata", message: "Coin alme işlemi yaparken bir hata oluştu: \(answer.message ?? "")")
-                    }
-
-                }catch{
-                    makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
+        NetworkManager.call(endpoint: "/api/order", method: .post, parameters: parameters) { (result: Result<SignUpModel, Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+                self.loadingView.isHidden = true
+            case let .success(signUpModel):
+                if let status = signUpModel.status, status {
+                    self.pullData()
+                    self.setupPurchaseView()
+                } else {
+                    self.loadingView.isHidden = true
+                    self.makeAlert(title: "Hata", message: "Coin alme işlemi yaparken bir hata oluştu: \(signUpModel.message ?? "")")
                 }
             }
         }
-
-        state = State(initialVideoPurchased: true)
-        collectionView.reloadData()
     }
 }
-
-extension PurchaseCoinController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PurchaseCell", for: indexPath) as! PurchaseCell
-        let indexArray = purchaseArray[state.initialVideoPurchased ? 1 : 0]
-        cell.lblCoin.text = "\(indexArray.coin)"
-        cell.lblPrice.text = "\(indexArray.price) €"
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let indexArray = purchaseArray[state.initialVideoPurchased ? 1 : 0]
-        print("did select")
-        indexCoin = indexArray.coin
-        indexArray.handler()
-    }
-}
-
-final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
-    static let shared = IAPManager()
-    var products = [SKProduct]()
-    
-    enum Product: String, CaseIterable {
-        case diamond_10_initial
-        case diamond_10
-    }
-
-    public func fetchProducts() {
-        let request = SKProductsRequest(productIdentifiers: Set(Product.allCases.compactMap({$0.rawValue})))
-        request.delegate = self
-        request.start()
-    }
-    
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        print("Products returned : \(response.products.count)")
-        self.products = response.products
-    }
-    
-    public func purchase(product: Product) {
-        guard SKPaymentQueue.canMakePayments() else{
-            return
-        }
-        
-        guard let storeKitProduct = products.first(where: {$0.productIdentifier == product.rawValue}) else {
-            return
-        }
-        
-        let paymentRequest = SKPayment(product: storeKitProduct)
-        SKPaymentQueue.default().add(self)
-        SKPaymentQueue.default().add(paymentRequest)
-    }
-    
-    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        transactions.forEach({
-            switch $0.transactionState {
-            case .purchasing:
-                print("purchasing")
-                break
-            case .purchased:
-                print("purchased")
-                NotificationCenter.default.post(name: .notificationName, object: nil, userInfo: nil)
-                break
-            case .failed:
-                break
-            case .restored:
-                break
-            case .deferred:
-                break
-            @unknown default:
-                break
-            }
-        })
-    }
-}
-
-
-

@@ -5,7 +5,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "10.0",
+      "displayPrice" : "9.99",
       "familyShareable" : false,
       "internalID" : "D38EC9F2",
       "localizations" : [
@@ -15,12 +15,12 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "diamond_10_initial",
+      "productID" : "com.ebucelik.SenSoyleAvrupa.diamond10Initial",
       "referenceName" : "10 Diamond Initial",
       "type" : "Consumable"
     },
     {
-      "displayPrice" : "5",
+      "displayPrice" : "4.99",
       "familyShareable" : false,
       "internalID" : "B13950F0",
       "localizations" : [
@@ -30,7 +30,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "diamond_10",
+      "productID" : "com.ebucelik.SenSoyleAvrupa.diamond10",
       "referenceName" : "10 Diamond",
       "type" : "Consumable"
     }

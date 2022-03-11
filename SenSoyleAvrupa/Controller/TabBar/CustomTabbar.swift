@@ -28,11 +28,8 @@ class CustomTabbar: UITabBarController{
                                                   seciliOlmayanIcon: UIImage(systemName: "music.note.house") ?? UIImage(),
                                                   title: "Ana sayfa")
         
-//        let shareVideoController = navControllerOlustur(rootViewController: ShareVideoController(), seciliOlmayanIcon: UIImage(systemName: "plus.rectangle.fill") ?? UIImage(), title: "Video paylaş")
-        
-//        let purchaseCoinController = navControllerOlustur(rootViewController: PurchaseCoinController(), seciliOlmayanIcon: UIImage(systemName: "dollarsign.circle") ?? UIImage(), title: "Satın Al")
-        
         let profileController = navControllerOlustur(rootViewController: ProfileController(email: CacheUser.email,
+                                                                                           service: ViewControllerService(),
                                                                                            isOwnUserProfile: true),
                                                      seciliOlmayanIcon: UIImage(systemName: "person.fill.viewfinder") ?? UIImage(),
                                                      title: "Profil")

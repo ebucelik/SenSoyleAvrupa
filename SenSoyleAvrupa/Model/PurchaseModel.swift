@@ -9,6 +9,6 @@ import Foundation
 
 struct PurchaseModel {
     var coin: Int
-    var price: Int
+    var price: Float
     var handler: (() -> Void)
 }

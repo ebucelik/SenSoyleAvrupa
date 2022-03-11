@@ -19,7 +19,7 @@ class ReklamController: UIViewController {
         button.widthAnchor.constraint(equalToConstant: 36).isActive = true
         button.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
         button.layer.cornerRadius = 18
-        button.backgroundColor = .customBackgorundButton()
+        button.backgroundColor = .customBackgroundColor()
         return button
     }()
     

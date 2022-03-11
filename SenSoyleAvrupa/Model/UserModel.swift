@@ -7,8 +7,7 @@
 
 import UIKit
 
-public class UserModel: Codable {
-    
+public class UserModel: Codable, Equatable {
     var coin: Int?
     var id: Int?
     var points: Int?
@@ -22,7 +21,14 @@ public class UserModel: Codable {
         self.pp = pp
         self.username = username
     }
-    
+
+    public static func == (lhs: UserModel, rhs: UserModel) -> Bool {
+        return lhs.coin == rhs.coin &&
+        lhs.id == rhs.id &&
+        lhs.points == rhs.points &&
+        lhs.pp == rhs.pp &&
+        lhs.username == rhs.username
+    }
 }
 
 

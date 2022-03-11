@@ -43,14 +43,17 @@ class LeftMenuController: UITableViewController {
     
     var imagearray = ["dollarsign.circle","message.circle.fill","lock.shield","shield.checkerboard","return"]
     
-    var controller = [PurchaseCoinController(),MessageController(),TermsofServiceController(),PrivacyPolicyController()]
+    var controller = [PurchaseCoinController(service: ViewControllerService()),
+                      MessageController(),
+                      TermsofServiceController(),
+                      PrivacyPolicyController()]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.keyboardDismissMode = .interactive
         
-        tableView.backgroundColor = .customBackgorundButton()
+        tableView.backgroundColor = .customBackgroundColor()
         
         tableView.tableFooterView = UIView()
         
@@ -106,7 +109,7 @@ class LeftMenuController: UITableViewController {
         cell.imageView?.image = UIImage(systemName: imagearray[indexPath.row])
         cell.imageView?.tintColor = .customLabelColor()
         cell.separatorInset = .zero
-        cell.backgroundColor = .customBackgorundButton()
+        cell.backgroundColor = .customBackgroundColor()
         return cell
     }
     

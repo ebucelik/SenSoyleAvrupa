@@ -86,7 +86,7 @@ class EditProfileController: UIViewController {
     
     let txtNickName : UITextField = {
        let textField = CustomTextField()
-        textField.backgroundColor = .customBackgorundButton()
+        textField.backgroundColor = .customBackgroundColor()
         textField.layer.cornerRadius = 5
         textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
         textField.textColor = .black

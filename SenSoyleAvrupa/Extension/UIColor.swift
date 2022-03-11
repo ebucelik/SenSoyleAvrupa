@@ -32,7 +32,7 @@ extension UIColor {
 
 //F0F5FE
 extension UIColor {
-    class func customBackgorundButton() -> UIColor {
+    class func customBackgroundColor() -> UIColor {
         return UIColor(red: 240/255, green: 245/255, blue: 254/255, alpha: 1)
     }
 }

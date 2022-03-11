@@ -20,7 +20,7 @@ class ShareVideoController: UITableViewController {
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
         btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
         btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
+        btn.backgroundColor = .customBackgroundColor()
         return btn
     }()
     
@@ -66,7 +66,7 @@ class ShareVideoController: UITableViewController {
     
       let videoView : VideoView = {
        let view = VideoView()
-        view.backgroundColor = .customBackgorundButton()
+        view.backgroundColor = .customBackgroundColor()
         view.layer.cornerRadius = 10
         view.heightAnchor.constraint(equalToConstant: 200).isActive = true
         view.clipsToBounds = true
@@ -84,7 +84,7 @@ class ShareVideoController: UITableViewController {
 
     let txtComment : CustomTextField = {
        let view = CustomTextField()
-        view.backgroundColor = .customBackgorundButton()
+        view.backgroundColor = .customBackgroundColor()
         view.layer.cornerRadius = 5
         view.heightAnchor.constraint(equalToConstant: 50).isActive = true
         view.placeholder = "Video ile ilgili bir yorum yaz"
@@ -245,7 +245,7 @@ class ShareVideoController: UITableViewController {
         if Int(lblMyCoinCount.text!) ?? 0 < coin {
             let alert = UIAlertController(title: "Uyarı", message: "Video paylaşmanız için yeterli Coin e sahib değilsiniz", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Coin Satın Al", style: .default, handler: { (_) in
-                self.navigationController?.pushViewController(PurchaseCoinController(), animated: true)
+                self.navigationController?.pushViewController(PurchaseCoinController(service: ViewControllerService()), animated: true)
             }))
             alert.addAction(UIAlertAction(title: "İptal et", style: .cancel, handler: nil))
             present(alert, animated: true, completion: nil)

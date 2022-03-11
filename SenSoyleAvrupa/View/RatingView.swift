@@ -31,7 +31,7 @@ class RatingView : UIView {
         btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
         btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
+        btn.backgroundColor = .customBackgroundColor()
         return btn
     }()
     

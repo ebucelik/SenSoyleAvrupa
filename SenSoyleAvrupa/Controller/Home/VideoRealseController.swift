@@ -124,8 +124,13 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
             () in
             print("Go to profile account")
            
-            let vc = ProfileController(userModel: UserModel(coin: 0, id: model.id ?? 0, points: 0, pp: model.pp ?? "", username: model.username ?? ""),
-                                       email: model.email ?? "")
+            let vc = ProfileController(userModel: UserModel(coin: 0,
+                                                            id: model.id ?? 0,
+                                                            points: 0,
+                                                            pp: model.pp ?? "",
+                                                            username: model.username ?? ""),
+                                       email: model.email ?? "",
+                                       service: ViewControllerService())
             self.navigationController?.pushViewController(vc, animated: true)
         }
         

@@ -49,7 +49,7 @@ class SignUpController: UITableViewController {
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
         btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
         btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
+        btn.backgroundColor = .customBackgroundColor()
         return btn
     }()
     
@@ -85,7 +85,7 @@ class SignUpController: UITableViewController {
     let txtMail : UITextField = {
         let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
-        textField.backgroundColor = .customBackgorundButton()
+        textField.backgroundColor = .customBackgroundColor()
         textField.placeholder = ""
         textField.layer.cornerRadius = 5
         textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
@@ -105,7 +105,7 @@ class SignUpController: UITableViewController {
     let txtNickName : UITextField = {
         let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
-        textField.backgroundColor = .customBackgorundButton()
+        textField.backgroundColor = .customBackgroundColor()
         textField.placeholder = ""
         textField.layer.cornerRadius = 5
         textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
@@ -125,7 +125,7 @@ class SignUpController: UITableViewController {
     let txtPassword : UITextField = {
         let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
-        textField.backgroundColor = .customBackgorundButton()
+        textField.backgroundColor = .customBackgroundColor()
         textField.placeholder = ""
         textField.layer.cornerRadius = 5
         textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
@@ -285,10 +285,10 @@ class SignUpController: UITableViewController {
         print("create account")
         
         let email = txtMail.text ?? ""
-        let nickname = txtNickName.text ?? ""
+        let username = txtNickName.text ?? ""
         let password = txtPassword.text ?? ""
 
-        if email == "" || nickname == "" || password == "" {
+        if email == "" || username == "" || password == "" {
             let snackBar = TTGSnackbar(message: "Lütfen tüm alanları giriniz", duration: .middle)
             snackBar.show()
             return
@@ -302,7 +302,7 @@ class SignUpController: UITableViewController {
 
         loadingView.isHidden = false
 
-        let parameters : Parameters = ["username": nickname, "email": email, "password": password]
+        let parameters : Parameters = ["username": username, "email": email, "password": password]
         
         AF.request("\(NetworkManager.url)/api/register", method: .post, parameters: parameters).responseString { [self] response in
             print(response)

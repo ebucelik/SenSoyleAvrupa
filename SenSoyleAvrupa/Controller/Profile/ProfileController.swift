@@ -12,17 +12,25 @@ import Alamofire
 class ProfileController: UIViewController {
 
     private struct State {
-        private(set) var oldVideoDataModel: [VideoDataModel]
+        var oldUserModel: UserModel?
+        var oldVideoDataModels: [VideoDataModel]
     }
 
     // MARK: Variables
     private let email: String
     private let isOwnUserProfile: Bool
     private var state: State
+    private let service: ViewControllerServiceProtocol
 
     // MARK: Models
-    private var userModel: UserModel?
-    private var videoDataModel = [VideoDataModel]() {
+    private var userModel: UserModel? {
+        didSet {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    private var videoDataModels = [VideoDataModel]() {
         didSet {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
@@ -42,11 +50,12 @@ class ProfileController: UIViewController {
         return cv
     }()
 
-    init(userModel: UserModel? = nil, email: String, isOwnUserProfile: Bool = false) {
+    init(userModel: UserModel? = nil, email: String, service: ViewControllerService, isOwnUserProfile: Bool = false) {
         self.userModel = userModel
         self.email = email
+        self.service = service
         self.isOwnUserProfile = isOwnUserProfile
-        self.state = State(oldVideoDataModel: videoDataModel)
+        self.state = State(oldUserModel: userModel, oldVideoDataModels: videoDataModels)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -139,28 +148,16 @@ class ProfileController: UIViewController {
     }
 
     func pullData() {
-        let userParameters: Parameters = ["email": email]
-
-        NetworkManager.call(endpoint: "/api/user", method: .get, parameters: userParameters) { [self] (result: Result<UserModel, Error>) in
-            switch result {
-            case let .failure(error):
-                print("Network request error: \(error)")
-            case let .success(userModel):
+        service.pullUserData(email: email) { [self] userModel in
+            if state.oldUserModel != userModel {
+                state.oldUserModel = userModel
                 self.userModel = userModel
+            }
 
-                let profileParameters: Parameters = ["email": email,
-                                                     "user": userModel.id ?? 0]
-
-                NetworkManager.call(endpoint: "/api/profile", method: .get, parameters: profileParameters) { (result: Result<[VideoDataModel], Error>) in
-                    switch result {
-                    case let .failure(error):
-                        print("Network request error: \(error)")
-                    case let .success(videoDataModel):
-                        if state.oldVideoDataModel != videoDataModel {
-                            state = State(oldVideoDataModel: videoDataModel)
-                            self.videoDataModel = videoDataModel
-                        }
-                    }
+            service.pullProfileData(email: email, userId: userModel.id ?? 0) { videoDataModels in
+                if state.oldVideoDataModels != videoDataModels {
+                    state.oldVideoDataModels = videoDataModels
+                    self.videoDataModels = videoDataModels
                 }
             }
         }
@@ -169,18 +166,18 @@ class ProfileController: UIViewController {
 
 extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return videoDataModel.count
+        return videoDataModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileVideoCell", for: indexPath) as! ProfileVideoCell
-        let model = videoDataModel[indexPath.row]
+        let model = videoDataModels[indexPath.row]
         cell.configureVideo(model: model)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let model = videoDataModel[indexPath.row]
+        let model = videoDataModels[indexPath.row]
 
         if model.email == nil {
             model.email = email
@@ -200,7 +197,7 @@ extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegat
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionView.identifer, for: indexPath) as! HeaderCollectionView
         header.btnEditProfile.addTarget(self, action: #selector(actionEditProfile), for: .touchUpInside)
         header.lblMail.text = email
-        header.lblVideoCount.text = "\(videoDataModel.count)"
+        header.lblVideoCount.text = "\(videoDataModels.count)"
 
         guard let userModel = userModel else { return header }
 

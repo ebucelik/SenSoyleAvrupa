@@ -208,7 +208,8 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
                                                             points: 0,
                                                             pp: model.pp ?? "",
                                                             username: model.username ?? ""),
-                                       email: model.email ?? "")
+                                       email: model.email ?? "",
+                                       service: ViewControllerService())
             self.navigationController?.pushViewController(vc, animated: true)
         }
         

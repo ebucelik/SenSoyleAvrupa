@@ -24,7 +24,7 @@ class ChooseProfileImageController: UIViewController {
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
         btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
         btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
+        btn.backgroundColor = .customBackgroundColor()
         return btn
     }()
     

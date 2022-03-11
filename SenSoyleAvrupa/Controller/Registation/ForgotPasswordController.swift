@@ -29,7 +29,7 @@ class ForgotPasswordController: UITableViewController {
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
         btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
         btn.layer.cornerRadius = 18
-        btn.backgroundColor = .customBackgorundButton()
+        btn.backgroundColor = .customBackgroundColor()
         return btn
     }()
     
@@ -55,7 +55,7 @@ class ForgotPasswordController: UITableViewController {
     let txtMail : UITextField = {
        let textField = CustomTextField()
         //textField.backgroundColor = .init(white: 0.92, alpha: 1)
-        textField.backgroundColor = .customBackgorundButton()
+        textField.backgroundColor = .customBackgroundColor()
         textField.placeholder = ""
         textField.layer.cornerRadius = 5
         textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
