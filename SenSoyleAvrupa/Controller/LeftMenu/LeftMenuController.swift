@@ -6,31 +6,25 @@
 //
 
 import UIKit
-import SideMenu
-import CoreData
+import WebKit
 
 class LeftMenuController: UITableViewController {
-    
-    let context = appDelegate.persistentContainer.viewContext
-    
-    var userArray = [UserData]()
-    
-    let topView : UIView = {
+
+    // MARK: Views
+    let topView: UIView = {
         let view = UIView()
         return view
     }()
 
-    let profilImage : UIImageView = {
+    let profilImage: UIImageView = {
         let img = UIImageView(image: UIImage(named: "Character1Color1"))
         img.layer.borderColor = UIColor.customTintColor().cgColor
         img.widthAnchor.constraint(equalToConstant: 100).isActive = true
         img.heightAnchor.constraint(equalToConstant: 100).isActive = true
         img.layer.cornerRadius = 50
         img.clipsToBounds = true
-        img.layer.masksToBounds = true
         img.translatesAutoresizingMaskIntoConstraints = false
         img.contentMode = .scaleAspectFit
-        img.clipsToBounds = true
         img.layer.shadowColor = UIColor.white.cgColor
         img.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         img.layer.shadowRadius = 2.0
@@ -39,9 +33,9 @@ class LeftMenuController: UITableViewController {
         return img
     }()
     
-    var labelArray = ["Coin Satın Al","Mesajlar","Kullanıcı Sözleşmesi","Gizlilik Sözleşmesi","Çıkış Yap"]
+    var menus = ["Coin Satın Al", "Mesajlar", "Kullanıcı Sözleşmesi", "Gizlilik Sözleşmesi", "Çıkış Yap", "Profili Sil"]
     
-    var imagearray = ["dollarsign.circle","message.circle.fill","lock.shield","shield.checkerboard","return"]
+    var systemImages = ["dollarsign.circle", "message.circle.fill", "lock.shield", "shield.checkerboard", "return", "trash.fill"]
     
     var controller = [PurchaseCoinController(service: ViewControllerService()),
                       MessageController(),
@@ -50,29 +44,17 @@ class LeftMenuController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableView.keyboardDismissMode = .interactive
-        
         tableView.backgroundColor = .customBackgroundColor()
-        
         tableView.tableFooterView = UIView()
-        
         tableView.separatorColor = .customLabelColor()
-        
         tableView.isScrollEnabled = false
-        
         tableView.showsVerticalScrollIndicator = false
         
         topView.addSubview(profilImage)
-        
-        
-        
-       
-       
-       
+
         profilImage.centerViewAtSuperView()
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -99,50 +81,47 @@ class LeftMenuController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return labelArray.count
+        return menus.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        cell.textLabel?.text = labelArray[indexPath.row]
-        cell.textLabel?.textColor = .customLabelColor()
-        cell.imageView?.image = UIImage(systemName: imagearray[indexPath.row])
-        cell.imageView?.tintColor = .customLabelColor()
-        cell.separatorInset = .zero
+        cell.textLabel?.text = menus[indexPath.row]
+        cell.textLabel?.textColor = indexPath.row == menus.count - 1 ? .red : .customLabelColor()
+
+        cell.imageView?.image = UIImage(systemName: systemImages[indexPath.row])
+        cell.imageView?.tintColor = indexPath.row == menus.count - 1 ? .red : .customLabelColor()
+
         cell.backgroundColor = .customBackgroundColor()
+        cell.separatorInset = .zero
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 4 {
+        if indexPath.row == menus.count - 2 {
             let alert = UIAlertController(title: "Çıkış Yap", message: "Çıkıs yapmak istediğinizden eminmisiniz?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Evet", style: .default, handler: { [self] (_) in
-                do{
-                    userArray = try context.fetch(UserData.fetchRequest())
-                    
-                }catch{
-                    print("Error Pull Data")
-                }
-                
+                UserDefaults.standard.removeObject(forKey: SplashViewController.userDefaultsEmailKey)
+                UserDefaults.standard.removeObject(forKey: PurchaseCoinController.userDefaultsInitialVideoPurchasedKey)
                 CacheUser.email = ""
-                
-                let user = userArray[0]
-                
-                context.delete(user)
-                
-                appDelegate.saveContext()
-                
-                let vc = SplashViewController()
+
+                let vc = SplashViewController(service: ViewControllerService())
                 vc.modalPresentationStyle = .fullScreen
                 self.present(vc, animated: true, completion: nil)
             }))
+
             alert.addAction(UIAlertAction(title: "İptal et", style: .cancel))
             present(alert, animated: true, completion: nil)
-        }else{
+        } else if indexPath.row == menus.count - 1 {
+
+            // TODO: change url
+            guard let url = URL(string: "https://sensoyleavrupa.com/login") else { return }
+            let webViewController = WebViewController(url: url)
+            present(webViewController, animated: true, completion: nil)
+        }
+        else {
             navigationController?.pushViewController(controller[indexPath.row], animated: true)
         }
-        
     }
-    
 }

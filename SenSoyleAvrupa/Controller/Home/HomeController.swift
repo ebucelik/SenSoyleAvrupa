@@ -24,9 +24,7 @@ class HomeController: UIViewController {
     private let service: ViewControllerServiceProtocol
     private var state: State = State(oldVideoDataModel: [])
     private var prefetchedPlayer: [[String: AVPlayer]] = []
-
     private var interstitial: GADInterstitialAd?
-
 
     // MARK: Models
     private var videoDataModel = [VideoDataModel]() {
@@ -55,7 +53,12 @@ class HomeController: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
         
-        checkInternetConnection()
+        checkInternetConnection(completion: { [self] in
+            pullData()
+            editLayout()
+            editTableView()
+            editAdMob()
+        })
 
         pullData()
 
@@ -140,7 +143,6 @@ class HomeController: UIViewController {
 
     func editLayout() {
         view.backgroundColor = .white
-        
         view.addSubview(tableView)
         tableView.addToSuperViewAnchors()
     }
@@ -181,11 +183,11 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
         /*if (indexPath.row % 5 == 0) {
             let number = Int.random(in: 0..<2)
 
-            if number == 0 || indexPath.row != 0 || indexPath.row  != arrayCollectionView.count{
+            if number == 0 || indexPath.row != 0 || indexPath.row != videoDataModel.count {
                 let vc = ReklamController()
                 vc.modalPresentationStyle = .fullScreen
-                present(vc, animated: true, completion: nil)
-            }else{
+                present(vc, animated: true)
+            } else {
                 startGoogleAdMob()
             }
         } else {
@@ -313,7 +315,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
     }
 }
 
-extension HomeController : GADFullScreenContentDelegate{
+extension HomeController: GADFullScreenContentDelegate{
     /// Tells the delegate that the ad failed to present full screen content.
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         print("Ad did fail to present full screen content.")

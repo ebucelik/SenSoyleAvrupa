@@ -7,16 +7,12 @@
 
 import UIKit
 
-class CointCount: Codable {
-    
+class CoinSettingsModel: Codable {
     var coin: Int?
     var first_coin: Int?
-  
 
     init(coin: Int,first_coin: Int) {
         self.coin = coin
         self.first_coin = first_coin
-       
     }
-    
 }

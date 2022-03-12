@@ -6,12 +6,11 @@
 //
 
 import UIKit
-import TTGSnackbar
 
 class ForgotPasswordController: UITableViewController {
 
-    
-    let allView : UIView = {
+    // MARK: Views
+    let allView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         return view
@@ -19,21 +18,19 @@ class ForgotPasswordController: UITableViewController {
     
     let loadingView = LoadingView()
     
-    let snackBar = TTGSnackbar(message: "Message", duration: .middle)
-    
-    let btnLeft : UIButton = {
+    let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
         btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
         btn.layer.cornerRadius = 18
         btn.backgroundColor = .customBackgroundColor()
         return btn
     }()
     
-    let lblTop : UILabel = {
+    let labelTitle: UILabel = {
         let lbl = UILabel()
         lbl.text = "Parolanızı mı\nunuttunuz?"
         lbl.textColor = .customLabelColor()
@@ -44,7 +41,7 @@ class ForgotPasswordController: UITableViewController {
     }()
     
     
-    let lblYourMail : UILabel = {
+    let labelEmail: UILabel = {
         let lbl = UILabel()
         lbl.text = "Mail adresiniz"
         lbl.textColor = .black
@@ -52,9 +49,8 @@ class ForgotPasswordController: UITableViewController {
         return lbl
     }()
     
-    let txtMail : UITextField = {
+    let textFieldEmail: UITextField = {
        let textField = CustomTextField()
-        //textField.backgroundColor = .init(white: 0.92, alpha: 1)
         textField.backgroundColor = .customBackgroundColor()
         textField.placeholder = ""
         textField.layer.cornerRadius = 5
@@ -63,7 +59,7 @@ class ForgotPasswordController: UITableViewController {
         return textField
     }()
     
-    let btnForgotPassword : UIButton = {
+    let buttonForgotPassword : UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Gönder", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -79,13 +75,7 @@ class ForgotPasswordController: UITableViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
         
-        if CheckInternet.Connection() {
-            
-        }else{
-            let vc = NoInternetController()
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
+        checkInternetConnection(completion: nil)
     }
     
     override func viewDidLoad() {
@@ -99,68 +89,54 @@ class ForgotPasswordController: UITableViewController {
     func editLayout() {
         tableView.backgroundColor = .white
         
-        let stackView = UIStackView(arrangedSubviews: [lblYourMail,txtMail])
+        let stackView = UIStackView(arrangedSubviews: [labelTitle,
+                                                       labelEmail,
+                                                       textFieldEmail,
+                                                       buttonForgotPassword])
         stackView.axis = .vertical
-        stackView.spacing = 10
-        
-        let stackViewBtn = UIStackView(arrangedSubviews: [btnForgotPassword])
-        stackViewBtn.axis = .vertical
-        stackViewBtn.spacing = 10
-        
-        allView.addSubview(btnLeft)
-        
-        allView.addSubview(lblTop)
-        
+        stackView.spacing = 20
+        stackView.setCustomSpacing(25, after: textFieldEmail)
+
+        allView.addSubview(buttonDismiss)
         allView.addSubview(stackView)
-        
-        allView.addSubview(stackViewBtn)
-        
         allView.addSubview(loadingView)
-        
-        btnLeft.anchor(top: allView.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
-        
-        lblTop.anchor(top: btnLeft.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
-        
-        stackView.anchor(top: lblTop.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-        
-        stackViewBtn.anchor(top: stackView.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-        
-        
-        
+
+        buttonDismiss.anchor(top: allView.safeAreaLayoutGuide.topAnchor,
+                             leading: allView.leadingAnchor,
+                             padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+
+        stackView.anchor(top: buttonDismiss.bottomAnchor,
+                         leading: allView.leadingAnchor,
+                         trailing: allView.trailingAnchor,
+                         padding: .init(all: 20))
+
+
         loadingView.addToSuperViewAnchors()
-        
-      
-        
         loadingView.isHidden = true
-        
     }
-    
+
     func editTableView() {
         tableView.tableFooterView = UIView()
         tableView.keyboardDismissMode = .interactive
         tableView.allowsMultipleSelection = false
     }
 
-    @objc func actionLeft() {
-        print("left")
-        navigationController?.popViewController(animated: true)
-    }
-    
+    // TODO: Do network call
     @objc func actionForgotPssword() {
-        print("forgot  password")
+        guard let url = URL(string: "https://sensoyleavrupa.com/login/yeni-sifre.php") else { return }
+        let webViewController = WebViewController(url: url)
+        present(webViewController, animated: true, completion: nil)
     }
-    
-   
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-     return allView
+        return allView
     }
+
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return view.frame.size.height
     }
-
 }

@@ -65,8 +65,6 @@ extension IAPManager: SKPaymentTransactionObserver {
                 // MARK: We want to finish the transaction and remove the observer.
                 finishTransaction($0)
 
-                NotificationCenter.default.post(name: .notificationName, object: nil, userInfo: nil)
-
                 guard let completion = completion else { break }
                 completion()
 

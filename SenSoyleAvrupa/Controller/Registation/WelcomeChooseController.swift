@@ -67,10 +67,8 @@ class WelcomeChooseController: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
         
-        if CheckInternet.Connection() {
-            
-        }else{
-            let vc = NoInternetController()
+        if !CheckInternet.Connection() {
+            let vc = NoInternetController(completion: nil)
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
         }

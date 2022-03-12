@@ -19,7 +19,7 @@ class EditProfileController: UIViewController {
     private var state: State
     private let service: ViewControllerServiceProtocol
 
-    var bigCircle: UIView = {
+    var viewBigCircle: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.widthAnchor.constraint(equalToConstant: 180).isActive = true
@@ -27,7 +27,7 @@ class EditProfileController: UIViewController {
         return view
     }()
     
-    var littleCircle: UIView = {
+    var viewSmallCircle: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.widthAnchor.constraint(equalToConstant: 60).isActive = true
@@ -36,35 +36,33 @@ class EditProfileController: UIViewController {
         return view
     }()
     
-    let profilImage : UIImageView = {
-        let img = UIImageView(image: UIImage(named: "emojiman"))
+    let imageViewProfileImage: UIImageView = {
+        let img = UIImageView(image: UIImage())
+        img.translatesAutoresizingMaskIntoConstraints = false
         img.backgroundColor = .white
-        img.layer.borderWidth = 10
-        img.layer.borderColor = UIColor.customTintColor().cgColor
         img.widthAnchor.constraint(equalToConstant: 180).isActive = true
         img.heightAnchor.constraint(equalToConstant: 180).isActive = true
         img.layer.cornerRadius = 90
         img.clipsToBounds = true
         img.layer.masksToBounds = true
-        img.translatesAutoresizingMaskIntoConstraints = false
         img.contentMode = .scaleAspectFill
         return img
     }()
     
-    let editImage : UIImageView = {
+    let imageViewEdit: UIImageView = {
         let img = UIImageView(image: UIImage(systemName: "pencil.circle"))
+        img.translatesAutoresizingMaskIntoConstraints = false
         img.widthAnchor.constraint(equalToConstant: 60).isActive = true
         img.heightAnchor.constraint(equalToConstant: 60).isActive = true
         img.layer.cornerRadius = 30
         img.clipsToBounds = true
         img.layer.masksToBounds = true
-        img.translatesAutoresizingMaskIntoConstraints = false
         img.contentMode = .scaleAspectFill
         img.tintColor = .customLabelColor()
         return img
     }()
     
-    let btnNext : UIButton = {
+    let buttonSubmit: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Güncelle", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -76,7 +74,7 @@ class EditProfileController: UIViewController {
         return btn
     }()
 
-    let lblNickName : UILabel = {
+    let labelUsername: UILabel = {
         let lbl = UILabel()
         lbl.text = "Kullanıcı adınız"
         lbl.textColor = .black
@@ -84,19 +82,19 @@ class EditProfileController: UIViewController {
         return lbl
     }()
     
-    let txtNickName : UITextField = {
-       let textField = CustomTextField()
+    let textFieldUsername : UITextField = {
+        let textField = CustomTextField()
         textField.backgroundColor = .customBackgroundColor()
         textField.layer.cornerRadius = 5
         textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
         textField.textColor = .black
         return textField
     }()
-    
+
     let loadingView = LoadingView()
 
     init(service: ViewControllerServiceProtocol) {
-        self.state = State(oldUsername: txtNickName.text!, oldProfilePicture: profilImage.image ?? UIImage())
+        self.state = State(oldUsername: textFieldUsername.text!, oldProfilePicture: imageViewProfileImage.image ?? UIImage())
         self.service = service
 
         super.init(nibName: nil, bundle: nil)
@@ -109,12 +107,12 @@ class EditProfileController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        pullData()  
+        pullData()
         
         navigationController?.navigationBar.isHidden = false
         
         if !CheckInternet.Connection() {
-            let vc = NoInternetController()
+            let vc = NoInternetController(completion: { self.pullData() })
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
         }
@@ -125,49 +123,45 @@ class EditProfileController: UIViewController {
 
         editLayout()
     }
-    
+
     func editLayout() {
         title = "Profili Düzenle"
         
         view.backgroundColor = .white
         
-        let stackView = UIStackView(arrangedSubviews: [lblNickName,txtNickName,btnNext])
+        let stackView = UIStackView(arrangedSubviews: [labelUsername,textFieldUsername,buttonSubmit])
         stackView.axis = .vertical
         stackView.spacing = 10
         
-        view.addSubview(bigCircle)
+        view.addSubview(viewBigCircle)
         
-        bigCircle.addSubview(profilImage)
-        
-        bigCircle.addSubview(littleCircle)
-        
-        littleCircle.addSubview(editImage)
+        viewBigCircle.addSubview(imageViewProfileImage)
+        viewBigCircle.addSubview(viewSmallCircle)
+        viewSmallCircle.addSubview(imageViewEdit)
         
         view.addSubview(stackView)
-        
         view.addSubview(loadingView)
+
+        viewBigCircle.anchor(top: view.safeAreaLayoutGuide.topAnchor, padding: .init(top: 20, left: 0, bottom: 0, right: 0))
+        viewBigCircle.centerXAtSuperView()
         
+        imageViewProfileImage.addToSuperViewAnchors()
         
-        bigCircle.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: nil, trailing: nil,padding: .init(top: 20, left: 0, bottom: 0, right: 0))
-        bigCircle.centerXAtSuperView()
+        imageViewEdit.anchor(top: viewSmallCircle.topAnchor, bottom: viewSmallCircle.bottomAnchor, leading: viewSmallCircle.leadingAnchor, trailing: viewSmallCircle.trailingAnchor)
         
-        profilImage.addToSuperViewAnchors()
-        
-        editImage.anchor(top: littleCircle.topAnchor, bottom: littleCircle.bottomAnchor, leading: littleCircle.leadingAnchor, trailing: littleCircle.trailingAnchor)
-        
-        stackView.anchor(top: profilImage.bottomAnchor, bottom: nil, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 10, left: 20, bottom: 0, right: 20))
-        
+        stackView.anchor(top: imageViewProfileImage.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 10, left: 20, bottom: 0, right: 20))
+
         loadingView.addToSuperViewAnchors()
         
         loadingView.isHidden = true
         
         let gestureEdit = UITapGestureRecognizer(target: self, action: #selector(selectProfileImage))
-        littleCircle.addGestureRecognizer(gestureEdit)
+        viewSmallCircle.addGestureRecognizer(gestureEdit)
         
         let (hMult, vMult) = computeMultipliers(angle: 45)
         
-        NSLayoutConstraint(item: littleCircle, attribute: .centerX, relatedBy: .equal, toItem: bigCircle, attribute: .trailing, multiplier: hMult, constant: 0).isActive = true
-        NSLayoutConstraint(item: littleCircle, attribute: .centerY, relatedBy: .equal, toItem: bigCircle, attribute: .bottom, multiplier: vMult, constant: 0).isActive = true
+        NSLayoutConstraint(item: viewSmallCircle, attribute: .centerX, relatedBy: .equal, toItem: viewBigCircle, attribute: .trailing, multiplier: hMult, constant: 0).isActive = true
+        NSLayoutConstraint(item: viewSmallCircle, attribute: .centerY, relatedBy: .equal, toItem: viewBigCircle, attribute: .bottom, multiplier: vMult, constant: 0).isActive = true
     }
     
     func computeMultipliers(angle: CGFloat) -> (CGFloat, CGFloat) {
@@ -182,10 +176,10 @@ class EditProfileController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        bigCircle.layer.cornerRadius = 0.5 * bigCircle.frame.height
+        viewBigCircle.layer.cornerRadius = 0.5 * viewBigCircle.frame.height
         
-        littleCircle.layoutIfNeeded()
-        littleCircle.layer.cornerRadius = 0.5 * littleCircle.frame.height
+        viewSmallCircle.layoutIfNeeded()
+        viewSmallCircle.layer.cornerRadius = 0.5 * viewSmallCircle.frame.height
         
     }
     
@@ -197,21 +191,21 @@ class EditProfileController: UIViewController {
     
     func pullData() {
         service.pullUserData(email: CacheUser.email) { [self] userModel in
-            txtNickName.text = userModel.username
+            textFieldUsername.text = userModel.username
 
             if userModel.pp != "\(NetworkManager.url)/pp" {
-                profilImage.sd_setImage(with: URL(string: userModel.pp ?? ""), completed: nil)
+                imageViewProfileImage.sd_setImage(with: URL(string: userModel.pp ?? ""), completed: nil)
             }
 
-            state = State(oldUsername: userModel.username ?? "", oldProfilePicture: profilImage.image ?? UIImage())
+            state = State(oldUsername: userModel.username ?? "", oldProfilePicture: imageViewProfileImage.image ?? UIImage())
         }
     }
     
     @objc func updateProfile() {
-        let username = txtNickName.text ?? ""
-        let profilePicture = profilImage.image ?? UIImage()
+        let username = textFieldUsername.text ?? ""
+        let profilePicture = imageViewProfileImage.image ?? UIImage()
 
-        if username == "" {
+        if username.isEmpty {
             makeAlert(title: "Hata", message: "Kullanıcı adı kısmını boş bırakmayınız")
             return
         }
@@ -240,7 +234,7 @@ class EditProfileController: UIViewController {
                     multipartFormData.append(value.data(using: .utf8)!, withName: key)
                 }
 
-                if let jpegData = self.profilImage.image!.jpegData(compressionQuality: 1.0) {
+                if let jpegData = self.imageViewProfileImage.image!.jpegData(compressionQuality: 1.0) {
                     multipartFormData.append(jpegData, withName: "file", fileName: "file", mimeType: ".png")
                 }
             }, to: "\(NetworkManager.url)/api/change-pp").response { [self] response in
@@ -262,16 +256,16 @@ class EditProfileController: UIViewController {
     }
 }
 
-extension EditProfileController : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+extension EditProfileController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true)
     }
-    
+
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let selectedImage = info[.originalImage] as? UIImage
-        self.profilImage.image = selectedImage?.withRenderingMode(.alwaysOriginal)
-        profilImage.layer.masksToBounds = true
-        profilImage.contentMode = .scaleAspectFill
+        self.imageViewProfileImage.image = selectedImage?.withRenderingMode(.alwaysOriginal)
+        imageViewProfileImage.layer.masksToBounds = true
+        imageViewProfileImage.contentMode = .scaleAspectFill
         dismiss(animated: true)
     }
 }

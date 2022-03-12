@@ -84,14 +84,12 @@ class HomeView: UIView {
     }()
 
     let profilImage: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "emojiman"))
-        imageView.tintColor = .customTintColor()
+        let imageView = UIImageView(image: UIImage())
+        imageView.contentMode = .scaleAspectFill
         imageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
         imageView.layer.cornerRadius = 20
         imageView.backgroundColor = .customBackground()
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.customTintColor().cgColor
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         return imageView

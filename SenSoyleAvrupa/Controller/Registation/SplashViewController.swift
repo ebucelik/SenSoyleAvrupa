@@ -10,12 +10,10 @@ import CoreData
 import Alamofire
 
 class SplashViewController: UIViewController {
-    
-    let context = appDelegate.persistentContainer.viewContext
-    
-    var userArray = [UserData]()
-    
-    var email = ""
+
+    // MARK: Variables
+    private let service: ViewControllerServiceProtocol
+    static let userDefaultsEmailKey = "userEmail"
     
     lazy var imgLogo : UIImageView = {
         let img = UIImageView(image: UIImage(named: "Character1Color1"))
@@ -24,17 +22,26 @@ class SplashViewController: UIViewController {
         img.clipsToBounds = false
         return img
     }()
-    
+
+    init(service: ViewControllerService) {
+        self.service = service
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
         
-        if !CheckInternet.Connection() {
-            let vc = NoInternetController()
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
+        checkInternetConnection(completion: {
+            self.editLayout()
+            self.pullData()
+        })
     }
     
     override func viewDidLoad() {
@@ -54,41 +61,20 @@ class SplashViewController: UIViewController {
     }
     
     func pullData() {
-        do{
-            userArray = try context.fetch(UserData.fetchRequest())
-        }catch{
-            print("Error Pull Data")
-        }
-        
-        for k in userArray{
-            email = k.email ?? ""
-        }
-        
-        if email == "" {
-            perform(#selector(actionWelcomePage), with: nil,afterDelay: 1)
-        }else{
-            let parameters : Parameters = ["email":email]
-            
-            AF.request("\(NetworkManager.url)/api/user",method: .get,parameters: parameters).responseJSON { [self] response in
+        if let userDefaultsEmail = UserDefaults.standard.string(forKey: SplashViewController.userDefaultsEmailKey) {
+            CacheUser.email = userDefaultsEmail
 
-                print("response: \(response)")
-
-                if let data = response.data {
-                    do {
-                        let answer = try JSONDecoder().decode(UserModel.self, from: data)
-
-                        print("splash email \(email)")
-                        CacheUser.email = email
-                        if answer.pp == "\(NetworkManager.url)/pp" {
-                            perform(#selector(actionChooseProfilImage), with: nil, afterDelay: 1)
-                        } else {
-                            perform(#selector(actionTabBar), with: nil, afterDelay: 1)
-                        }
-                    }catch{
-                        makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
-                    }
+            service.pullUserData(email: CacheUser.email) { [self] userModel in
+                if userModel.pp == "\(NetworkManager.url)/pp" {
+                    perform(#selector(actionChooseProfileImage), with: nil)
+                } else {
+                    perform(#selector(actionTabBar), with: nil, afterDelay: 1)
                 }
             }
+        } else if CacheUser.email.isEmpty {
+            perform(#selector(actionWelcomePage), with: nil, afterDelay: 3)
+        } else {
+            perform(#selector(actionWelcomePage), with: nil, afterDelay: 3)
         }
     }
     
@@ -96,21 +82,20 @@ class SplashViewController: UIViewController {
         let vc = CustomTabbar()
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
-        present(navigationVC, animated: true, completion: nil)
+        present(navigationVC, animated: true)
     }
     
     @objc func actionWelcomePage() {
         let vc = WelcomeChooseController()
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
-        present(navigationVC, animated: true, completion: nil)
+        present(navigationVC, animated: true)
     }
     
-    @objc func actionChooseProfilImage() {
+    @objc func actionChooseProfileImage() {
         let vc = ChooseProfileImageController()
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
-        present(navigationVC, animated: true, completion: nil)
+        present(navigationVC, animated: true)
     }
-    
 }

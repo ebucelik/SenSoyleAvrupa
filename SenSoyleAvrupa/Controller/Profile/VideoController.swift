@@ -39,7 +39,7 @@ class VideoController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        checkInternetConnection()
+        checkInternetConnection(completion: nil)
 
         homeView.setPlayerView(player: player)
         homeView.playerView.player?.play()

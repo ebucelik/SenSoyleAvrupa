@@ -6,14 +6,11 @@
 //
 
 import UIKit
-import TTGSnackbar
 import Alamofire
 
 class SignInController: UITableViewController {
-
-    let context = appDelegate.persistentContainer.viewContext
     
-    let allView : UIView = {
+    let allView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         return view
@@ -21,15 +18,13 @@ class SignInController: UITableViewController {
     
     let loadingView = LoadingView()
     
-    let snackBar = TTGSnackbar(message: "Message", duration: .middle)
-    
     let btnLeft : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
         btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
         btn.layer.cornerRadius = 18
         btn.backgroundColor = .customBackgroundColor()
         return btn
@@ -110,14 +105,8 @@ class SignInController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
-        
-        if CheckInternet.Connection() {
-            
-        }else{
-            let vc = NoInternetController()
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
+
+        checkInternetConnection(completion: nil)
     }
     
     override func viewDidLoad() {
@@ -140,13 +129,9 @@ class SignInController: UITableViewController {
         stackViewBtn.spacing = 10
         
         allView.addSubview(btnLeft)
-        
         allView.addSubview(lblTop)
-        
         allView.addSubview(stackView)
-        
         allView.addSubview(stackViewBtn)
-        
         allView.addSubview(loadingView)
         
         btnLeft.anchor(top: allView.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
@@ -158,7 +143,6 @@ class SignInController: UITableViewController {
         stackViewBtn.anchor(top: stackView.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
 
         loadingView.addToSuperViewAnchors()
-
         loadingView.isHidden = true
     }
     
@@ -168,61 +152,50 @@ class SignInController: UITableViewController {
         tableView.allowsMultipleSelection = false
     }
 
-    @objc func actionLeft() {
-        print("left")
-        navigationController?.popViewController(animated: true)
-    }
-    
     @objc func actionSignIn() {
         print("sign in")
         let email = txtMail.text?.trim().lowercased() ?? ""
         let password = txtPassword.text?.trim() ?? ""
         
-        if email == "" || password == "" {
-            let snackBar = TTGSnackbar(message: "Lütfen tüm alanları giriniz", duration: .middle)
-            snackBar.show()
+        if email.isEmpty || password.isEmpty {
+            showSnackBar(message: "Lütfen tüm alanları giriniz")
             return
         }
         
         loadingView.isHidden = false
         
-        let parameters : Parameters = ["email": email, "password": password]
+        let parameters: Parameters = ["email": email, "password": password]
 
-        AF.request("\(NetworkManager.url)/api/login",method: .get, parameters: parameters).responseJSON { [self] response in
-            
-            print("response: \(response)")
-            
-            if let data = response.data {
-                do {
-                    let answer = try JSONDecoder().decode(SignUpModel.self, from: data)
-                    
-                    if answer.status == true {
-                        let user = UserData(context: context)
-                        user.email = email
-                        print("Save Core Data Email \(email)")
-                        appDelegate.saveContext()
+        NetworkManager.call(endpoint: "/api/login", method: .get, parameters: parameters) { [self] (result: Result<SignUpModel, Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+                loadingView.isHidden = true
+                makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
+            case let .success(signUpModel):
+                if signUpModel.status == true {
+                    UserDefaults.standard.set(email, forKey: SplashViewController.userDefaultsEmailKey)
+                    CacheUser.email = email
 
-                        let vc = SplashViewController()
-                        let navigationVC = UINavigationController(rootViewController: vc)
-                        navigationVC.modalPresentationStyle = .fullScreen
-                        present(navigationVC, animated: true, completion: nil)
-                    }else{
-                        loadingView.isHidden = true
-                        self.makeAlert(title: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(answer.message ?? "")")
-                    }
-                }catch{
+                    let vc = SplashViewController(service: ViewControllerService())
+                    let navigationVC = UINavigationController(rootViewController: vc)
+                    navigationVC.modalPresentationStyle = .fullScreen
+                    present(navigationVC, animated: true, completion: nil)
+                }else{
                     loadingView.isHidden = true
-                    makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
+                    makeAlert(title: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(signUpModel.message ?? "")")
                 }
             }
-            
         }
         
     }
     
     @objc func actionForgotPassword() {
-        print("action forgot password")
-        navigationController?.pushViewController(ForgotPasswordController(), animated: true)
+        guard let url = URL(string: "https://sensoyleavrupa.com/login/yeni-sifre.php") else { return }
+        let webViewController = WebViewController(url: url)
+        present(webViewController, animated: true, completion: nil)
+
+        //navigationController?.pushViewController(ForgotPasswordController(), animated: true)
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {

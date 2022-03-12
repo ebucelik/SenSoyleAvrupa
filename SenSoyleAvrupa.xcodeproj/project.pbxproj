@@ -13,6 +13,7 @@
 		712FA80E27CA2CF10020CAAB /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */; };
 		712FA81027CA30840020CAAB /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA80F27CA30840020CAAB /* HomeView.swift */; };
 		712FA81227CA352A0020CAAB /* VideoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA81127CA352A0020CAAB /* VideoController.swift */; };
+		713A27D527DD221E00093DE0 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713A27D427DD221E00093DE0 /* WebViewController.swift */; };
 		714A4DB327CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */; };
 		714AE41D27D249CD00ACC228 /* ViewControllerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714AE41C27D249CD00ACC228 /* ViewControllerService.swift */; };
 		717D3B9F27C2693200501FF1 /* VideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717D3B9E27C2693200501FF1 /* VideoModel.swift */; };
@@ -62,7 +63,6 @@
 		E4E860AF2624DC5F007A1915 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E860AE2624DC5F007A1915 /* SceneDelegate.swift */; };
 		E4E860B12624DC5F007A1915 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E860B02624DC5F007A1915 /* ViewController.swift */; };
 		E4E860B42624DC5F007A1915 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E4E860B22624DC5F007A1915 /* Main.storyboard */; };
-		E4E860B72624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E4E860B52624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodeld */; };
 		E4E860B92624DC64007A1915 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4E860B82624DC64007A1915 /* Assets.xcassets */; };
 		E4E860BC2624DC65007A1915 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E4E860BA2624DC64007A1915 /* LaunchScreen.storyboard */; };
 		E4E860F42624E4CB007A1915 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E860F32624E4CB007A1915 /* Constraints.swift */; };
@@ -91,6 +91,7 @@
 		712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		712FA80F27CA30840020CAAB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		712FA81127CA352A0020CAAB /* VideoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoController.swift; sourceTree = "<group>"; };
+		713A27D427DD221E00093DE0 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RangeReplaceableCollection+Extension.swift"; sourceTree = "<group>"; };
 		714AE41C27D249CD00ACC228 /* ViewControllerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerService.swift; sourceTree = "<group>"; };
 		717D3B9E27C2693200501FF1 /* VideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoModel.swift; sourceTree = "<group>"; };
@@ -141,7 +142,6 @@
 		E4E860AE2624DC5F007A1915 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		E4E860B02624DC5F007A1915 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E4E860B32624DC5F007A1915 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		E4E860B62624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SenSoyleAvrupa.xcdatamodel; sourceTree = "<group>"; };
 		E4E860B82624DC64007A1915 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E4E860BB2624DC65007A1915 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E4E860BD2624DC65007A1915 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -241,6 +241,7 @@
 				E4B74084262C405F00CB9697 /* RatingView.swift */,
 				7113785527C9689000C23710 /* PlayerView.swift */,
 				712FA80F27CA30840020CAAB /* HomeView.swift */,
+				713A27D427DD221E00093DE0 /* WebViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -339,7 +340,6 @@
 				E4E860B82624DC64007A1915 /* Assets.xcassets */,
 				E4E860BA2624DC64007A1915 /* LaunchScreen.storyboard */,
 				E4E860BD2624DC65007A1915 /* Info.plist */,
-				E4E860B52624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodeld */,
 			);
 			path = SenSoyleAvrupa;
 			sourceTree = "<group>";
@@ -546,7 +546,6 @@
 				714A4DB327CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift in Sources */,
 				E4F75083263AAC4A00A5457F /* Trim.swift in Sources */,
 				E4F959C82626390600DC5960 /* PrivacyPolicyController.swift in Sources */,
-				E4E860B72624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodeld in Sources */,
 				E4F95A052626620500DC5960 /* ProfileVideoCell.swift in Sources */,
 				717D3B9F27C2693200501FF1 /* VideoModel.swift in Sources */,
 				712FA81227CA352A0020CAAB /* VideoController.swift in Sources */,
@@ -584,6 +583,7 @@
 				E45225212624F809001ACD0A /* WelcomeChooseController.swift in Sources */,
 				712FA81027CA30840020CAAB /* HomeView.swift in Sources */,
 				E42AD0C12629BE7C006C218F /* HomeController.swift in Sources */,
+				713A27D527DD221E00093DE0 /* WebViewController.swift in Sources */,
 				E4E860AF2624DC5F007A1915 /* SceneDelegate.swift in Sources */,
 				E45225272624F823001ACD0A /* SignInController.swift in Sources */,
 				E45225242624F818001ACD0A /* SignUpController.swift in Sources */,
@@ -809,19 +809,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		E4E860B52624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				E4E860B62624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodel */,
-			);
-			currentVersion = E4E860B62624DC5F007A1915 /* SenSoyleAvrupa.xcdatamodel */;
-			path = SenSoyleAvrupa.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = E4E860A12624DC5F007A1915 /* Project object */;
 }

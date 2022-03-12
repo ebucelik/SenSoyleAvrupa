@@ -6,13 +6,25 @@
 //
 
 import UIKit
+import TTGSnackbar
 
 extension UIViewController {
-    func checkInternetConnection() {
+    func checkInternetConnection(completion: (() -> Void)?) {
         if !CheckInternet.Connection() {
-            let vc = NoInternetController()
+            let vc = NoInternetController(completion: completion)
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
         }
+    }
+
+    func showSnackBar(message: String) {
+        let snackBar = TTGSnackbar(message: message, duration: .middle)
+        snackBar.backgroundColor = .customTintColor()
+        snackBar.messageTextColor = .white
+        snackBar.show()
+    }
+
+    @objc func dismissViewController() {
+        navigationController?.popViewController(animated: true)
     }
 }

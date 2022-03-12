@@ -24,7 +24,7 @@ class ProfileVideoCell: UICollectionViewCell {
 
         backgroundColor = .customBackground()
         layer.masksToBounds = false
-        layer.cornerRadius = 20
+        layer.cornerRadius = 10
         clipsToBounds = true
 
         addSubview(playerView)
@@ -39,15 +39,8 @@ class ProfileVideoCell: UICollectionViewCell {
 
         player = AVPlayer(url: url)
 
-        /*if let isPlaying = model.isPlaying, isPlaying {
-            player?.playImmediately(atRate: 1)
-        } else {
-            player?.pause()
-        }*/
-
         playerView.playerLayer.player = player
         playerView.playerLayer.videoGravity = .resizeAspectFill
-        //player?.volume = 0
     }
 
     func playVideo() {

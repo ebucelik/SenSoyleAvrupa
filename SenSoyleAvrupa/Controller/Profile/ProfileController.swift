@@ -69,7 +69,7 @@ class ProfileController: UIViewController {
 
         navigationController?.navigationBar.isHidden = false
 
-        checkInternetConnection()
+        checkInternetConnection(completion: { self.pullData() })
 
         didPullToRefresh(self)
     }
@@ -90,7 +90,7 @@ class ProfileController: UIViewController {
         
         view.addSubview(collectionView)
         
-        collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 5, left: 0, bottom: 0, right: 0))
+        collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 5, left: 20, bottom: 0, right: 20))
 
         if isOwnUserProfile {
             navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"), style: .done, target: self, action: #selector(actionLeftMenu))
@@ -110,10 +110,9 @@ class ProfileController: UIViewController {
         collectionView.register(UINib(nibName: "ProfileVideoCell", bundle: nil), forCellWithReuseIdentifier: "ProfileVideoCell")
 
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.itemSize = CGSize(width: view.frame.width / 3.2, height: view.frame.width / 3.2)
-            layout.minimumLineSpacing = 6
-            layout.minimumInteritemSpacing = 5
-            layout.sectionInset = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+            layout.itemSize = CGSize(width: view.frame.width / 3.6, height: view.frame.width / 3.6)
+            layout.minimumLineSpacing = 10
+            layout.minimumInteritemSpacing = 10
         }
         
         refreshControl.addTarget(self, action: #selector(didPullToRefresh(_:)), for: .valueChanged)
@@ -125,7 +124,6 @@ class ProfileController: UIViewController {
         pullData()
         refreshControl.endRefreshing()
     }
-    
     
     @objc func actionLeftMenu() {
         print("left menu")
@@ -141,7 +139,7 @@ class ProfileController: UIViewController {
     }
 
     @objc func actionAddVideo() {
-        let vc = ShareVideoController()
+        let vc = ShareVideoController(service: ViewControllerService())
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true, completion: nil)
@@ -164,18 +162,20 @@ class ProfileController: UIViewController {
     }
 }
 
-extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+extension ProfileController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return videoDataModels.count
     }
-    
+}
+
+extension ProfileController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileVideoCell", for: indexPath) as! ProfileVideoCell
         let model = videoDataModels[indexPath.row]
         cell.configureVideo(model: model)
         return cell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let model = videoDataModels[indexPath.row]
 
@@ -192,30 +192,29 @@ extension ProfileController : UICollectionViewDataSource,UICollectionViewDelegat
 
         present(videoController, animated: true)
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionView.identifer, for: indexPath) as! HeaderCollectionView
-        header.btnEditProfile.addTarget(self, action: #selector(actionEditProfile), for: .touchUpInside)
-        header.lblMail.text = email
-        header.lblVideoCount.text = "\(videoDataModels.count)"
 
-        guard let userModel = userModel else { return header }
+        header.buttonEditProfile.isHidden = !isOwnUserProfile
 
-        if let pp = userModel.pp, pp != "\(NetworkManager.url)/public/pp" {
-            header.imgProfile.sd_setImage(with: URL(string: pp), completed: nil)
+        if isOwnUserProfile {
+            header.buttonEditProfile.addTarget(self, action: #selector(actionEditProfile), for: .touchUpInside)
         }
 
-        header.lblCoinCount.text = "\(userModel.coin ?? 0)"
-        header.lblPuahCount.text = "\(userModel.points ?? 0)"
-        header.lblName.text = userModel.username
+        header.labelEmail.text = email
+        header.labelVideoCount.text = "\(videoDataModels.count)"
+
+        guard let userModel = userModel else { return header }
+        header.userModel = userModel
 
         return header
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.size.width, height: 200)
     }
-    
+
     @objc func actionEditProfile() {
         let vc = EditProfileController(service: ViewControllerService())
         navigationController?.pushViewController(vc, animated: true)

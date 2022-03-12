@@ -7,7 +7,18 @@
 
 import UIKit
 
-class CustomTextField : UITextField {
+class CustomTextField: UITextField {
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        autocapitalizationType = .none
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override var intrinsicContentSize: CGSize {
         return .init(width: 0, height: 45)
     }
@@ -21,11 +32,9 @@ class CustomTextField : UITextField {
     }
 }
 
-class CustomTextView : UITextView  {
-    
+class CustomTextView: UITextView  {
     override var intrinsicContentSize: CGSize {
         return .init(width: 0, height: 150)
     }
-    
 }
 

@@ -7,28 +7,23 @@
 
 import UIKit
 import Alamofire
-import TTGSnackbar
 import CoreData
 
 class ChooseProfileImageController: UIViewController {
     
-    let context = appDelegate.persistentContainer.viewContext
-    
-    var userArray = [UserData]()
-    
-    let btnLeft : UIButton = {
+    let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
         btn.heightAnchor.constraint(equalToConstant: 36).isActive = true
         btn.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        btn.addTarget(self, action: #selector(actionLeft), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
         btn.layer.cornerRadius = 18
         btn.backgroundColor = .customBackgroundColor()
         return btn
     }()
     
-    let lblTop : UILabel = {
+    let lblTop: UILabel = {
         let lbl = UILabel()
         lbl.text = "Choose your\nProfile picture"
         lbl.textColor = .customLabelColor()
@@ -38,7 +33,7 @@ class ChooseProfileImageController: UIViewController {
         return lbl
     }()
     
-    let centerView : UIView = {
+    let centerView: UIView = {
        let view = UIView()
         view.heightAnchor.constraint(equalToConstant: 180).isActive = true
         view.widthAnchor.constraint(equalToConstant: 180).isActive = true
@@ -68,11 +63,9 @@ class ChooseProfileImageController: UIViewController {
         return view
     }()
     
-    let profilImage : UIImageView = {
+    let profilImage: UIImageView = {
         let img = UIImageView(image: UIImage(named: "emojiman"))
         img.backgroundColor = .white
-        img.layer.borderWidth = 10
-        img.layer.borderColor = UIColor.customTintColor().cgColor
         img.widthAnchor.constraint(equalToConstant: 180).isActive = true
         img.heightAnchor.constraint(equalToConstant: 180).isActive = true
         img.layer.cornerRadius = 90
@@ -83,7 +76,7 @@ class ChooseProfileImageController: UIViewController {
         return img
     }()
     
-    let editImage : UIImageView = {
+    let editImage: UIImageView = {
         let img = UIImageView(image: UIImage(systemName: "plus.circle"))
         img.widthAnchor.constraint(equalToConstant: 60).isActive = true
         img.heightAnchor.constraint(equalToConstant: 60).isActive = true
@@ -96,7 +89,7 @@ class ChooseProfileImageController: UIViewController {
         return img
     }()
     
-    let btnNext : UIButton = {
+    let btnNext: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Next", for: .normal)
         btn.backgroundColor = .lightGray
@@ -115,14 +108,8 @@ class ChooseProfileImageController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
-        
-        if CheckInternet.Connection() {
-            
-        }else{
-            let vc = NoInternetController()
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
+
+        checkInternetConnection(completion: nil)
     }
 
     override func viewDidLoad() {
@@ -133,27 +120,21 @@ class ChooseProfileImageController: UIViewController {
  
     func editLayout() {
         view.backgroundColor = .white
-        
-        view.addSubview(btnLeft)
-        
+        view.addSubview(buttonDismiss)
         view.addSubview(lblTop)
-        
         view.addSubview(bigCircle)
         
         bigCircle.addSubview(profilImage)
-        
         bigCircle.addSubview(littleCircle)
         
         littleCircle.addSubview(editImage)
         
         view.addSubview(btnNext)
-        
         view.addSubview(loadingView)
         
+        buttonDismiss.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
-        btnLeft.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: view.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
-        
-        lblTop.anchor(top: btnLeft.bottomAnchor, bottom: nil, leading: view.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+        lblTop.anchor(top: buttonDismiss.bottomAnchor, leading: view.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
         profilImage.addToSuperViewAnchors()
         
@@ -161,13 +142,11 @@ class ChooseProfileImageController: UIViewController {
         
         bigCircle.centerViewAtSuperView()
         
-        btnNext.anchor(top: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 20, right: 20))
-        
-        
+        btnNext.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 20, right: 20))
+
         loadingView.addToSuperViewAnchors()
         
         loadingView.isHidden = true
-        
         
         let gestureEdit = UITapGestureRecognizer(target: self, action: #selector(actionEdit))
         littleCircle.addGestureRecognizer(gestureEdit)
@@ -177,60 +156,40 @@ class ChooseProfileImageController: UIViewController {
         NSLayoutConstraint(item: littleCircle, attribute: .centerX, relatedBy: .equal, toItem: bigCircle, attribute: .trailing, multiplier: hMult, constant: 0).isActive = true
         NSLayoutConstraint(item: littleCircle, attribute: .centerY, relatedBy: .equal, toItem: bigCircle, attribute: .bottom, multiplier: vMult, constant: 0).isActive = true
     }
-    
-    
-    
-    @objc func actionLeft() {
+
+    @objc override func dismissViewController() {
         let alert = UIAlertController(title: "Çıkış Yap", message: "Çıkıs yapmak istediğinizden eminmisiniz?", preferredStyle: .alert)
+
         alert.addAction(UIAlertAction(title: "Evet", style: .default, handler: { [self] (_) in
-            do{
-                userArray = try context.fetch(UserData.fetchRequest())
-                
-            }catch{
-                print("Error Pull Data")
-            }
-            
+            UserDefaults.standard.removeObject(forKey: SplashViewController.userDefaultsEmailKey)
             CacheUser.email = ""
-           
-          
-            let user = userArray[0]
 
-            context.delete(user)
-
-            appDelegate.saveContext()
-            
-            let vc = SplashViewController()
+            let vc = SplashViewController(service: ViewControllerService())
             vc.modalPresentationStyle = .fullScreen
-            self.present(vc, animated: true, completion: nil)
+            present(vc, animated: true)
         }))
+
         alert.addAction(UIAlertAction(title: "İptal et", style: .cancel))
-        present(alert, animated: true, completion: nil)
-       
+        present(alert, animated: true)
     }
     
     @objc func actionEdit() {
         let imgPickerController = UIImagePickerController()
         imgPickerController.delegate = self
-        present(imgPickerController, animated: true, completion: nil)
+        present(imgPickerController, animated: true)
     }
     
     @objc func actionNext() {
-        
-        
         if profilImage.image == UIImage(named: "emojiman") {
-            let snackBar = TTGSnackbar(message: "Lütfen profil fotoğrafı ekleyin", duration: .middle)
-            snackBar.show()
+            showSnackBar(message: "Lütfen profil fotoğrafı ekleyin")
             return
         }
-       
-        
+
         loadingView.isHidden = false
         
-        let parameters = ["email" : CacheUser.email
-        ]
+        let parameters = ["email": CacheUser.email]
         
         AF.upload(multipartFormData: { multipartFormData in
-            
             for (key, value) in parameters {
                 multipartFormData.append(value.data(using: .utf8)!, withName: key)
             }
@@ -243,18 +202,13 @@ class ChooseProfileImageController: UIViewController {
             print(response)
             if response.response?.statusCode == 200 {
                 print("OK. Done")
-                let vc = SplashViewController()
+                let vc = SplashViewController(service: ViewControllerService())
                 vc.modalPresentationStyle = .fullScreen
                 self.present(vc, animated: true, completion: nil)
-                
             }
         }
-        
-        
     }
-    
-   
-    
+
     func computeMultipliers(angle: CGFloat) -> (CGFloat, CGFloat) {
         let radians = angle * .pi / 180
         
@@ -263,8 +217,7 @@ class ChooseProfileImageController: UIViewController {
         
         return (h, v)
     }
-    
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -272,13 +225,8 @@ class ChooseProfileImageController: UIViewController {
         
         littleCircle.layoutIfNeeded()
         littleCircle.layer.cornerRadius = 0.5 * littleCircle.frame.height
-        
     }
-    
-    
-
 }
-
 
 extension ChooseProfileImageController : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -287,7 +235,7 @@ extension ChooseProfileImageController : UIImagePickerControllerDelegate,UINavig
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let imgSecilen = info[.originalImage] as? UIImage
-        self.profilImage.image = imgSecilen?.withRenderingMode(.alwaysOriginal)
+        profilImage.image = imgSecilen?.withRenderingMode(.alwaysOriginal)
         editImage.image = UIImage(systemName: "checkmark.circle")
         btnNext.backgroundColor = .customTintColor()
         btnNext.titleLabel?.tintColor = .white
@@ -295,6 +243,6 @@ extension ChooseProfileImageController : UIImagePickerControllerDelegate,UINavig
         btnNext.isUserInteractionEnabled = true
         profilImage.layer.masksToBounds = true
         profilImage.contentMode = .scaleAspectFill
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
     }
 }

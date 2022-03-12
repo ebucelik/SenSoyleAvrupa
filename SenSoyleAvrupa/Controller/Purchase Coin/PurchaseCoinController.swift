@@ -21,9 +21,9 @@ class PurchaseCoinController: UIViewController {
     // MARK: Variables
     private var state: State
     private let service: ViewControllerServiceProtocol
-    private let userDefaultsKey = "initialVideoPurchased"
     private var purchaseModels = [PurchaseModel]()
     private var purchasedCoins = 0
+    static let userDefaultsInitialVideoPurchasedKey = "initialVideoPurchased"
 
     // MARK: Views
     let buttonDismiss: UIButton = {
@@ -91,7 +91,7 @@ class PurchaseCoinController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let initialVideoPurchased = UserDefaults.standard.object(forKey: userDefaultsKey) as? Bool {
+        if let initialVideoPurchased = UserDefaults.standard.object(forKey: PurchaseCoinController.userDefaultsInitialVideoPurchasedKey) as? Bool {
             state = State(initialVideoPurchased: initialVideoPurchased)
         }
 
@@ -125,7 +125,8 @@ class PurchaseCoinController: UIViewController {
 
             IAPManager.shared.purchase(product: .diamond_10_initial, completion: {
                 self.state = State(initialVideoPurchased: true)
-                UserDefaults.standard.set(true, forKey: self.userDefaultsKey)
+                UserDefaults.standard.set(true, forKey: PurchaseCoinController.userDefaultsInitialVideoPurchasedKey)
+                self.savePurchasedCoins()
             }, purchaseCanceled: {
                 self.loadingView.isHidden = true
             })
@@ -134,12 +135,12 @@ class PurchaseCoinController: UIViewController {
         purchaseModels.append(PurchaseModel(coin: 10, price: 4.99, handler: {
             self.loadingView.isHidden = false
 
-            IAPManager.shared.purchase(product: .diamond_10, purchaseCanceled: {
+            IAPManager.shared.purchase(product: .diamond_10, completion: {
+                self.savePurchasedCoins()
+            }, purchaseCanceled: {
                 self.loadingView.isHidden = true
             })
         }))
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(savePurchasedCoins), name: .notificationName, object: nil)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(purchaseViewSelected))
         purchaseView.addGestureRecognizer(tapGesture)
@@ -157,36 +158,32 @@ class PurchaseCoinController: UIViewController {
         }
     }
 
-    @objc func dismissViewController() {
-        navigationController?.popViewController(animated: true)
+    func savePurchasedCoins() {
+        print("Purchased Coins: \(purchasedCoins)")
+
+        let parameters: Parameters = ["email": CacheUser.email,
+                                      "coin": purchasedCoins]
+
+        NetworkManager.call(endpoint: "/api/order", method: .post, parameters: parameters) { [self] (result: Result<SignUpModel, Error>) in
+            switch result {
+            case let .failure(error):
+                print("Network request error: \(error)")
+                loadingView.isHidden = true
+            case let .success(signUpModel):
+                if let status = signUpModel.status, status {
+                    pullData()
+                    setupPurchaseView()
+                } else {
+                    loadingView.isHidden = true
+                    makeAlert(title: "Hata", message: "Coin alme işlemi yaparken bir hata oluştu: \(signUpModel.message ?? "")")
+                }
+            }
+        }
     }
 
     @objc func purchaseViewSelected() {
         let purchaseModel = purchaseModels[state.initialVideoPurchased ? 1 : 0]
         purchasedCoins = purchaseModel.coin
         purchaseModel.handler()
-    }
-    
-    @objc func savePurchasedCoins() {
-        print("Purchased Coins: \(purchasedCoins)")
-
-        let parameters: Parameters = ["email": CacheUser.email,
-                                      "coin": purchasedCoins]
-
-        NetworkManager.call(endpoint: "/api/order", method: .post, parameters: parameters) { (result: Result<SignUpModel, Error>) in
-            switch result {
-            case let .failure(error):
-                print("Network request error: \(error)")
-                self.loadingView.isHidden = true
-            case let .success(signUpModel):
-                if let status = signUpModel.status, status {
-                    self.pullData()
-                    self.setupPurchaseView()
-                } else {
-                    self.loadingView.isHidden = true
-                    self.makeAlert(title: "Hata", message: "Coin alme işlemi yaparken bir hata oluştu: \(signUpModel.message ?? "")")
-                }
-            }
-        }
     }
 }

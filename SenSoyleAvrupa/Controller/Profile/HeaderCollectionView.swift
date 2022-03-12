@@ -11,27 +11,34 @@ import SDWebImage
 
 class HeaderCollectionView: UICollectionReusableView {
     static let identifer = "HeaderCollectionView"
-    
-    let topView : UIView = {
-        let view = UIView()
-        view.backgroundColor = .customBackground()
-        view.layer.cornerRadius = 15
-        return view
-    }()
-    
-    let imgProfile : UIImageView = {
-        let img = UIImageView(image: UIImage(named: "emojiman"))
+
+    // MARK: Variables
+    var userModel: UserModel? {
+        didSet {
+            guard let userModel = userModel else { return }
+
+            if let pp = userModel.pp, pp != "\(NetworkManager.url)/public/pp" {
+                imageViewProfilePicture.sd_setImage(with: URL(string: pp), completed: nil)
+            }
+            labelCoinCount.text = "\(userModel.coin ?? 0)"
+            labelPointCount.text = "\(userModel.points ?? 0)"
+            labelUsername.text = userModel.username
+        }
+    }
+
+    // MARK: Views
+    let imageViewProfilePicture: UIImageView = {
+        let img = UIImageView(image: UIImage())
         img.backgroundColor = .white
+        img.contentMode = .scaleAspectFill
         img.heightAnchor.constraint(equalToConstant: 100).isActive = true
         img.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        img.layer.cornerRadius = 50
         img.clipsToBounds = true
-        img.layer.borderWidth = 2
-        img.layer.borderColor = UIColor.customTintColor().cgColor
+        img.layer.cornerRadius = 50
         return img
     }()
     
-    let lblName : UILabel = {
+    let labelUsername: UILabel = {
         let lbl = UILabel()
         lbl.text = ""
         lbl.textColor = .customLabelColor()
@@ -40,7 +47,7 @@ class HeaderCollectionView: UICollectionReusableView {
         return lbl
     }()
     
-    let lblMail : UILabel = {
+    let labelEmail: UILabel = {
         let lbl = UILabel()
         lbl.text = "..."
         lbl.textColor = .lightGray
@@ -49,7 +56,7 @@ class HeaderCollectionView: UICollectionReusableView {
         return lbl
     }()
     
-    let btnEditProfile : UIButton = {
+    let buttonEditProfile: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Profili Düzenle", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -59,30 +66,28 @@ class HeaderCollectionView: UICollectionReusableView {
         return btn
     }()
     
-    let lblVideoView : UIView = {
-        let view  = UIView()
-        view.layer.cornerRadius = 5
-       
-        view.backgroundColor = .customBackground()
-        return view
-    }()
-    
-    let lblCoinView : UIView = {
-        let view  = UIView()
-        view.layer.cornerRadius = 5
-      
-        view.backgroundColor = .customBackground()
-        return view
-    }()
-    
-    let lblPuanView : UIView = {
-        let view  = UIView()
+    let viewVideoCount: UIView = {
+        let view = UIView()
         view.layer.cornerRadius = 5
         view.backgroundColor = .customBackground()
         return view
     }()
     
-    let lblVideoCount : UILabel = {
+    let viewCoinCount: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 5
+        view.backgroundColor = .customBackground()
+        return view
+    }()
+    
+    let viewPointCount: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 5
+        view.backgroundColor = .customBackground()
+        return view
+    }()
+    
+    let labelVideoCount: UILabel = {
         let lbl = UILabel()
         lbl.text = "..."
         lbl.textColor = .customLabelColor()
@@ -91,7 +96,16 @@ class HeaderCollectionView: UICollectionReusableView {
         return lbl
     }()
     
-    let lblCoinCount : UILabel = {
+    let labelCoinCount: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "..."
+        lbl.textColor = .customLabelColor()
+        lbl.textAlignment = .center
+        lbl.font = .systemFont(ofSize: 20, weight: .heavy)
+        return lbl
+    }()
+
+    let labelPointCount: UILabel = {
         let lbl = UILabel()
         lbl.text = "..."
         lbl.textColor = .customLabelColor()
@@ -100,17 +114,7 @@ class HeaderCollectionView: UICollectionReusableView {
         return lbl
     }()
     
-    
-    let lblPuahCount : UILabel = {
-        let lbl = UILabel()
-        lbl.text = "..."
-        lbl.textColor = .customLabelColor()
-        lbl.textAlignment = .center
-        lbl.font = .systemFont(ofSize: 20, weight: .heavy)
-        return lbl
-    }()
-    
-    let lblVideo : UILabel = {
+    let labelVideo: UILabel = {
         let lbl = UILabel()
         lbl.text = "Video"
         lbl.textColor = .lightGray
@@ -119,7 +123,7 @@ class HeaderCollectionView: UICollectionReusableView {
         return lbl
     }()
     
-    let lblCoin : UILabel = {
+    let labelCoin: UILabel = {
         let lbl = UILabel()
         lbl.text = "Coin"
         lbl.textColor = .lightGray
@@ -128,7 +132,7 @@ class HeaderCollectionView: UICollectionReusableView {
         return lbl
     }()
     
-    let lblPuan : UILabel = {
+    let labelPoint: UILabel = {
         let lbl = UILabel()
         lbl.text = "Puan"
         lbl.textColor = .lightGray
@@ -136,62 +140,62 @@ class HeaderCollectionView: UICollectionReusableView {
         lbl.font = .boldSystemFont(ofSize: 15)
         return lbl
     }()
-    
-   
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-      
-        
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configure()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure() {
         backgroundColor = .white
-        
-        let stackView = UIStackView(arrangedSubviews: [lblName,lblMail,btnEditProfile])
-        stackView.axis = .vertical
+
+        let stackViewUserData = UIStackView(arrangedSubviews: [labelUsername, labelEmail, buttonEditProfile])
+        stackViewUserData.axis = .vertical
+        stackViewUserData.spacing = 10
+
+        let stackView = UIStackView(arrangedSubviews: [imageViewProfilePicture, stackViewUserData])
+        stackView.backgroundColor = .customBackground()
+        stackView.axis = .horizontal
+        stackView.layer.cornerRadius = 10
         stackView.spacing = 10
-        
-        let stackViewTop = UIStackView(arrangedSubviews: [lblCoinView,lblCoin])
-        stackViewTop.axis = .vertical
-        stackViewTop.spacing = 5
-       
-        let stackViewBottom = UIStackView(arrangedSubviews: [lblVideoView,lblVideo])
-        stackViewBottom.axis = .vertical
-        stackViewBottom.spacing = 5
-        
-        let stackViewCenter = UIStackView(arrangedSubviews: [lblPuanView,lblPuan])
-        stackViewCenter.axis = .vertical
-        stackViewCenter.spacing = 5
-        
-        let stackViewAll = UIStackView(arrangedSubviews: [stackViewBottom,stackViewCenter,stackViewTop])
-        stackViewAll.axis = .horizontal
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = .init(all: 5)
+
+        let stackViewCoin = UIStackView(arrangedSubviews: [viewCoinCount, labelCoin])
+        stackViewCoin.axis = .vertical
+        stackViewCoin.spacing = 5
+
+        let stackViewVideo = UIStackView(arrangedSubviews: [viewVideoCount, labelVideo])
+        stackViewVideo.axis = .vertical
+        stackViewVideo.spacing = 5
+
+        let stackViewPoint = UIStackView(arrangedSubviews: [viewPointCount, labelPoint])
+        stackViewPoint.axis = .vertical
+        stackViewPoint.spacing = 5
+
+        let stackViewVideoData = UIStackView(arrangedSubviews: [stackViewVideo, stackViewPoint, stackViewCoin])
+        stackViewVideoData.axis = .horizontal
+        stackViewVideoData.spacing = 10
+        stackViewVideoData.distribution = .fillEqually
+
+        let stackViewAll = UIStackView(arrangedSubviews: [stackView, stackViewVideoData])
+        stackViewAll.axis = .vertical
         stackViewAll.spacing = 10
-        stackViewAll.distribution = .fillEqually
-        
-        let stackViewAllView = UIStackView(arrangedSubviews: [topView,stackViewAll])
-        stackViewAllView.axis = .vertical
-        stackViewAllView.spacing = 10
-        
-        
-       addSubview(stackViewAllView)
-        
-        topView.addSubview(imgProfile)
-        
-        topView.addSubview(stackView)
-      
-        stackViewAllView.anchor(top: nil, bottom: nil, leading: leadingAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
 
-        stackViewAllView.centerViewAtSuperView()
-        imgProfile.anchor(top: topView.topAnchor, bottom: topView.bottomAnchor, leading: topView.leadingAnchor, trailing: nil,padding: .init(top: 10, left: 10, bottom: 10, right: 0))
-        
-        stackView.anchor(top: imgProfile.topAnchor, bottom: topView.bottomAnchor, leading: imgProfile.trailingAnchor, trailing: topView.trailingAnchor,padding: .init(top: 0, left: 10, bottom: 15, right: 10))
-        
-       
+        addSubview(stackViewAll)
 
-        lblCoinView.addSubview(lblCoinCount)
-        lblVideoView.addSubview(lblVideoCount)
-        lblPuanView.addSubview(lblPuahCount)
-        lblCoinCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
-        lblVideoCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
-        lblPuahCount.addToSuperViewAnchors(padding: .init(top: 5, left: 5, bottom: 5, right: 5))
+        stackViewAll.anchor(leading: leadingAnchor, trailing: trailingAnchor)
+
+        viewVideoCount.addSubview(labelVideoCount)
+        viewPointCount.addSubview(labelPointCount)
+        viewCoinCount.addSubview(labelCoinCount)
+
+        labelVideoCount.addToSuperViewAnchors(padding: .init(all: 5))
+        labelPointCount.addToSuperViewAnchors(padding: .init(all: 5))
+        labelCoinCount.addToSuperViewAnchors(padding: .init(all: 5))
     }
 }

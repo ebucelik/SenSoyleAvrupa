@@ -23,12 +23,8 @@ class VideoRealseController: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
         
-        if !CheckInternet.Connection() {
-            let vc = NoInternetController()
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
-        
+        checkInternetConnection(completion: { self.pullData() })
+
         if let cell = tableView.visibleCells.first as? HomeCell {
             cell.homeView.playerView.player?.play()
             cell.homeView.imageViewPause.alpha = 0

@@ -14,7 +14,7 @@ public class UserModel: Codable, Equatable {
     var pp: String? // EbuCelik: This is the ProfilePicture url
     var username: String?
 
-    init(coin: Int,id: Int,points: Int,pp: String,username: String) {
+    init(coin: Int, id: Int, points: Int, pp: String, username: String) {
         self.coin = coin
         self.id = id
         self.points = points
@@ -33,12 +33,10 @@ public class UserModel: Codable, Equatable {
 
 
 public class CacheUser {
-    
     static var email = ""
     static var coin = 0
     static var id = 0
     static var pp = ""
     static var username = ""
     static var points = 0
-
 }
