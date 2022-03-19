@@ -7,10 +7,19 @@
 
 import UIKit
 import Alamofire
-import CoreData
+import Combine
+import ComposableArchitecture
 
 class ChooseProfileImageController: UIViewController {
-    
+
+    // MARK: Properties
+    var store: Store<ChooseProfileImageState, ChooseProfileImageAction>
+    var viewStore: ViewStore<ChooseProfileImageState, ChooseProfileImageAction>
+    var cancellable: Set<AnyCancellable> = []
+
+    // MARK: Views
+    let loadingView = LoadingView()
+
     let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
@@ -23,7 +32,7 @@ class ChooseProfileImageController: UIViewController {
         return btn
     }()
     
-    let lblTop: UILabel = {
+    let labelTitle: UILabel = {
         let lbl = UILabel()
         lbl.text = "Choose your\nProfile picture"
         lbl.textColor = .customLabelColor()
@@ -89,7 +98,7 @@ class ChooseProfileImageController: UIViewController {
         return img
     }()
     
-    let btnNext: UIButton = {
+    let buttonNext: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Next", for: .normal)
         btn.backgroundColor = .lightGray
@@ -102,9 +111,18 @@ class ChooseProfileImageController: UIViewController {
         btn.addTarget(self, action: #selector(actionNext), for: .touchUpInside)
         return btn
     }()
-    
-    let loadingView = LoadingView()
-    
+
+    init(store: Store<ChooseProfileImageState, ChooseProfileImageAction>) {
+        self.store = store
+        self.viewStore = ViewStore(store)
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
@@ -116,12 +134,14 @@ class ChooseProfileImageController: UIViewController {
         super.viewDidLoad()
 
         editLayout()
+
+        setupStateObservers()
     }
  
     func editLayout() {
         view.backgroundColor = .white
         view.addSubview(buttonDismiss)
-        view.addSubview(lblTop)
+        view.addSubview(labelTitle)
         view.addSubview(bigCircle)
         
         bigCircle.addSubview(profilImage)
@@ -129,12 +149,12 @@ class ChooseProfileImageController: UIViewController {
         
         littleCircle.addSubview(editImage)
         
-        view.addSubview(btnNext)
+        view.addSubview(buttonNext)
         view.addSubview(loadingView)
         
         buttonDismiss.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
-        lblTop.anchor(top: buttonDismiss.bottomAnchor, leading: view.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+        labelTitle.anchor(top: buttonDismiss.bottomAnchor, leading: view.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
         profilImage.addToSuperViewAnchors()
         
@@ -142,10 +162,9 @@ class ChooseProfileImageController: UIViewController {
         
         bigCircle.centerViewAtSuperView()
         
-        btnNext.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 20, right: 20))
+        buttonNext.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 20, right: 20))
 
         loadingView.addToSuperViewAnchors()
-        
         loadingView.isHidden = true
         
         let gestureEdit = UITapGestureRecognizer(target: self, action: #selector(actionEdit))
@@ -157,6 +176,41 @@ class ChooseProfileImageController: UIViewController {
         NSLayoutConstraint(item: littleCircle, attribute: .centerY, relatedBy: .equal, toItem: bigCircle, attribute: .bottom, multiplier: vMult, constant: 0).isActive = true
     }
 
+    func setupStateObservers() {
+        viewStore.publisher.loadingStatusCode
+            .sink { [self] in
+                loadingStatusCodeUpdated(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.statusCode
+            .sink { [self] _ in
+                statusCodeUpdated()
+            }
+            .store(in: &cancellable)
+    }
+
+    func loadingStatusCodeUpdated(state: StatusCodeState) {
+        switch state {
+        case .none, .loaded, .error:
+            loadingView.isHidden = true
+        case .loading, .refreshing:
+            loadingView.isHidden = false
+        }
+    }
+
+    func statusCodeUpdated() {
+        guard let statusCode = viewStore.statusCode else { return }
+
+        if statusCode == 200 {
+            let vc = SplashViewController(service: Services.sharedService)
+            vc.modalPresentationStyle = .fullScreen
+            self.present(vc, animated: true)
+        } else {
+            showSnackBar(message: "Profil fotoğrafı yüklemede hata oldu. Lütfen tekrar deneyin.")
+        }
+    }
+
     @objc override func dismissViewController() {
         let alert = UIAlertController(title: "Çıkış Yap", message: "Çıkıs yapmak istediğinizden eminmisiniz?", preferredStyle: .alert)
 
@@ -164,7 +218,7 @@ class ChooseProfileImageController: UIViewController {
             UserDefaults.standard.removeObject(forKey: SplashViewController.userDefaultsEmailKey)
             CacheUser.email = ""
 
-            let vc = SplashViewController(service: ViewControllerService())
+            let vc = SplashViewController(service: Services.sharedService)
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true)
         }))
@@ -185,27 +239,10 @@ class ChooseProfileImageController: UIViewController {
             return
         }
 
-        loadingView.isHidden = false
-        
-        let parameters = ["email": CacheUser.email]
-        
-        AF.upload(multipartFormData: { multipartFormData in
-            for (key, value) in parameters {
-                multipartFormData.append(value.data(using: .utf8)!, withName: key)
-            }
-            
-            if let jpegData = self.profilImage.image!.jpegData(compressionQuality: 1.0) {
-                multipartFormData.append(jpegData, withName: "file", fileName: "file", mimeType: ".png")
-            }
-        }, to: "\(NetworkManager.url)/api/upload-pp")
-        .response { response in
-            print(response)
-            if response.response?.statusCode == 200 {
-                print("OK. Done")
-                let vc = SplashViewController(service: ViewControllerService())
-                vc.modalPresentationStyle = .fullScreen
-                self.present(vc, animated: true, completion: nil)
-            }
+        if let image = profilImage.image, let data = image.jpegData(compressionQuality: 1) {
+            viewStore.send(.uploadImage(email: CacheUser.email, jpegData: data))
+        } else {
+            showSnackBar(message: "Profil fotoğrafı yüklemede hata oldu. Lütfen tekrar deneyin.")
         }
     }
 
@@ -237,10 +274,10 @@ extension ChooseProfileImageController : UIImagePickerControllerDelegate,UINavig
         let imgSecilen = info[.originalImage] as? UIImage
         profilImage.image = imgSecilen?.withRenderingMode(.alwaysOriginal)
         editImage.image = UIImage(systemName: "checkmark.circle")
-        btnNext.backgroundColor = .customTintColor()
-        btnNext.titleLabel?.tintColor = .white
-        btnNext.alpha = 1
-        btnNext.isUserInteractionEnabled = true
+        buttonNext.backgroundColor = .customTintColor()
+        buttonNext.titleLabel?.tintColor = .white
+        buttonNext.alpha = 1
+        buttonNext.isUserInteractionEnabled = true
         profilImage.layer.masksToBounds = true
         profilImage.contentMode = .scaleAspectFill
         dismiss(animated: true)

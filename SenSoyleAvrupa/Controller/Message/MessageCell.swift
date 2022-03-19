@@ -8,16 +8,17 @@
 import UIKit
 
 class MessageCell: UITableViewCell {
-    
-    let allView : UIView = {
+
+    // MARK: Views
+    let allView: UIView = {
         let view = UIView()
-        view.roundCorners([.topLeft,.bottomLeft,.bottomRight], radius: 15)
+        view.roundCorners([.topLeft, .bottomLeft, .bottomRight], radius: 15)
         view.backgroundColor = .customTintColor()
         return view
     }()
-    
-    let lblMessage : UILabel = {
-       let lbl = UILabel()
+
+    let labelMessage: UILabel = {
+        let lbl = UILabel()
         lbl.textColor = .white
         lbl.numberOfLines = 0
         lbl.font = .boldSystemFont(ofSize: 17)
@@ -34,17 +35,9 @@ class MessageCell: UITableViewCell {
         
         addSubview(allView)
         
-        allView.addSubview(lblMessage)
+        allView.addSubview(labelMessage)
         
         allView.addToSuperViewAnchors(padding: .init(top: 10, left: 30, bottom: 10, right: 10))
-        
-        lblMessage.addToSuperViewAnchors(padding: .init(top: 10, left: 10, bottom: 10, right: 10))
+        labelMessage.addToSuperViewAnchors(padding: .init(all: 10))
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    
 }

@@ -121,7 +121,6 @@ class ForgotPasswordController: UITableViewController {
         tableView.allowsMultipleSelection = false
     }
 
-    // TODO: Do network call
     @objc func actionForgotPssword() {
         guard let url = URL(string: "https://sensoyleavrupa.com/login/yeni-sifre.php") else { return }
         let webViewController = WebViewController(url: url)

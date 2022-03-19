@@ -20,7 +20,7 @@ class PurchaseCoinController: UIViewController {
 
     // MARK: Variables
     private var state: State
-    private let service: ViewControllerServiceProtocol
+    private let service: SharedServiceProtocol
     private var purchaseModels = [PurchaseModel]()
     private var purchasedCoins = 0
     static let userDefaultsInitialVideoPurchasedKey = "initialVideoPurchased"
@@ -77,7 +77,7 @@ class PurchaseCoinController: UIViewController {
         return loadingView
     }()
 
-    init(service: ViewControllerService) {
+    init(service: SharedServiceProtocol) {
         self.state = State(initialVideoPurchased: false)
         self.service = service
 

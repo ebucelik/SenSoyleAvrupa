@@ -6,16 +6,16 @@
 //
 
 import UIKit
-import CoreData
 import Alamofire
 
 class SplashViewController: UIViewController {
 
-    // MARK: Variables
-    private let service: ViewControllerServiceProtocol
+    // MARK: Properties
+    private let service: SharedServiceProtocol
     static let userDefaultsEmailKey = "userEmail"
-    
-    lazy var imgLogo : UIImageView = {
+
+    // MARK: Views
+    lazy var imageViewLogo: UIImageView = {
         let img = UIImageView(image: UIImage(named: "Character1Color1"))
         img.widthAnchor.constraint(equalToConstant: view.frame.width / 1.5).isActive = true
         img.heightAnchor.constraint(equalToConstant: view.frame.width / 1.5).isActive = true
@@ -23,7 +23,7 @@ class SplashViewController: UIViewController {
         return img
     }()
 
-    init(service: ViewControllerService) {
+    init(service: SharedServiceProtocol) {
         self.service = service
 
         super.init(nibName: nil, bundle: nil)
@@ -38,9 +38,9 @@ class SplashViewController: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
         
-        checkInternetConnection(completion: {
-            self.editLayout()
-            self.pullData()
+        checkInternetConnection(completion: { [self] in
+            editLayout()
+            pullData()
         })
     }
     
@@ -55,18 +55,18 @@ class SplashViewController: UIViewController {
     func editLayout() {
         view.backgroundColor = .white
         
-        view.addSubview(imgLogo)
+        view.addSubview(imageViewLogo)
         
-        imgLogo.centerViewAtSuperView()
+        imageViewLogo.centerViewAtSuperView()
     }
-    
+
     func pullData() {
         if let userDefaultsEmail = UserDefaults.standard.string(forKey: SplashViewController.userDefaultsEmailKey) {
             CacheUser.email = userDefaultsEmail
 
-            service.pullUserData(email: CacheUser.email) { [self] userModel in
-                if userModel.pp == "\(NetworkManager.url)/pp" {
-                    perform(#selector(actionChooseProfileImage), with: nil)
+            service.pullUserData(email: CacheUser.email) { [self] in
+                if $0.pp == "\(NetworkManager.url)/pp" {
+                    perform(#selector(actionChooseProfileImage))
                 } else {
                     perform(#selector(actionTabBar), with: nil, afterDelay: 1)
                 }
@@ -77,23 +77,26 @@ class SplashViewController: UIViewController {
             perform(#selector(actionWelcomePage), with: nil, afterDelay: 3)
         }
     }
-    
+
     @objc func actionTabBar() {
         let vc = CustomTabbar()
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true)
     }
-    
+
     @objc func actionWelcomePage() {
         let vc = WelcomeChooseController()
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true)
     }
-    
+
     @objc func actionChooseProfileImage() {
-        let vc = ChooseProfileImageController()
+        let vc = ChooseProfileImageController(
+            store: .init(initialState: ChooseProfileImageState(),
+                         reducer: chooseProfileImageReducer,
+                         environment: ChooseProfileImageEnvironment(service: Services.chooseProfileImageService, mainQueue: .main)))
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true)

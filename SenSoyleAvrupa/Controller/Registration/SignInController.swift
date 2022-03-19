@@ -7,9 +7,17 @@
 
 import UIKit
 import Alamofire
+import Combine
+import ComposableArchitecture
 
 class SignInController: UITableViewController {
-    
+
+    // MARK: Properties
+    var store: Store<LoginState, LoginAction>
+    var viewStore: ViewStore<LoginState, LoginAction>
+    var cancellables: Set<AnyCancellable> = []
+
+    // MARK: Views
     let allView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -18,7 +26,7 @@ class SignInController: UITableViewController {
     
     let loadingView = LoadingView()
     
-    let btnLeft : UIButton = {
+    let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
@@ -30,7 +38,7 @@ class SignInController: UITableViewController {
         return btn
     }()
     
-    let lblTop : UILabel = {
+    let labelTitle: UILabel = {
         let lbl = UILabel()
         lbl.text = "Merhaba!\nGiriş yap"
         lbl.textColor = .customLabelColor()
@@ -40,7 +48,7 @@ class SignInController: UITableViewController {
         return lbl
     }()
 
-    let lblYourMail : UILabel = {
+    let labelEmail: UILabel = {
         let lbl = UILabel()
         lbl.text = "E-Postanız"
         lbl.textColor = .black
@@ -48,9 +56,8 @@ class SignInController: UITableViewController {
         return lbl
     }()
     
-    let txtMail : UITextField = {
+    let textFieldEmail: UITextField = {
         let textField = CustomTextField()
-        //textField.backgroundColor = .init(white: 0.92, alpha: 1)
         textField.backgroundColor = .customBackgroundColor()
         textField.placeholder = ""
         textField.layer.cornerRadius = 5
@@ -60,7 +67,7 @@ class SignInController: UITableViewController {
         return textField
     }()
     
-    let lblPassword : UILabel = {
+    let labelPassword: UILabel = {
         let lbl = UILabel()
         lbl.text = "Parolanız"
         lbl.textColor = .black
@@ -68,9 +75,8 @@ class SignInController: UITableViewController {
         return lbl
     }()
     
-    let txtPassword : UITextField = {
+    let textFieldPassword: UITextField = {
         let textField = CustomTextField()
-        //textField.backgroundColor = .init(white: 0.92, alpha: 1)
         textField.backgroundColor = .customBackgroundColor()
         textField.placeholder = ""
         textField.layer.cornerRadius = 5
@@ -81,7 +87,7 @@ class SignInController: UITableViewController {
         return textField
     }()
     
-    let btnForgotPassword : UIButton = {
+    let buttonForgotPassword: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Parolanızı mı unuttunuz?", for: .normal)
         btn.contentHorizontalAlignment = .right
@@ -90,7 +96,7 @@ class SignInController: UITableViewController {
         return btn
     }()
     
-    let btnSingIn : UIButton = {
+    let buttonSignIn: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Giriş Yap", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -101,7 +107,18 @@ class SignInController: UITableViewController {
         btn.addTarget(self, action: #selector(actionSignIn), for: .touchUpInside)
         return btn
     }()
-    
+
+    init(store: Store<LoginState, LoginAction>) {
+        self.store = store
+        self.viewStore = ViewStore(store)
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
@@ -115,32 +132,31 @@ class SignInController: UITableViewController {
         editLayout()
         
         editTableView()
+
+        setupStateObservers()
     }
-    
+
     func editLayout() {
         tableView.backgroundColor = .white
         
-        let stackView = UIStackView(arrangedSubviews: [lblYourMail,txtMail,lblPassword,txtPassword,btnForgotPassword])
+        let stackView = UIStackView(arrangedSubviews: [labelTitle,
+                                                       labelEmail,
+                                                       textFieldEmail,
+                                                       labelPassword,
+                                                       textFieldPassword,
+                                                       buttonForgotPassword,
+                                                       buttonSignIn])
         stackView.axis = .vertical
         stackView.spacing = 10
-        
-        let stackViewBtn = UIStackView(arrangedSubviews: [btnSingIn])
-        stackViewBtn.axis = .vertical
-        stackViewBtn.spacing = 10
-        
-        allView.addSubview(btnLeft)
-        allView.addSubview(lblTop)
+        stackView.setCustomSpacing(20, after: buttonForgotPassword)
+
+        allView.addSubview(buttonDismiss)
         allView.addSubview(stackView)
-        allView.addSubview(stackViewBtn)
         allView.addSubview(loadingView)
+
+        buttonDismiss.anchor(top: allView.safeAreaLayoutGuide.topAnchor, leading: allView.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
-        btnLeft.anchor(top: allView.safeAreaLayoutGuide.topAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
-        
-        lblTop.anchor(top: btnLeft.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
-        
-        stackView.anchor(top: lblTop.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-        
-        stackViewBtn.anchor(top: stackView.bottomAnchor, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
+        stackView.anchor(top: buttonDismiss.bottomAnchor, leading: allView.leadingAnchor, trailing: allView.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
 
         loadingView.addToSuperViewAnchors()
         loadingView.isHidden = true
@@ -152,44 +168,59 @@ class SignInController: UITableViewController {
         tableView.allowsMultipleSelection = false
     }
 
+    func setupStateObservers() {
+        viewStore.publisher.loadingSignUpModel
+            .sink { [self] in
+                loadingSignUpModelUpdated(state: $0)
+            }
+            .store(in: &cancellables)
+
+        viewStore.publisher.signUpModel
+            .sink { [self] _ in
+                signUpModelUpdated()
+            }
+            .store(in: &cancellables)
+    }
+
+    func loadingSignUpModelUpdated(state: SignUpModelLoadingState) {
+        switch state {
+        case .none, .loaded, .error:
+            loadingView.isHidden = true
+
+        case .loading, .refreshing:
+            loadingView.isHidden = false
+        }
+    }
+
+    func signUpModelUpdated() {
+        guard let signUpModel = viewStore.signUpModel else { return }
+
+        if signUpModel.status == true {
+            UserDefaults.standard.set(viewStore.email, forKey: SplashViewController.userDefaultsEmailKey)
+            CacheUser.email = viewStore.email
+
+            let vc = SplashViewController(service: Services.sharedService)
+            let navigationVC = UINavigationController(rootViewController: vc)
+            navigationVC.modalPresentationStyle = .fullScreen
+            present(navigationVC, animated: true, completion: nil)
+        } else {
+            makeAlert(title: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(signUpModel.message ?? "")")
+        }
+    }
+
     @objc func actionSignIn() {
         print("sign in")
-        let email = txtMail.text?.trim().lowercased() ?? ""
-        let password = txtPassword.text?.trim() ?? ""
+        let email = textFieldEmail.text?.trim().lowercased() ?? ""
+        let password = textFieldPassword.text?.trim() ?? ""
         
         if email.isEmpty || password.isEmpty {
             showSnackBar(message: "Lütfen tüm alanları giriniz")
             return
         }
-        
-        loadingView.isHidden = false
-        
-        let parameters: Parameters = ["email": email, "password": password]
 
-        NetworkManager.call(endpoint: "/api/login", method: .get, parameters: parameters) { [self] (result: Result<SignUpModel, Error>) in
-            switch result {
-            case let .failure(error):
-                print("Network request error: \(error)")
-                loadingView.isHidden = true
-                makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
-            case let .success(signUpModel):
-                if signUpModel.status == true {
-                    UserDefaults.standard.set(email, forKey: SplashViewController.userDefaultsEmailKey)
-                    CacheUser.email = email
-
-                    let vc = SplashViewController(service: ViewControllerService())
-                    let navigationVC = UINavigationController(rootViewController: vc)
-                    navigationVC.modalPresentationStyle = .fullScreen
-                    present(navigationVC, animated: true, completion: nil)
-                }else{
-                    loadingView.isHidden = true
-                    makeAlert(title: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(signUpModel.message ?? "")")
-                }
-            }
-        }
-        
+        viewStore.send(.login(email: email, password: password))
     }
-    
+
     @objc func actionForgotPassword() {
         guard let url = URL(string: "https://sensoyleavrupa.com/login/yeni-sifre.php") else { return }
         let webViewController = WebViewController(url: url)

@@ -15,14 +15,14 @@ class VideoController: UIViewController {
     // MARK: Variables
     private let homeView: HomeView
     private let model: VideoDataModel
-    private let service: ViewControllerServiceProtocol
+    private let service: SharedServiceProtocol
     private var modelDidChanged: Bool = false
     private var player: AVPlayer?
 
     // MARK: Actions
     var onDismiss: ((Bool) -> Void)? = nil
 
-    init(model: VideoDataModel, service: ViewControllerServiceProtocol) {
+    init(model: VideoDataModel, service: SharedServiceProtocol) {
         self.homeView = HomeView(frame: .zero)
         self.model = model
         self.service = service

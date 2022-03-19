@@ -126,7 +126,7 @@ extension VideoRealseController:  UITableViewDelegate,UITableViewDataSource {
                                                             pp: model.pp ?? "",
                                                             username: model.username ?? ""),
                                        email: model.email ?? "",
-                                       service: ViewControllerService())
+                                       service: Services.sharedService)
             self.navigationController?.pushViewController(vc, animated: true)
         }
         

@@ -20,7 +20,7 @@ class ProfileController: UIViewController {
     private let email: String
     private let isOwnUserProfile: Bool
     private var state: State
-    private let service: ViewControllerServiceProtocol
+    private let service: SharedServiceProtocol
 
     // MARK: Models
     private var userModel: UserModel? {
@@ -50,7 +50,7 @@ class ProfileController: UIViewController {
         return cv
     }()
 
-    init(userModel: UserModel? = nil, email: String, service: ViewControllerService, isOwnUserProfile: Bool = false) {
+    init(userModel: UserModel? = nil, email: String, service: SharedServiceProtocol, isOwnUserProfile: Bool = false) {
         self.userModel = userModel
         self.email = email
         self.service = service
@@ -139,7 +139,7 @@ class ProfileController: UIViewController {
     }
 
     @objc func actionAddVideo() {
-        let vc = ShareVideoController(service: ViewControllerService())
+        let vc = ShareVideoController(service: Services.sharedService)
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true, completion: nil)
@@ -183,7 +183,7 @@ extension ProfileController: UICollectionViewDelegateFlowLayout {
             model.email = email
         }
 
-        let videoController = VideoController(model: model, service: ViewControllerService())
+        let videoController = VideoController(model: model, service: Services.sharedService)
         videoController.onDismiss = { modelDidChanged in
             if modelDidChanged {
                 self.pullData()
@@ -216,7 +216,7 @@ extension ProfileController: UICollectionViewDelegateFlowLayout {
     }
 
     @objc func actionEditProfile() {
-        let vc = EditProfileController(service: ViewControllerService())
+        let vc = EditProfileController(service: Services.sharedService)
         navigationController?.pushViewController(vc, animated: true)
     }
 }

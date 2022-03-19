@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class SignUpModel: Codable {
+public class SignUpModel: Codable, Equatable {
     var status: Bool?
     var message: String?
 
@@ -15,5 +15,9 @@ public class SignUpModel: Codable {
         self.status = status
         self.message = message
     }
-    
+
+    public static func == (lhs: SignUpModel, rhs: SignUpModel) -> Bool {
+        return lhs.status == rhs.status &&
+        lhs.message == rhs.message
+    }
 }

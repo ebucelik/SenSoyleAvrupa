@@ -17,7 +17,7 @@ class EditProfileController: UIViewController {
 
     // MARK: Variables
     private var state: State
-    private let service: ViewControllerServiceProtocol
+    private let service: SharedServiceProtocol
 
     var viewBigCircle: UIView = {
         let view = UIView()
@@ -93,7 +93,7 @@ class EditProfileController: UIViewController {
 
     let loadingView = LoadingView()
 
-    init(service: ViewControllerServiceProtocol) {
+    init(service: SharedServiceProtocol) {
         self.state = State(oldUsername: textFieldUsername.text!, oldProfilePicture: imageViewProfileImage.image ?? UIImage())
         self.service = service
 

@@ -8,9 +8,17 @@
 import UIKit
 import AIFlatSwitch
 import Alamofire
+import Combine
+import ComposableArchitecture
 
 class SignUpController: UITableViewController {
-    
+
+    // MARK: Properties
+    var store: Store<RegistrationState, RegistrationAction>
+    var viewStore: ViewStore<RegistrationState, RegistrationAction>
+    var cancellable: Set<AnyCancellable> = []
+
+    // MARK: Views
     let allView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -51,7 +59,7 @@ class SignUpController: UITableViewController {
         return img
     }()
     
-    let labelEmailTitle: UILabel = {
+    let labelEmail: UILabel = {
         let lbl = UILabel()
         lbl.text = "Mail adresiniz"
         lbl.textColor = .black
@@ -97,7 +105,7 @@ class SignUpController: UITableViewController {
         return lbl
     }()
     
-    let textFieldPassword : UITextField = {
+    let textFieldPassword: UITextField = {
         let textField = CustomTextField()
         textField.backgroundColor = .customBackgroundColor()
         textField.placeholder = ""
@@ -167,6 +175,17 @@ class SignUpController: UITableViewController {
         return btn
     }()
 
+    init(store: Store<RegistrationState, RegistrationAction>) {
+        self.store = store
+        self.viewStore = ViewStore(store)
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
@@ -180,32 +199,34 @@ class SignUpController: UITableViewController {
         editLayout()
         
         editTableView()
+
+        setupStateObservers()
     }
-    
+
     func editLayout() {
         tableView.backgroundColor = .white
         
-        let stackView = UIStackView(arrangedSubviews: [labelEmailTitle,textFieldEmail,labelUsername,textFieldUsername,labelPassword,textFieldPassword,viewPrivacyPolicy])
+        let stackView = UIStackView(arrangedSubviews: [labelTitle,
+                                                       labelEmail,
+                                                       textFieldEmail,
+                                                       labelUsername,
+                                                       textFieldUsername,
+                                                       labelPassword,
+                                                       textFieldPassword,
+                                                       viewPrivacyPolicy,
+                                                       btnSignUp,
+                                                       btnSignIn])
         stackView.axis = .vertical
         stackView.spacing = 10
-        
-        let stackViewBtn = UIStackView(arrangedSubviews: [btnSignUp,btnSignIn])
-        stackViewBtn.axis = .vertical
-        stackViewBtn.spacing = 10
+        stackView.setCustomSpacing(40, after: viewPrivacyPolicy)
         
         allView.addSubview(buttonDismiss)
-        allView.addSubview(labelTitle)
         allView.addSubview(stackView)
-        allView.addSubview(stackViewBtn)
         allView.addSubview(loadingView)
         
         buttonDismiss.anchor(top: allView.safeAreaLayoutGuide.topAnchor, leading: allView.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
-        labelTitle.anchor(top: buttonDismiss.bottomAnchor, leading: allView.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
-        
-        stackView.anchor(top: labelTitle.bottomAnchor, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-        
-        stackViewBtn.anchor(top: stackView.bottomAnchor, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 30, left: 20, bottom: 0, right: 20))
+        stackView.anchor(top: buttonDismiss.bottomAnchor, leading: allView.leadingAnchor, trailing: allView.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
 
         //Switch View
         viewPrivacyPolicy.addSubview(flatSwitch)
@@ -213,15 +234,15 @@ class SignUpController: UITableViewController {
 
         flatSwitch.anchor(leading: viewPrivacyPolicy.leadingAnchor, padding: .init(horizontal: 5))
         flatSwitch.centerYAtSuperView()
-        
+
         labelPrivacyPolicy.anchor(leading: flatSwitch.trailingAnchor, trailing: viewPrivacyPolicy.trailingAnchor, padding: .init(right: 5))
         labelPrivacyPolicy.centerYAtSuperView()
-        
+
         loadingView.addToSuperViewAnchors()
-        
+
         let gestureSwitch = UITapGestureRecognizer(target: self, action: #selector(actionPrivacyPolicy))
         labelPrivacyPolicy.addGestureRecognizer(gestureSwitch)
-        
+
         loadingView.isHidden = true
     }
     
@@ -229,6 +250,46 @@ class SignUpController: UITableViewController {
         tableView.tableFooterView = UIView()
         tableView.keyboardDismissMode = .interactive
         tableView.allowsMultipleSelection = false
+    }
+
+    func setupStateObservers() {
+        viewStore.publisher.loadingSignUpModel
+            .sink { [self] in
+                loadingSignUpModelUpdated(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.signUpModel
+            .sink { [self] _ in
+                signUpModelUpdated()
+            }
+            .store(in: &cancellable)
+    }
+
+    func loadingSignUpModelUpdated(state: SignUpModelLoadingState) {
+        switch state {
+        case .none, .loaded, .error:
+            loadingView.isHidden = true
+
+        case .loading, .refreshing:
+            loadingView.isHidden = false
+        }
+    }
+
+    func signUpModelUpdated() {
+        guard let signUpModel = viewStore.signUpModel else { return }
+
+        if let status = signUpModel.status, status {
+            UserDefaults.standard.set(viewStore.email, forKey: SplashViewController.userDefaultsEmailKey)
+            CacheUser.email = viewStore.email
+
+            let vc = SplashViewController(service: Services.sharedService)
+            let navigationVC = UINavigationController(rootViewController: vc)
+            navigationVC.modalPresentationStyle = .fullScreen
+            present(navigationVC, animated: true)
+        } else {
+            makeAlert(title: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(signUpModel.message ?? "")")
+        }
     }
 
     @objc func actionPrivacyPolicy() {
@@ -263,37 +324,17 @@ class SignUpController: UITableViewController {
             return
         }
 
-        loadingView.isHidden = false
-
-        let parameters: Parameters = ["username": username, "email": email, "password": password]
-
-        NetworkManager.call(endpoint: "/api/register", method: .post, parameters: parameters) { [self] (result: Result<SignUpModel, Error>) in
-            switch result {
-            case let .failure(error):
-                print("Network request error: \(error)")
-
-                loadingView.isHidden = true
-                makeAlert(title: "Error Localized Description", message: "\(error.localizedDescription)")
-            case let .success(signUpModel):
-                if let status = signUpModel.status, status {
-                    UserDefaults.standard.set(email, forKey: SplashViewController.userDefaultsEmailKey)
-                    CacheUser.email = email
-
-                    let vc = SplashViewController(service: ViewControllerService())
-                    let navigationVC = UINavigationController(rootViewController: vc)
-                    navigationVC.modalPresentationStyle = .fullScreen
-                    present(navigationVC, animated: true, completion: nil)
-                } else {
-                    loadingView.isHidden = true
-                    makeAlert(title: "Hata", message: "Profil Oluşturarken bir hata oluştu: \(signUpModel.message ?? "")")
-                }
-            }
-        }
+        viewStore.send(.register(username: username, email: email, password: password))
     }
     
     @objc func actionSignIn() {
         print("go to sign in")
-        navigationController?.pushViewController(SignInController(), animated: true)
+        navigationController?.pushViewController(SignInController(
+            store: .init(initialState: LoginState(),
+                         reducer: loginReducer,
+                         environment: LoginEnvironment(service: Services.loginService,
+                                                       mainQueue: .main))),
+                                                 animated: true)
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {

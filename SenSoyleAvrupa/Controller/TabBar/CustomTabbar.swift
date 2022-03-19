@@ -24,12 +24,12 @@ class CustomTabbar: UITabBarController{
     
     func editTabBar() {
         
-        let homeController = navControllerOlustur(rootViewController: HomeController(service: ViewControllerService()),
+        let homeController = navControllerOlustur(rootViewController: HomeController(service: Services.sharedService),
                                                   seciliOlmayanIcon: UIImage(systemName: "music.note.house") ?? UIImage(),
                                                   title: "Ana sayfa")
         
         let profileController = navControllerOlustur(rootViewController: ProfileController(email: CacheUser.email,
-                                                                                           service: ViewControllerService(),
+                                                                                           service: Services.sharedService,
                                                                                            isOwnUserProfile: true),
                                                      seciliOlmayanIcon: UIImage(systemName: "person.fill.viewfinder") ?? UIImage(),
                                                      title: "Profil")

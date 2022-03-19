@@ -12,7 +12,7 @@ import AVFoundation
 class ShareVideoController: UITableViewController {
 
     // MARK: Variables
-    private let service: ViewControllerServiceProtocol
+    private let service: SharedServiceProtocol
     private var urlLocal : URL?
     private var coin = 0
 
@@ -129,7 +129,7 @@ class ShareVideoController: UITableViewController {
 
     let loadingView = LoadingView()
 
-    init(service: ViewControllerService) {
+    init(service: SharedServiceProtocol) {
         self.service = service
 
         super.init(nibName: nil, bundle: nil)
@@ -234,7 +234,7 @@ class ShareVideoController: UITableViewController {
             let alert = UIAlertController(title: "Uyarı", message: "Video paylaşmanız için yeterli Coin e sahib değilsiniz", preferredStyle: .alert)
 
             alert.addAction(UIAlertAction(title: "Coin Satın Al", style: .default, handler: { (_) in
-                self.navigationController?.pushViewController(PurchaseCoinController(service: ViewControllerService()), animated: true)
+                self.navigationController?.pushViewController(PurchaseCoinController(service: Services.sharedService), animated: true)
             }))
 
             alert.addAction(UIAlertAction(title: "İptal et", style: .cancel, handler: nil))

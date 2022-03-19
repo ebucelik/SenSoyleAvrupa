@@ -37,7 +37,7 @@ class LeftMenuController: UITableViewController {
     
     var systemImages = ["dollarsign.circle", "message.circle.fill", "lock.shield", "shield.checkerboard", "return", "trash.fill"]
     
-    var controller = [PurchaseCoinController(service: ViewControllerService()),
+    var controller = [PurchaseCoinController(service: Services.sharedService),
                       MessageController(),
                       TermsofServiceController(),
                       PrivacyPolicyController()]
@@ -106,7 +106,7 @@ class LeftMenuController: UITableViewController {
                 UserDefaults.standard.removeObject(forKey: PurchaseCoinController.userDefaultsInitialVideoPurchasedKey)
                 CacheUser.email = ""
 
-                let vc = SplashViewController(service: ViewControllerService())
+                let vc = SplashViewController(service: Services.sharedService)
                 vc.modalPresentationStyle = .fullScreen
                 self.present(vc, animated: true, completion: nil)
             }))

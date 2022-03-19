@@ -8,7 +8,7 @@
 import Foundation
 import Alamofire
 
-public protocol ViewControllerServiceProtocol {
+public protocol SharedServiceProtocol {
     func pullVideoData(email: String, block: @escaping ([VideoDataModel]) -> Void)
     func pullUserData(email: String, block: @escaping (UserModel) -> Void)
     func pullProfileData(email: String, userId: Int, block: @escaping ([VideoDataModel]) -> Void)
@@ -17,7 +17,7 @@ public protocol ViewControllerServiceProtocol {
     func changeUsername(email: String, username: String, onError: (() -> Void)?, block: @escaping (SignUpModel) -> Void)
 }
 
-public final class ViewControllerService: ViewControllerServiceProtocol {
+public final class SharedService: SharedServiceProtocol {
 
     public func pullVideoData(email: String, block: @escaping ([VideoDataModel]) -> Void) {
         let parameters: Parameters = ["email": email]

@@ -8,8 +8,9 @@
 import UIKit
 
 class WelcomeChooseController: UIViewController {
-    
-    lazy var imgLogo : UIImageView = {
+
+    // MARK: Views
+    lazy var imageViewLogo: UIImageView = {
         let img = UIImageView(image: #imageLiteral(resourceName: "Character1Color1"))
         img.widthAnchor.constraint(equalToConstant: view.frame.width / 2).isActive = true
         img.heightAnchor.constraint(equalToConstant: view.frame.width / 2).isActive = true
@@ -17,7 +18,7 @@ class WelcomeChooseController: UIViewController {
         return img
     }()
     
-    let lblTitle : UILabel = {
+    let labelTitle: UILabel = {
         let lbl = UILabel()
         lbl.text = "Sen Söyle Avrupa"
         lbl.textColor = .customLabelColor()
@@ -26,7 +27,7 @@ class WelcomeChooseController: UIViewController {
         return lbl
     }()
     
-    let lblDescription : UILabel = {
+    let labelDescription: UILabel = {
         let lbl = UILabel()
         lbl.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
         lbl.textColor = .gray
@@ -36,7 +37,7 @@ class WelcomeChooseController: UIViewController {
         return lbl
     }()
     
-    let btnSignUp : UIButton = {
+    let buttonSignUp: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Kayıt Ol", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -48,7 +49,7 @@ class WelcomeChooseController: UIViewController {
         return btn
     }()
     
-    let btnSignIn : UIButton = {
+    let buttonSignIn: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Giriş Yap", for: .normal)
         btn.backgroundColor = .white
@@ -66,52 +67,52 @@ class WelcomeChooseController: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
-        
-        if !CheckInternet.Connection() {
-            let vc = NoInternetController(completion: nil)
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
+
+        checkInternetConnection(completion: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        editLayot()
+        editLayout()
     }
     
-    
-    func editLayot() {
+    func editLayout() {
         view.backgroundColor = .white
         
-        let stackView = UIStackView(arrangedSubviews: [lblTitle,lblDescription])
+        let stackView = UIStackView(arrangedSubviews: [labelTitle, labelDescription])
         stackView.axis = .vertical
         stackView.spacing = 15
         
-        let btnStackView = UIStackView(arrangedSubviews: [btnSignUp,btnSignIn])
-        btnStackView.axis = .horizontal
-        btnStackView.spacing = 15
-        btnStackView.distribution = .fillEqually
+        let buttonStackView = UIStackView(arrangedSubviews: [buttonSignUp, buttonSignIn])
+        buttonStackView.axis = .horizontal
+        buttonStackView.spacing = 15
+        buttonStackView.distribution = .fillEqually
         
-        view.addSubview(imgLogo)
-        
+        view.addSubview(imageViewLogo)
         view.addSubview(stackView)
+        view.addSubview(buttonStackView)
         
-        view.addSubview(btnStackView)
+        imageViewLogo.centerViewAtSuperView()
         
-        imgLogo.centerViewAtSuperView()
+        stackView.anchor(top: imageViewLogo.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 20, left: 30, bottom: 0, right: 30))
         
-        stackView.anchor(top: imgLogo.bottomAnchor, bottom: nil, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 20, left: 30, bottom: 0, right: 30))
-        
-        btnStackView.anchor(top: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 20, right: 20))
+        buttonStackView.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 0, left: 20, bottom: 20, right: 20))
     }
     
     @objc func actionSignUp() {
-        navigationController?.pushViewController(SignUpController(), animated: true)
+        navigationController?.pushViewController(SignUpController(
+            store: .init(initialState: RegistrationState(),
+                         reducer: registrationReducer,
+                         environment: RegistrationEnvironment(service: Services.registrationService,
+                                                              mainQueue: .main))), animated: true)
     }
-    
+
     @objc func actionSignIn() {
-        navigationController?.pushViewController(SignInController(), animated: true)
+        navigationController?.pushViewController(SignInController(
+            store: .init(initialState: LoginState(),
+                         reducer: loginReducer,
+                         environment: LoginEnvironment(service: Services.loginService,
+                                                       mainQueue: .main))), animated: true)
     }
-    
 }

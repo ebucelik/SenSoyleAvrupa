@@ -21,7 +21,7 @@ class HomeController: UIViewController {
     }
 
     // MARK: Variables
-    private let service: ViewControllerServiceProtocol
+    private let service: SharedServiceProtocol
     private var state: State = State(oldVideoDataModel: [])
     private var prefetchedPlayer: [[String: AVPlayer]] = []
     private var interstitial: GADInterstitialAd?
@@ -38,7 +38,7 @@ class HomeController: UIViewController {
     // MARK: Views
     let tableView = UITableView()
 
-    init(service: ViewControllerService) {
+    init(service: SharedServiceProtocol) {
         self.service = service
 
         super.init(nibName: nil, bundle: nil)
@@ -74,7 +74,7 @@ class HomeController: UIViewController {
             cell.homeView.playerView.player?.pause()
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -211,7 +211,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
                                                             pp: model.pp ?? "",
                                                             username: model.username ?? ""),
                                        email: model.email ?? "",
-                                       service: ViewControllerService())
+                                       service: Services.sharedService)
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
