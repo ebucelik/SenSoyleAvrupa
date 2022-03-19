@@ -13,7 +13,7 @@ import Alamofire
 
 class HomeView: UIView {
 
-    // MARK: Variables
+    // MARK: Properties
     private(set) var isPlaying = true
 
     // MARK: Models
@@ -75,12 +75,6 @@ class HomeView: UIView {
         playerView.isUserInteractionEnabled = true
         playerView.playerLayer.videoGravity = .resize
         return playerView
-    }()
-
-    let activityIndicator: NVActivityIndicatorView = {
-        let view = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 30, height: 30), type: .ballClipRotatePulse, color: .customTintColor(), padding: nil)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
     }()
 
     let profilImage: UIImageView = {
@@ -210,12 +204,10 @@ class HomeView: UIView {
         addSubview(stackView)
         addSubview(stackViewLabel)
         addSubview(imageViewPause)
-        addSubview(activityIndicator)
         addSubview(ratingView)
         addSubview(loadingView)
 
         playerView.addToSuperViewAnchors()
-        activityIndicator.centerViewAtSuperView()
 
         stackView.anchor(bottom: safeAreaLayoutGuide.bottomAnchor,
                          trailing: trailingAnchor,

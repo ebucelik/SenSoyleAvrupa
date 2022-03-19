@@ -18,7 +18,7 @@ class HeaderCollectionView: UICollectionReusableView {
             guard let userModel = userModel else { return }
 
             if let pp = userModel.pp, pp != "\(NetworkManager.url)/public/pp" {
-                imageViewProfilePicture.sd_setImage(with: URL(string: pp), completed: nil)
+                imageViewProfilePicture.sd_setImage(with: URL(string: pp))
             }
             labelCoinCount.text = "\(userModel.coin ?? 0)"
             labelPointCount.text = "\(userModel.points ?? 0)"

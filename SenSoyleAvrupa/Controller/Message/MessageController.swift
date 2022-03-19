@@ -64,11 +64,11 @@ class MessageController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messageModels == [] ? 1 : messageModels.count
+        return messageModels.isEmpty ? 1 : messageModels.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if messageModels == [] {
+        if messageModels.isEmpty {
             let cell = tableView.dequeueReusableCell(withIdentifier: "EmptyCell") as! EmptyCell
             let tableViewFrame = CGRect(origin: .zero,
                                         size: CGSize(width: tableView.frame.width,

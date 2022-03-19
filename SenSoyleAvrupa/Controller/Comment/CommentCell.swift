@@ -8,35 +8,37 @@
 import UIKit
 
 class CommentCell: UITableViewCell {
-    
-    let imgProfile : UIImageView = {
+
+    // MARK: Views
+    let imageViewProfile: UIImageView = {
         let img = UIImageView(image: UIImage(systemName: "person.crop.circle")?.withRenderingMode(.alwaysOriginal).withTintColor(.customLabelColor()))
+        img.contentMode = .scaleAspectFill
         img.heightAnchor.constraint(equalToConstant: 40).isActive = true
         img.widthAnchor.constraint(equalToConstant: 40).isActive = true
         img.layer.cornerRadius = 20
         img.clipsToBounds = true
         return img
     }()
-    
-    let commentView : UIView = {
-       let view = UIView()
+
+    let viewComment: UIView = {
+        let view = UIView()
         view.backgroundColor = .customBackground()
-        view.layer.cornerRadius = 15
+        view.layer.cornerRadius = 10
         return view
     }()
     
-    let lblName : UILabel = {
-       let lbl = UILabel()
+    let labelDate: UILabel = {
+        let lbl = UILabel()
         lbl.textColor = .customLabelColor()
-        lbl.font = .boldSystemFont(ofSize: 18)
+        lbl.font = .systemFont(ofSize: 12)
         lbl.textAlignment = .left
         lbl.numberOfLines = 0
         lbl.text = ""
         return lbl
     }()
     
-    let lblComment : UILabel = {
-       let lbl = UILabel()
+    let labelComment: UILabel = {
+        let lbl = UILabel()
         lbl.textColor = .customLabelColor()
         lbl.font = .systemFont(ofSize: 17)
         lbl.textAlignment = .left
@@ -45,8 +47,8 @@ class CommentCell: UITableViewCell {
         return lbl
     }()
     
-    let btnSpam : UIButton = {
-       let btn = UIButton()
+    let buttonSpam: UIButton = {
+        let btn = UIButton()
         btn.setImage(UIImage(systemName: "rectangle.and.pencil.and.ellipsis"), for: .normal)
         btn.tintColor = .black
         return btn
@@ -58,34 +60,32 @@ class CommentCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .clear
         
-        let stackView = UIStackView(arrangedSubviews: [lblName,lblComment])
+        let stackView = UIStackView(arrangedSubviews: [labelComment, labelDate])
         stackView.axis = .vertical
         stackView.spacing = 5
         
-        addSubview(imgProfile)
+        addSubview(imageViewProfile)
+        addSubview(viewComment)
+        //addSubview(buttonSpam)
         
-        addSubview(commentView)
+        viewComment.addSubview(stackView)
         
-        addSubview(btnSpam)
-        
-        commentView.addSubview(stackView)
-        
-        imgProfile.anchor(top: topAnchor, bottom: nil, leading: leadingAnchor, trailing: nil,padding: .init(top: 10, left: 10, bottom: 0, right: 0))
-        
-        btnSpam.anchor(top: imgProfile.bottomAnchor, bottom: nil, leading: leadingAnchor, trailing: nil,padding: .init(top: 5, left: 15, bottom: 0, right: 0))
-        
-        commentView.anchor(top: topAnchor, bottom: bottomAnchor, leading: imgProfile.trailingAnchor, trailing: trailingAnchor,padding: .init(top: 10, left: 5, bottom: 10, right: 10))
-        
-        stackView.anchor(top: commentView.topAnchor, bottom: commentView.bottomAnchor, leading: commentView.leadingAnchor, trailing: commentView.trailingAnchor,padding: .init(top: 10, left: 10, bottom: 10, right: 10))
-        
-        btnSpam.isHidden = true
-        
-    }
+        imageViewProfile.anchor(top: topAnchor,
+                                leading: leadingAnchor,
+                                padding: .init(top: 10, left: 10, bottom: 0, right: 0))
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+        viewComment.anchor(top: topAnchor,
+                           bottom: bottomAnchor,
+                           leading: imageViewProfile.trailingAnchor,
+                           trailing: trailingAnchor,
+                           padding: .init(top: 10, left: 5, bottom: 10, right: 10))
+        
+        stackView.anchor(top: viewComment.topAnchor,
+                         bottom: viewComment.bottomAnchor,
+                         leading: viewComment.leadingAnchor,
+                         trailing: viewComment.trailingAnchor,
+                         padding: .init(all: 10))
 
-        // Configure the view for the selected state
+        //buttonSpam.isHidden = true
     }
-    
 }

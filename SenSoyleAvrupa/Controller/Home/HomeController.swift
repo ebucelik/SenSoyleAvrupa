@@ -27,7 +27,7 @@ class HomeController: UIViewController {
     private var interstitial: GADInterstitialAd?
 
     // MARK: Models
-    private var videoDataModel = [VideoDataModel]() {
+    private var videoDataModels = [VideoDataModel]() {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -37,6 +37,7 @@ class HomeController: UIViewController {
 
     // MARK: Views
     let tableView = UITableView()
+    let refreshControl = UIRefreshControl()
 
     init(service: SharedServiceProtocol) {
         self.service = service
@@ -148,7 +149,9 @@ class HomeController: UIViewController {
     }
 
     func editTableView() {
-        tableView.backgroundColor = .black
+        refreshControl.addTarget(self, action: #selector(pullData), for: .valueChanged)
+
+        tableView.backgroundColor = .white
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.tableFooterView = UIView()
         tableView.isPagingEnabled = true
@@ -159,22 +162,28 @@ class HomeController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.prefetchDataSource = self
+        tableView.refreshControl = refreshControl
+
+        refreshControl.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 80))
     }
 
+    @objc
     func pullData() {
         service.pullVideoData(email: CacheUser.email) { [self] videoDataModels in
             if state.oldVideoDataModel != videoDataModels {
                 prefetchedPlayer.removeAll()
                 state = State(oldVideoDataModel: videoDataModels)
-                videoDataModel = videoDataModels
+                self.videoDataModels = videoDataModels
             }
+
+            refreshControl.endRefreshing()
         }
     }
 }
 
 extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return videoDataModel.count
+        return videoDataModels.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -195,7 +204,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
         }*/
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath) as! HomeCell
-        let model = videoDataModel[indexPath.row]
+        let model = videoDataModels[indexPath.row]
         cell.homeView.configure(with: model)
 
         /// Use prefetched videos to increase the usability.
@@ -308,7 +317,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
 
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach {
-            guard let url = URL(string: "\(NetworkManager.url)/video/\(videoDataModel[$0.row].video ?? "")") else { return }
+            guard let url = URL(string: "\(NetworkManager.url)/video/\(videoDataModels[$0.row].video ?? "")") else { return }
 
             prefetchedPlayer.appendIfNotContains(key: "\($0.row)", value: ["\($0.row)": AVPlayer(url: url)])
         }
