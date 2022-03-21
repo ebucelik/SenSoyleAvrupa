@@ -17,6 +17,6 @@ final class ChooseProfileImageService: ChooseProfileImageServiceProtocol {
     func uploadImage(email: String, jpegData: Data) -> AnyPublisher<Int, APIError> {
         let parameters = ["email": email]
 
-        return NetworkManager.upload(endpoint: "/api/upload-pp", parameters: parameters, data: jpegData, mimeType: ".png")
+        return NetworkManager.upload(endpoint: "/api/upload-pp", parameters: parameters, data: jpegData, url: nil, mimeType: ".png")
     }
 }

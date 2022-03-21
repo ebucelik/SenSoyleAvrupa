@@ -15,7 +15,7 @@ class EditProfileController: UIViewController {
         var oldProfilePicture: UIImage
     }
 
-    // MARK: Variables
+    // MARK: Properties
     private var state: State
     private let service: SharedServiceProtocol
 

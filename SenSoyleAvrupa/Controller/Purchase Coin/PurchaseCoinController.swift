@@ -18,7 +18,7 @@ class PurchaseCoinController: UIViewController {
         var initialVideoPurchased: Bool
     }
 
-    // MARK: Variables
+    // MARK: Properties
     private var state: State
     private let service: SharedServiceProtocol
     private var purchaseModels = [PurchaseModel]()

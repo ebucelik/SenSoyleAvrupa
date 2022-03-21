@@ -12,7 +12,7 @@ import SDWebImage
 class HeaderCollectionView: UICollectionReusableView {
     static let identifer = "HeaderCollectionView"
 
-    // MARK: Variables
+    // MARK: Properties
     var userModel: UserModel? {
         didSet {
             guard let userModel = userModel else { return }

@@ -23,6 +23,8 @@
 		712FA80E27CA2CF10020CAAB /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */; };
 		712FA81027CA30840020CAAB /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA80F27CA30840020CAAB /* HomeView.swift */; };
 		712FA81227CA352A0020CAAB /* VideoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA81127CA352A0020CAAB /* VideoController.swift */; };
+		713335EE27E902A3003B624F /* ShareVideoCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713335ED27E902A3003B624F /* ShareVideoCore.swift */; };
+		713335F027E90549003B624F /* ShareVideoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713335EF27E90549003B624F /* ShareVideoService.swift */; };
 		713A27D527DD221E00093DE0 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713A27D427DD221E00093DE0 /* WebViewController.swift */; };
 		714A4DB327CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */; };
 		714AE41D27D249CD00ACC228 /* SharedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714AE41C27D249CD00ACC228 /* SharedService.swift */; };
@@ -113,6 +115,8 @@
 		712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		712FA80F27CA30840020CAAB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		712FA81127CA352A0020CAAB /* VideoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoController.swift; sourceTree = "<group>"; };
+		713335ED27E902A3003B624F /* ShareVideoCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareVideoCore.swift; sourceTree = "<group>"; };
+		713335EF27E90549003B624F /* ShareVideoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareVideoService.swift; sourceTree = "<group>"; };
 		713A27D427DD221E00093DE0 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RangeReplaceableCollection+Extension.swift"; sourceTree = "<group>"; };
 		714AE41C27D249CD00ACC228 /* SharedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedService.swift; sourceTree = "<group>"; };
@@ -215,6 +219,7 @@
 				711F8EEA27E4EA3900137EE4 /* LoginService.swift */,
 				711F8EEE27E5CBC600137EE4 /* RegistrationService.swift */,
 				711F8EF227E5DC3100137EE4 /* ChooseProfileImageService.swift */,
+				713335EF27E90549003B624F /* ShareVideoService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -445,6 +450,7 @@
 			isa = PBXGroup;
 			children = (
 				E462A672262A41AD008F191B /* ShareVideoController.swift */,
+				713335ED27E902A3003B624F /* ShareVideoCore.swift */,
 			);
 			path = ShareVideo;
 			sourceTree = "<group>";
@@ -627,6 +633,7 @@
 				E4B666452635890D0017E2D0 /* UserModel.swift in Sources */,
 				E42A33B72636184F00AB6CDA /* VideoDataModel.swift in Sources */,
 				E4F959C126262F2700DC5960 /* LoadingView.swift in Sources */,
+				713335EE27E902A3003B624F /* ShareVideoCore.swift in Sources */,
 				E4E860B12624DC5F007A1915 /* ViewController.swift in Sources */,
 				E4F959CF262639C000DC5960 /* ChooseProfileImageController.swift in Sources */,
 				E452251E2624F7CD001ACD0A /* SplashViewController.swift in Sources */,
@@ -655,6 +662,7 @@
 				E45225312624FD34001ACD0A /* CustomTextField.swift in Sources */,
 				E40735E02638819400A21E3D /* Comment.swift in Sources */,
 				7113785627C9689000C23710 /* PlayerView.swift in Sources */,
+				713335F027E90549003B624F /* ShareVideoService.swift in Sources */,
 				E48E3C8D262DCE1C001C4C54 /* SignUpModel.swift in Sources */,
 				E462A673262A41AD008F191B /* ShareVideoController.swift in Sources */,
 				711F8EFE27E60B9D00137EE4 /* EmptyCell.swift in Sources */,

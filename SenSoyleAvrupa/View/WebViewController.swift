@@ -9,7 +9,7 @@ import WebKit
 
 class WebViewController: UIViewController {
 
-    // MARK: Variables
+    // MARK: Properties
     private let url: URL
 
     // MARK: Views

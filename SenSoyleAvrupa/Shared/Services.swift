@@ -28,4 +28,9 @@ final class Services {
     static var chooseProfileImageService: ChooseProfileImageServiceProtocol {
         ChooseProfileImageService()
     }
+
+    // MARK: ShareVideoService
+    static var shareVideoService: ShareVideoServiceProtocol {
+        ShareVideoService()
+    }
 }

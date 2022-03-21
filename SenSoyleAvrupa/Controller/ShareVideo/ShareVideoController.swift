@@ -6,17 +6,21 @@
 //
 
 import UIKit
-import Alamofire
 import AVFoundation
+import Combine
+import ComposableArchitecture
 
 class ShareVideoController: UITableViewController {
 
-    // MARK: Variables
-    private let service: SharedServiceProtocol
-    private var urlLocal : URL?
-    private var coin = 0
+    // MARK: Properties
+    var store: Store<ShareVideoState, ShareVideoAction>
+    var viewStore: ViewStore<ShareVideoState, ShareVideoAction>
+    var cancellable: Set<AnyCancellable> = []
+    private var videoUrl: URL?
 
     // MARK: Views
+    let loadingView = LoadingView()
+
     var videoPicker: VideoPicker!
     
     let buttonDismiss: UIButton = {
@@ -127,10 +131,9 @@ class ShareVideoController: UITableViewController {
         return btn
     }()
 
-    let loadingView = LoadingView()
-
-    init(service: SharedServiceProtocol) {
-        self.service = service
+    init(store: Store<ShareVideoState, ShareVideoAction>) {
+        self.store = store
+        self.viewStore = ViewStore(store)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -155,6 +158,8 @@ class ShareVideoController: UITableViewController {
         editLayout()
         
         editTableView()
+
+        setupStateObserver()
     }
     
     func editLayout() {
@@ -194,30 +199,99 @@ class ShareVideoController: UITableViewController {
         tableView.allowsMultipleSelection = false
         
         //Video View
-        self.playerView.contentMode = .scaleAspectFill
-        self.playerView.player?.isMuted = true
+        playerView.contentMode = .scaleAspectFill
+        playerView.player?.isMuted = true
         
         labelTitle.text = "Video: (Seçilmedi)"
         playerView.isHidden = true
     }
-    
-    func pullDataUser() {
-        service.pullUserData(email: CacheUser.email) {
-            self.labelCoinCount.text = "\($0.coin ?? 0)"
+
+    func setupStateObserver() {
+        viewStore.publisher.shareVideoLoadingState
+            .sink {
+                self.shareVideoLoadingStateUpdated(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.shareVideoStatusCode
+            .sink { _ in
+                self.shareVideoStatusCodeUpdated()
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.coinSettingsLoadingState
+            .sink {
+                self.coinSettingsLoadingStateUpdated(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.coinSettingsModel
+            .sink { _ in
+                self.coinSettingsModelStateUpdated()
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.userLoadingState
+            .sink {
+                self.userLoadingStateUpdated(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.userModel
+            .sink { _ in
+                self.userModelStateUpdated()
+            }
+            .store(in: &cancellable)
+    }
+
+    func shareVideoLoadingStateUpdated(state: ShareVideoLoadingState) {
+        handleLoadingState(state: state)
+    }
+
+    func shareVideoStatusCodeUpdated() {
+        guard let statusCode = viewStore.shareVideoStatusCode else { return }
+
+        if statusCode == 200 {
+            dismiss(animated: true)
         }
     }
 
-    func pullDataCoinCount() {
-        NetworkManager.call(endpoint: "/api/coin-settings", method: .get, parameters: .init()) { [self] (result: Result<CoinSettingsModel, Error>) in
-            switch result {
-            case let .failure(error):
-                print("Network request error: \(error)")
-            case let .success(coinSettingsModel):
-                coin = coinSettingsModel.first_coin ?? 0
+    func coinSettingsLoadingStateUpdated(state: CoinSettingsLoadingState) {
+        handleLoadingState(state: state)
+    }
 
-                labelCoinInfo.text = "İlk video paylaşımı için video başına \(coinSettingsModel.first_coin ?? 0) coin, diğer videolar için ise video başına \(coinSettingsModel.coin ?? 0) coin bakiyenizden çıkılıcaktır"
-            }
+    func coinSettingsModelStateUpdated() {
+        guard let coinSettingsModel = viewStore.coinSettingsModel else { return }
+
+        labelCoinInfo.text = "İlk video paylaşımı için video başına \(coinSettingsModel.first_coin ?? 0) coin, diğer videolar için ise video başına \(coinSettingsModel.coin ?? 0) coin bakiyenizden çıkılıcaktır"
+    }
+
+    func userLoadingStateUpdated(state: UserLoadingState) {
+        handleLoadingState(state: state)
+    }
+
+    func userModelStateUpdated() {
+        guard let userModel = viewStore.userModel else { return }
+
+        labelCoinCount.text = "\(userModel.coin ?? 0)"
+    }
+
+    private func handleLoadingState<T: Codable>(state: Loadable<T>) {
+        switch state {
+        case .none, .loaded, .error:
+            loadingView.isHidden = true
+
+        case .loading, .refreshing:
+            loadingView.isHidden = false
         }
+    }
+
+    func pullDataUser() {
+        viewStore.send(.getUser(email: CacheUser.email))
+    }
+
+    func pullDataCoinCount() {
+        viewStore.send(.getCoinSettings)
     }
 
     override func dismissViewController() {
@@ -230,7 +304,7 @@ class ShareVideoController: UITableViewController {
     }
     
     @objc func actionShareVideo() {
-        if Int(labelCoinCount.text!) ?? 0 < coin {
+        if Int(labelCoinCount.text!) ?? 0 < viewStore.coins {
             let alert = UIAlertController(title: "Uyarı", message: "Video paylaşmanız için yeterli Coin e sahib değilsiniz", preferredStyle: .alert)
 
             alert.addAction(UIAlertAction(title: "Coin Satın Al", style: .default, handler: { (_) in
@@ -238,35 +312,13 @@ class ShareVideoController: UITableViewController {
             }))
 
             alert.addAction(UIAlertAction(title: "İptal et", style: .cancel, handler: nil))
-            present(alert, animated: true, completion: nil)
+            present(alert, animated: true)
         } else {
             if let comment = textFieldVideoTitle.text, comment.isEmpty {
                 makeAlert(title: "Uyarı", message: "Paylaşımınız için yorum yazınız lütfen")
-            } else if let comment = textFieldVideoTitle.text, urlLocal != nil {
-                loadingView.isHidden = false
-
-                let parameters = ["email": CacheUser.email,
-                                  "status": comment]
-
-                AF.upload(multipartFormData: { multipartFormData in
-                    for (key, value) in parameters {
-                        multipartFormData.append(value.data(using: .utf8)!, withName: key)
-                    }
-
-                    if let URL = self.urlLocal {
-                        print(URL)
-                        multipartFormData.append(URL, withName: "file", fileName: "file", mimeType: "video/mp4")
-                    }
-                }, to: "\(NetworkManager.url)/api/upload-vid").response { [self] response in
-                    print(response)
-                    if response.response?.statusCode == 200 {
-                        print("OK. Done")
-                        loadingView.isHidden = true
-                        dismiss(animated: true)
-                    }
-                }
+            } else if let comment = textFieldVideoTitle.text, let url = videoUrl {
+                viewStore.send(.shareVideo(email: CacheUser.email, comment: comment, url: url))
             } else {
-                loadingView.isHidden = true
                 makeAlert(title: "Uyarı", message: "Video Seçilmedi")
             }
         }
@@ -289,11 +341,10 @@ extension ShareVideoController: VideoPickerDelegate {
     func didSelect(url: URL?) {
         guard let url = url else { return }
 
-        urlLocal = url
+        videoUrl = url
         
         labelTitle.text = "Video"
         playerView.isHidden = false
         playerView.player = AVPlayer(url: url)
     }
 }
-

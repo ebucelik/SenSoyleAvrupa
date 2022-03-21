@@ -20,7 +20,7 @@ class HomeController: UIViewController {
         private(set) var oldVideoDataModel: [VideoDataModel]
     }
 
-    // MARK: Variables
+    // MARK: Properties
     private let service: SharedServiceProtocol
     private var state: State = State(oldVideoDataModel: [])
     private var prefetchedPlayer: [[String: AVPlayer]] = []

@@ -72,6 +72,7 @@ class NetworkManager {
                        endpoint: String,
                        parameters: [String: String],
                        data: Data?,
+                       url: URL?,
                        mimeType: String) -> AnyPublisher<Int, APIError> {
         return Deferred {
             Future { promise in
@@ -82,6 +83,8 @@ class NetworkManager {
 
                     if let data = data {
                         multipartFormData.append(data, withName: "file", fileName: "file", mimeType: mimeType)
+                    } else if let url = url {
+                        multipartFormData.append(url, withName: "file", fileName: "file", mimeType: mimeType)
                     }
                 }, to: domain + endpoint)
                     .response { response in

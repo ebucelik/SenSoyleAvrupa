@@ -12,7 +12,7 @@ import Alamofire
 
 class VideoController: UIViewController {
 
-    // MARK: Variables
+    // MARK: Properties
     private let homeView: HomeView
     private let model: VideoDataModel
     private let service: SharedServiceProtocol

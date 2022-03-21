@@ -9,7 +9,7 @@ import UIKit
 
 class NoInternetController: UIViewController {
 
-    // MARK: Variables
+    // MARK: Properties
     private let completion: (() -> Void)?
 
     // MARK: Views

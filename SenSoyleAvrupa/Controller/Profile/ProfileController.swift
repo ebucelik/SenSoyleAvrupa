@@ -16,7 +16,7 @@ class ProfileController: UIViewController {
         var oldVideoDataModels: [VideoDataModel]
     }
 
-    // MARK: Variables
+    // MARK: Properties
     private let email: String
     private let isOwnUserProfile: Bool
     private var state: State
@@ -135,14 +135,17 @@ class ProfileController: UIViewController {
         menu?.presentationStyle = .viewSlideOutMenuPartialIn
         SideMenuManager.default.leftMenuNavigationController = menu
         SideMenuManager.default.addPanGestureToPresent(toView: self.view)
-        present(menu!, animated: true, completion: nil)
+        present(menu!, animated: true)
     }
 
     @objc func actionAddVideo() {
-        let vc = ShareVideoController(service: Services.sharedService)
+        let vc = ShareVideoController(store: .init(initialState: ShareVideoState(),
+                                                   reducer: shareVideoReducer,
+                                                   environment: ShareVideoEnvironment(service: Services.shareVideoService,
+                                                                                      mainQueue: .main)))
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
-        present(navigationVC, animated: true, completion: nil)
+        present(navigationVC, animated: true)
     }
 
     func pullData() {
