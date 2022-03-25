@@ -28,11 +28,15 @@ class CustomTabbar: UITabBarController{
                                                   seciliOlmayanIcon: UIImage(systemName: "music.note.house") ?? UIImage(),
                                                   title: "Ana sayfa")
         
-        let profileController = navControllerOlustur(rootViewController: ProfileController(email: CacheUser.email,
-                                                                                           service: Services.sharedService,
-                                                                                           isOwnUserProfile: true),
-                                                     seciliOlmayanIcon: UIImage(systemName: "person.fill.viewfinder") ?? UIImage(),
-                                                     title: "Profil")
+        let profileController = navControllerOlustur(
+            rootViewController: ProfileController(store: .init(initialState: ProfileState(),
+                                                               reducer: profileReducer,
+                                                               environment: ProfileEnvironment(service: Services.profileService,
+                                                                                               mainQeue: .main)),
+                                                  email: CacheUser.email,
+                                                  isOwnUserProfile: true),
+            seciliOlmayanIcon: UIImage(systemName: "person.fill.viewfinder") ?? UIImage(),
+            title: "Profil")
         
         viewControllers = [homeController,profileController]
         

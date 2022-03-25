@@ -8,19 +8,18 @@
 import UIKit
 import SideMenu
 import Alamofire
+import Combine
+import ComposableArchitecture
 
 class ProfileController: UIViewController {
 
-    private struct State {
-        var oldUserModel: UserModel?
-        var oldVideoDataModels: [VideoDataModel]
-    }
-
     // MARK: Properties
+    private let store: Store<ProfileState, ProfileAction>
+    private var viewStore: ViewStore<ProfileState, ProfileAction>
+    private var cancellable: Set<AnyCancellable> = []
     private let email: String
     private let isOwnUserProfile: Bool
-    private var state: State
-    private let service: SharedServiceProtocol
+    private let collectionViewHeaderHeight: CGFloat = 200
 
     // MARK: Models
     private var userModel: UserModel? {
@@ -39,9 +38,10 @@ class ProfileController: UIViewController {
     }
 
     // MARK: Views
+    private let loadingView = LoadingView()
     private let refreshControl = UIRefreshControl()
   
-    let collectionView : UICollectionView = {
+    let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -50,12 +50,11 @@ class ProfileController: UIViewController {
         return cv
     }()
 
-    init(userModel: UserModel? = nil, email: String, service: SharedServiceProtocol, isOwnUserProfile: Bool = false) {
-        self.userModel = userModel
+    init(store: Store<ProfileState, ProfileAction>, userModel: UserModel? = nil, email: String, isOwnUserProfile: Bool = false) {
+        self.store = store
+        self.viewStore = ViewStore(store)
         self.email = email
-        self.service = service
         self.isOwnUserProfile = isOwnUserProfile
-        self.state = State(oldUserModel: userModel, oldVideoDataModels: videoDataModels)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -76,7 +75,9 @@ class ProfileController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        setupStateChange()
+
         pullData()
 
         editLayout()
@@ -87,10 +88,21 @@ class ProfileController: UIViewController {
     func editLayout() {
         
         view.backgroundColor = .white
-        
+
         view.addSubview(collectionView)
-        
-        collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 5, left: 20, bottom: 0, right: 20))
+        view.addSubview(loadingView)
+
+        collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor,
+                              bottom: view.safeAreaLayoutGuide.bottomAnchor,
+                              leading: view.leadingAnchor,
+                              trailing: view.trailingAnchor,
+                              padding: .init(top: 5, left: 20, bottom: 0, right: 20))
+
+        loadingView.anchor(top: view.safeAreaLayoutGuide.topAnchor,
+                           bottom: view.safeAreaLayoutGuide.bottomAnchor,
+                           leading: view.leadingAnchor,
+                           trailing: view.trailingAnchor,
+                           padding: .init(top: collectionViewHeaderHeight))
 
         if isOwnUserProfile {
             navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"), style: .done, target: self, action: #selector(actionLeftMenu))
@@ -100,7 +112,7 @@ class ProfileController: UIViewController {
             navigationItem.rightBarButtonItem?.tintColor = .customTintColor()
         }
     }
-    
+
     func editCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -119,7 +131,65 @@ class ProfileController: UIViewController {
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
     }
-    
+
+    func setupStateChange() {
+        viewStore.publisher.loadingUserModel
+            .sink {
+                self.loadingUserModelUpdated(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.userModel
+            .sink { _ in
+                self.userModelUpdated()
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.loadingVideoDataModel
+            .sink {
+                self.loadingVideoDataModelsUpdated(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.videoDataModels
+            .sink { _ in
+                self.videoDataModelsUpdated()
+            }
+            .store(in: &cancellable)
+    }
+
+    func loadingUserModelUpdated(state: UserModelLoadingState) {
+        switch state {
+        case .none, .loaded, .error:
+            loadingView.isHidden = true
+
+        case .loading, .refreshing:
+            loadingView.isHidden = false
+        }
+    }
+
+    func userModelUpdated() {
+        guard let userModel = viewStore.userModel else { return }
+
+        self.userModel = userModel
+    }
+
+    func loadingVideoDataModelsUpdated(state: VideoDataModelLoadingState) {
+        switch state {
+        case .none, .loaded, .error:
+            loadingView.isHidden = true
+
+        case .loading, .refreshing:
+            loadingView.isHidden = false
+        }
+    }
+
+    func videoDataModelsUpdated() {
+        guard let videoDataModels = viewStore.videoDataModels else { return }
+
+        self.videoDataModels = videoDataModels
+    }
+
     @objc private func didPullToRefresh(_ sender: Any) {
         pullData()
         refreshControl.endRefreshing()
@@ -149,18 +219,10 @@ class ProfileController: UIViewController {
     }
 
     func pullData() {
-        service.pullUserData(email: email) { [self] userModel in
-            if state.oldUserModel != userModel {
-                state.oldUserModel = userModel
-                self.userModel = userModel
-            }
-
-            service.pullProfileData(email: email, userId: userModel.id ?? 0) { videoDataModels in
-                if state.oldVideoDataModels != videoDataModels {
-                    state.oldVideoDataModels = videoDataModels
-                    self.videoDataModels = videoDataModels
-                }
-            }
+        if let userModel = userModel {
+            viewStore.send(.loadVideos(email: email, userId: userModel.id ?? 0))
+        } else {
+            viewStore.send(.loadUser(email: email))
         }
     }
 }
@@ -169,15 +231,16 @@ extension ProfileController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return videoDataModels.count
     }
-}
 
-extension ProfileController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileVideoCell", for: indexPath) as! ProfileVideoCell
         let model = videoDataModels[indexPath.row]
         cell.configureVideo(model: model)
         return cell
     }
+}
+
+extension ProfileController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let model = videoDataModels[indexPath.row]
@@ -215,11 +278,17 @@ extension ProfileController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.size.width, height: 200)
+        return CGSize(width: view.frame.size.width, height: collectionViewHeaderHeight)
     }
 
     @objc func actionEditProfile() {
         let vc = EditProfileController(service: Services.sharedService)
+        vc.onDismiss = { [self] modelDidChanged in
+            if modelDidChanged {
+                viewStore.send(.loadUser(email: email))
+            }
+        }
+
         navigationController?.pushViewController(vc, animated: true)
     }
 }

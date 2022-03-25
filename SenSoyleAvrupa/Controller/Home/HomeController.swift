@@ -214,13 +214,16 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
         cell.homeView.buttonProfileImageAction = { [self] in
             print("Go to profile account")
 
-            let vc = ProfileController(userModel: UserModel(coin: 0,
+            let vc = ProfileController(store: .init(initialState: ProfileState(),
+                                                    reducer: profileReducer,
+                                                    environment: ProfileEnvironment(service: Services.profileService,
+                                                                                    mainQeue: .main)),
+                                       userModel: UserModel(coin: 0,
                                                             id: model.id ?? 0,
                                                             points: 0,
                                                             pp: model.pp ?? "",
                                                             username: model.username ?? ""),
-                                       email: model.email ?? "",
-                                       service: Services.sharedService)
+                                       email: model.email ?? "")
             self.navigationController?.pushViewController(vc, animated: true)
         }
         

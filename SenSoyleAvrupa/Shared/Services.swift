@@ -33,4 +33,9 @@ final class Services {
     static var shareVideoService: ShareVideoServiceProtocol {
         ShareVideoService()
     }
+
+    // MARK: ProfileService
+    static var profileService: ProfileServiceProtocol {
+        ProfileService()
+    }
 }

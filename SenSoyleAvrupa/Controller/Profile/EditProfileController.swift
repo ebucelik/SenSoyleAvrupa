@@ -18,6 +18,9 @@ class EditProfileController: UIViewController {
     // MARK: Properties
     private var state: State
     private let service: SharedServiceProtocol
+    private var userModelDidChanged = false
+
+    var onDismiss: ((Bool) -> Void)?
 
     var viewBigCircle: UIView = {
         let view = UIView()
@@ -124,6 +127,12 @@ class EditProfileController: UIViewController {
         editLayout()
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        if let onDismiss = onDismiss {
+            onDismiss(userModelDidChanged)
+        }
+    }
+
     func editLayout() {
         title = "Profili Düzenle"
         
@@ -219,6 +228,8 @@ class EditProfileController: UIViewController {
                 if let status = signUpModel.status, status {
                     state.oldUsername = username
                     pullData()
+                    userModelDidChanged = true
+
                     makeAlert(title: "Başarılı", message: "Kullanıcı adınız başarıyla güncellendi")
                 } else {
                     makeAlert(title: "Uyarı", message: signUpModel.message ?? "")

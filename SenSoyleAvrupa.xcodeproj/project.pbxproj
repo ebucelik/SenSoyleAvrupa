@@ -35,6 +35,8 @@
 		719DE26B27DFD35800B7F1C7 /* LoginCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719DE26A27DFD35800B7F1C7 /* LoginCore.swift */; };
 		71C9D8B627DB8D8600761E14 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C9D8B527DB8D8600761E14 /* IAPManager.swift */; };
 		71C9D8B827DB932B00761E14 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71C9D8B727DB932B00761E14 /* StoreKit.framework */; };
+		71EB934727EDBEDC00B7620C /* ProfileCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71EB934627EDBEDC00B7620C /* ProfileCore.swift */; };
+		71EB934927EDBEF200B7620C /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71EB934827EDBEF200B7620C /* ProfileService.swift */; };
 		81C08B11DA2F6C0EBEEA1985 /* Pods_SenSoyleAvrupa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2836D3E175EC00B1444DD53E /* Pods_SenSoyleAvrupa.framework */; };
 		E40735DD2638741100A21E3D /* Puan.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40735DC2638741100A21E3D /* Puan.swift */; };
 		E40735E02638819400A21E3D /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40735DF2638819400A21E3D /* Comment.swift */; };
@@ -126,6 +128,8 @@
 		719DE26A27DFD35800B7F1C7 /* LoginCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCore.swift; sourceTree = "<group>"; };
 		71C9D8B527DB8D8600761E14 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		71C9D8B727DB932B00761E14 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		71EB934627EDBEDC00B7620C /* ProfileCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCore.swift; sourceTree = "<group>"; };
+		71EB934827EDBEF200B7620C /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		D887853E4071F865BF816DA0 /* Pods-SenSoyleAvrupa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SenSoyleAvrupa.release.xcconfig"; path = "Target Support Files/Pods-SenSoyleAvrupa/Pods-SenSoyleAvrupa.release.xcconfig"; sourceTree = "<group>"; };
 		E40735DC2638741100A21E3D /* Puan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Puan.swift; sourceTree = "<group>"; };
 		E40735DF2638819400A21E3D /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
@@ -220,6 +224,7 @@
 				711F8EEE27E5CBC600137EE4 /* RegistrationService.swift */,
 				711F8EF227E5DC3100137EE4 /* ChooseProfileImageService.swift */,
 				713335EF27E90549003B624F /* ShareVideoService.swift */,
+				71EB934827EDBEF200B7620C /* ProfileService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -442,6 +447,7 @@
 				E42AD0BA2629A526006C218F /* HeaderCollectionView.swift */,
 				E45F8179262AF3E3001F7979 /* EditProfileController.swift */,
 				712FA81127CA352A0020CAAB /* VideoController.swift */,
+				71EB934627EDBEDC00B7620C /* ProfileCore.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -659,6 +665,7 @@
 				E45F8183262AFFC7001F7979 /* PurchaseView.swift in Sources */,
 				E444804E26397FB40005223B /* ReklamController.swift in Sources */,
 				E4F78BCA2635C9AE00AAE321 /* CoinCount.swift in Sources */,
+				71EB934727EDBEDC00B7620C /* ProfileCore.swift in Sources */,
 				E45225312624FD34001ACD0A /* CustomTextField.swift in Sources */,
 				E40735E02638819400A21E3D /* Comment.swift in Sources */,
 				7113785627C9689000C23710 /* PlayerView.swift in Sources */,
@@ -668,6 +675,7 @@
 				711F8EFE27E60B9D00137EE4 /* EmptyCell.swift in Sources */,
 				E4C3BC7A2631C1980038F411 /* MessageController.swift in Sources */,
 				E45F817E262AF6B3001F7979 /* PurchaseCoinController.swift in Sources */,
+				71EB934927EDBEF200B7620C /* ProfileService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
