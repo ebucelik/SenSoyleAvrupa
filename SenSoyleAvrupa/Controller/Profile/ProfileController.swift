@@ -69,8 +69,6 @@ class ProfileController: UIViewController {
         navigationController?.navigationBar.isHidden = false
 
         checkInternetConnection(completion: { self.pullData() })
-
-        didPullToRefresh(self)
     }
 
     override func viewDidLoad() {
@@ -213,6 +211,12 @@ class ProfileController: UIViewController {
                                                    reducer: shareVideoReducer,
                                                    environment: ShareVideoEnvironment(service: Services.shareVideoService,
                                                                                       mainQueue: .main)))
+        vc.onDismiss = { [self] modelDidChanged in
+            if modelDidChanged {
+                pullData()
+            }
+        }
+
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true)

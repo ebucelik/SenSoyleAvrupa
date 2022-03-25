@@ -17,6 +17,9 @@ class ShareVideoController: UITableViewController {
     var viewStore: ViewStore<ShareVideoState, ShareVideoAction>
     var cancellable: Set<AnyCancellable> = []
     private var videoUrl: URL?
+    private var videoDataModelChanged = false
+
+    var onDismiss: ((Bool) -> Void)?
 
     // MARK: Views
     let loadingView = LoadingView()
@@ -161,6 +164,12 @@ class ShareVideoController: UITableViewController {
 
         setupStateObserver()
     }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        if let onDismiss = onDismiss {
+            onDismiss(videoDataModelChanged)
+        }
+    }
     
     func editLayout() {
         tableView.backgroundColor = .white
@@ -252,6 +261,7 @@ class ShareVideoController: UITableViewController {
         guard let statusCode = viewStore.shareVideoStatusCode else { return }
 
         if statusCode == 200 {
+            videoDataModelChanged = true
             dismiss(animated: true)
         }
     }
