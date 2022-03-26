@@ -2,7 +2,7 @@
 //  VideoDataModel.swift
 //  SenSoyleAvrupa
 //
-//  Created by ilyas abiyev on 26.04.21.
+//  Created by Ing. Ebu Celik on 05.03.22.
 //
 
 import UIKit

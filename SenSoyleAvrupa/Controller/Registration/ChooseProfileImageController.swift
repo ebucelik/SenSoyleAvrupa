@@ -13,9 +13,9 @@ import ComposableArchitecture
 class ChooseProfileImageController: UIViewController {
 
     // MARK: Properties
-    var store: Store<ChooseProfileImageState, ChooseProfileImageAction>
-    var viewStore: ViewStore<ChooseProfileImageState, ChooseProfileImageAction>
-    var cancellable: Set<AnyCancellable> = []
+    private let store: Store<ChooseProfileImageState, ChooseProfileImageAction>
+    private var viewStore: ViewStore<ChooseProfileImageState, ChooseProfileImageAction>
+    private var cancellable: Set<AnyCancellable> = []
 
     // MARK: Views
     let loadingView = LoadingView()

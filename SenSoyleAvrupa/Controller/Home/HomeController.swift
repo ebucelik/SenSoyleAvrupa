@@ -12,28 +12,28 @@ import AppTrackingTransparency
 import AdSupport
 import AVFoundation
 import IGListKit
+import Combine
+import ComposableArchitecture
 
 class HomeController: UIViewController {
 
-    private struct State {
-        private(set) var oldVideoDataModel: [VideoDataModel]
-    }
-
     // MARK: Properties
-    private let service: SharedServiceProtocol
-    private var state: State = State(oldVideoDataModel: [])
-    private var prefetchedPlayer: [[String: AVPlayer]] = []
+    private let store: Store<HomeState, HomeAction>
+    private var viewStore: ViewStore<HomeState, HomeAction>
+    private var cancellable: Set<AnyCancellable> = []
+
     private var interstitial: GADInterstitialAd?
 
     // MARK: Models
     private var videoDataModels = [VideoDataModel]()
 
     // MARK: Views
+    private let loadingView = LoadingView()
     private let refreshControl = UIRefreshControl()
     private lazy var adapter: ListAdapter = {
         return ListAdapter(updater: ListAdapterUpdater(),
                            viewController: self,
-                           workingRangeSize: 1)
+                           workingRangeSize: 0)
     }()
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -42,8 +42,9 @@ class HomeController: UIViewController {
         return collectionView
     }()
 
-    init(service: SharedServiceProtocol) {
-        self.service = service
+    init(store: Store<HomeState, HomeAction>) {
+        self.store = store
+        self.viewStore = ViewStore(store)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -85,16 +86,37 @@ class HomeController: UIViewController {
         guard let deviceId = UIDevice.current.identifierForVendor?.uuidString else { return }
         GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [deviceId]
 
+        setupStateObservers()
+
         pullData()
         
         editLayout()
 
         editAdMob()
     }
-    
+
+    func editLayout() {
+        view.backgroundColor = .white
+        view.addSubview(collectionView)
+        view.addSubview(loadingView)
+
+        collectionView.addToSuperViewAnchors()
+        loadingView.addToSuperViewAnchors()
+
+        refreshControl.addTarget(self, action: #selector(pullData), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
+
+        refreshControl.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 80))
+
+        adapter.collectionView = collectionView
+        adapter.dataSource = self
+
+        loadingView.isHidden = true
+    }
+
     func editAdMob() {
         let request = GADRequest()
-        GADInterstitialAd.load(withAdUnitID:"ca-app-pub-3940256099942544/4411468910",
+        GADInterstitialAd.load(withAdUnitID: "ca-app-pub-3940256099942544/4411468910",
                                request: request,
                                completionHandler: { [self] ad, error in
             if let error = error {
@@ -104,6 +126,89 @@ class HomeController: UIViewController {
             interstitial = ad
             interstitial?.fullScreenContentDelegate = self
         })
+    }
+
+    func setupStateObservers() {
+        viewStore.publisher.loadingVideoDataModels
+            .sink {
+                self.loadingVideoDataModels(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.videoDataModels
+            .sink { _ in
+                self.videoDataModelsUpdated()
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.loadingSignUpModel
+            .sink {
+                self.loadingSignUpModel(state: $0)
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.spamSignUpModel
+            .sink { _ in
+                self.spamSignUpModelUpdated()
+            }
+            .store(in: &cancellable)
+
+        viewStore.publisher.pointsSignUpModel
+            .sink { _ in
+                self.pointsSignUpModelUpdated()
+            }
+            .store(in: &cancellable)
+    }
+
+    func loadingVideoDataModels(state: VideoDataModelLoadingState) {
+        switch state {
+        case .none, .loaded, .error:
+            loadingView.isHidden = true
+            refreshControl.endRefreshing()
+
+        case .loading, .refreshing:
+            loadingView.isHidden = false
+            refreshControl.beginRefreshing()
+        }
+    }
+
+    func videoDataModelsUpdated() {
+        guard let videoDataModels = viewStore.videoDataModels else { return }
+
+        self.videoDataModels = videoDataModels
+        adapter.performUpdates(animated: true)
+    }
+
+    func loadingSignUpModel(state: SignUpModelLoadingState) {
+        switch state {
+        case .none, .loaded, .error:
+            loadingView.isHidden = true
+
+        case .loading, .refreshing:
+            loadingView.isHidden = false
+        }
+    }
+
+    func spamSignUpModelUpdated() {
+        guard let signUpModel = viewStore.spamSignUpModel else { return }
+
+        if let status = signUpModel.status, status {
+            makeAlert(title: "Başarılı", message: "Bildiriniz bizim için çok önemli. Teşekkürler")
+            pullData()
+        } else {
+            makeAlert(title: "Hata", message: signUpModel.message ?? "")
+        }
+    }
+
+    func pointsSignUpModelUpdated() {
+        guard let signUpModel = viewStore.pointsSignUpModel else { return }
+
+        if let status = signUpModel.status, status {
+            makeAlert(title: "Başarılı", message: "Puan verdiğiniz için teşekkürler")
+            pullData()
+        } else {
+            makeAlert(title: "Hata", message: signUpModel.message ?? "")
+        }
     }
     
     func startAdmob() {
@@ -142,53 +247,17 @@ class HomeController: UIViewController {
         }
     }
 
-    func editLayout() {
-        view.backgroundColor = .white
-        view.addSubview(collectionView)
-        collectionView.addToSuperViewAnchors()
-        refreshControl.addTarget(self, action: #selector(pullData), for: .valueChanged)
-        collectionView.refreshControl = refreshControl
-
-        refreshControl.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 80))
-
-        adapter.collectionView = collectionView
-        adapter.dataSource = self
-    }
-
     @objc
     func pullData() {
-        service.pullVideoData(email: CacheUser.email) { [self] videoDataModels in
-            if state.oldVideoDataModel != videoDataModels {
-                prefetchedPlayer.removeAll()
-                state = State(oldVideoDataModel: videoDataModels)
-                self.videoDataModels = videoDataModels
-                self.adapter.performUpdates(animated: true)
-            }
-
-            refreshControl.endRefreshing()
-        }
+        viewStore.send(.loadingVideoDataModels(email: CacheUser.email))
     }
 
-    func spamPost(type: Int, id: Int) {
-        service.spamPost(type: type, id: id) { [self] in
-            if let status = $0.status, status {
-                makeAlert(title: "Başarılı", message: "Bildiriniz bizim için çok önemli. Teşekkürler")
-                pullData()
-            } else {
-                makeAlert(title: "Hata", message: $0.message ?? "")
-            }
-        }
+    func spamPost(videoId: Int, type: Int) {
+        viewStore.send(.sendSpam(videoId: videoId, type: type))
     }
 
     func sendPoints(email: String, videoId: Int, point: Int) {
-        service.sendPoints(email: email, videoId: videoId, point: point) { [self] in
-            if let status = $0.status, status {
-                makeAlert(title: "Başarılı", message: "Puan verdiğiniz için teşekkürler")
-                pullData()
-            } else {
-                makeAlert(title: "Hata", message: $0.message ?? "")
-            }
-        }
+        viewStore.send(.sendPoints(email: email, videoId: videoId, point: point))
     }
 }
 

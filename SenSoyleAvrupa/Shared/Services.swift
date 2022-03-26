@@ -38,4 +38,9 @@ final class Services {
     static var profileService: ProfileServiceProtocol {
         ProfileService()
     }
+
+    // MARK: HomeService
+    static var homeService: HomeServiceProtocol {
+        HomeService()
+    }
 }
