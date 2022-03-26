@@ -270,6 +270,7 @@ class HomeView: UIView {
 
     func setPlayerView(player: AVPlayer?) {
         playerView.player = player
+        playerView.player?.automaticallyWaitsToMinimizeStalling = false
 
         NotificationCenter.default.addObserver(self,
                                                selector:#selector(self.playerDidFinishPlaying(note:)),

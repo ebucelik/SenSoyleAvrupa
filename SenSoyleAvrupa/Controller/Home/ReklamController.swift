@@ -37,7 +37,7 @@ class ReklamController: UIViewController {
     }
 
     func pullData() {
-        AF.request("\(NetworkManager.url)/api/get-ad",method: .get).responseString { response in
+        AF.request("\(NetworkManager.url)/api/get-ad", method: .get).responseString { response in
             print("response: \(response)")
 
             switch response.result {

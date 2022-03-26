@@ -30,6 +30,8 @@
 		714AE41D27D249CD00ACC228 /* SharedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714AE41C27D249CD00ACC228 /* SharedService.swift */; };
 		717D3B9F27C2693200501FF1 /* VideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717D3B9E27C2693200501FF1 /* VideoModel.swift */; };
 		717D3BA127C26FD000501FF1 /* UIEdgeInsets+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717D3BA027C26FD000501FF1 /* UIEdgeInsets+Extension.swift */; };
+		71803D2427EE5AE400953F4B /* IGListKit in Frameworks */ = {isa = PBXBuildFile; productRef = 71803D2327EE5AE400953F4B /* IGListKit */; };
+		71803D2627EE5F9600953F4B /* HomeSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71803D2527EE5F9600953F4B /* HomeSectionController.swift */; };
 		7183D5CE27BEB5C0009626D2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7183D5CD27BEB5C0009626D2 /* NetworkManager.swift */; };
 		719DE26627DFD0A000B7F1C7 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 719DE26527DFD0A000B7F1C7 /* ComposableArchitecture */; };
 		719DE26B27DFD35800B7F1C7 /* LoginCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719DE26A27DFD35800B7F1C7 /* LoginCore.swift */; };
@@ -64,7 +66,6 @@
 		E462A67A262A453B008F191B /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E462A679262A453B008F191B /* VideoView.swift */; };
 		E47D7C2526370B3200FE3405 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = E47D7C2426370B3200FE3405 /* Configuration.storekit */; };
 		E48E3C8D262DCE1C001C4C54 /* SignUpModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E3C8C262DCE1C001C4C54 /* SignUpModel.swift */; };
-		E49762D0263C860000BE3E16 /* VideoRealseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49762CF263C860000BE3E16 /* VideoRealseController.swift */; };
 		E49762D3263C86EC00BE3E16 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49762D2263C86EC00BE3E16 /* TableView.swift */; };
 		E4B666452635890D0017E2D0 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B666442635890D0017E2D0 /* UserModel.swift */; };
 		E4B74085262C405F00CB9697 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B74084262C405F00CB9697 /* RatingView.swift */; };
@@ -124,6 +125,7 @@
 		714AE41C27D249CD00ACC228 /* SharedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedService.swift; sourceTree = "<group>"; };
 		717D3B9E27C2693200501FF1 /* VideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoModel.swift; sourceTree = "<group>"; };
 		717D3BA027C26FD000501FF1 /* UIEdgeInsets+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Extension.swift"; sourceTree = "<group>"; };
+		71803D2527EE5F9600953F4B /* HomeSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSectionController.swift; sourceTree = "<group>"; };
 		7183D5CD27BEB5C0009626D2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		719DE26A27DFD35800B7F1C7 /* LoginCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCore.swift; sourceTree = "<group>"; };
 		71C9D8B527DB8D8600761E14 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
@@ -157,7 +159,6 @@
 		E462A679262A453B008F191B /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		E47D7C2426370B3200FE3405 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		E48E3C8C262DCE1C001C4C54 /* SignUpModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpModel.swift; sourceTree = "<group>"; };
-		E49762CF263C860000BE3E16 /* VideoRealseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoRealseController.swift; sourceTree = "<group>"; };
 		E49762D2263C86EC00BE3E16 /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		E4B666442635890D0017E2D0 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		E4B74084262C405F00CB9697 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
@@ -199,6 +200,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81C08B11DA2F6C0EBEEA1985 /* Pods_SenSoyleAvrupa.framework in Frameworks */,
+				71803D2427EE5AE400953F4B /* IGListKit in Frameworks */,
 				71C9D8B827DB932B00761E14 /* StoreKit.framework in Frameworks */,
 				719DE26627DFD0A000B7F1C7 /* ComposableArchitecture in Frameworks */,
 			);
@@ -468,7 +470,7 @@
 				E42AD0C32629BF55006C218F /* HomeCell.swift */,
 				E42AD0C42629BF55006C218F /* HomeCell.xib */,
 				E444804D26397FB40005223B /* ReklamController.swift */,
-				E49762CF263C860000BE3E16 /* VideoRealseController.swift */,
+				71803D2527EE5F9600953F4B /* HomeSectionController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -493,6 +495,7 @@
 			name = SenSoyleAvrupa;
 			packageProductDependencies = (
 				719DE26527DFD0A000B7F1C7 /* ComposableArchitecture */,
+				71803D2327EE5AE400953F4B /* IGListKit */,
 			);
 			productName = SenSoyleAvrupa;
 			productReference = E4E860A92624DC5F007A1915 /* SenSoyleAvrupa.app */;
@@ -523,6 +526,7 @@
 			mainGroup = E4E860A02624DC5F007A1915;
 			packageReferences = (
 				719DE26427DFD0A000B7F1C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				71803D2227EE5AE400953F4B /* XCRemoteSwiftPackageReference "IGListKit" */,
 			);
 			productRefGroup = E4E860AA2624DC5F007A1915 /* Products */;
 			projectDirPath = "";
@@ -661,7 +665,6 @@
 				E45225242624F818001ACD0A /* SignUpController.swift in Sources */,
 				714AE41D27D249CD00ACC228 /* SharedService.swift in Sources */,
 				E4E860F92624E4DD007A1915 /* Alert.swift in Sources */,
-				E49762D0263C860000BE3E16 /* VideoRealseController.swift in Sources */,
 				E45F8183262AFFC7001F7979 /* PurchaseView.swift in Sources */,
 				E444804E26397FB40005223B /* ReklamController.swift in Sources */,
 				E4F78BCA2635C9AE00AAE321 /* CoinCount.swift in Sources */,
@@ -669,6 +672,7 @@
 				E45225312624FD34001ACD0A /* CustomTextField.swift in Sources */,
 				E40735E02638819400A21E3D /* Comment.swift in Sources */,
 				7113785627C9689000C23710 /* PlayerView.swift in Sources */,
+				71803D2627EE5F9600953F4B /* HomeSectionController.swift in Sources */,
 				713335F027E90549003B624F /* ShareVideoService.swift in Sources */,
 				E48E3C8D262DCE1C001C4C54 /* SignUpModel.swift in Sources */,
 				E462A673262A41AD008F191B /* ShareVideoController.swift in Sources */,
@@ -887,6 +891,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		71803D2227EE5AE400953F4B /* XCRemoteSwiftPackageReference "IGListKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Instagram/IGListKit";
+			requirement = {
+				kind = revision;
+				revision = b22a10e47ffa87c79993ea19db7b52605e83ebbf;
+			};
+		};
 		719DE26427DFD0A000B7F1C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
@@ -898,6 +910,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		71803D2327EE5AE400953F4B /* IGListKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 71803D2227EE5AE400953F4B /* XCRemoteSwiftPackageReference "IGListKit" */;
+			productName = IGListKit;
+		};
 		719DE26527DFD0A000B7F1C7 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 719DE26427DFD0A000B7F1C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;

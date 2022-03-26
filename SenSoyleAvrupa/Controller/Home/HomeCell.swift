@@ -11,14 +11,13 @@ import AVKit
 import NVActivityIndicatorView
 import Alamofire
 
-class HomeCell: UITableViewCell {
+class HomeCell: UICollectionViewCell {
 
     var homeView: HomeView = HomeView(frame: .zero)
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        selectionStyle = .none
 
         homeView = HomeView(frame: bounds)
 
@@ -27,13 +26,29 @@ class HomeCell: UITableViewCell {
         homeView.addToSuperViewAnchors()
     }
 
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        addSubview(homeView)
+
+        homeView.addToSuperViewAnchors()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func prepareForReuse() {
         super.prepareForReuse()
 
         homeView.resetViewsForReuse()
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
+    override func select(_ sender: Any?) {
         homeView.setSelected()
     }
+
+    /*override func setSelected(_ selected: Bool, animated: Bool) {
+        homeView.setSelected()
+    }*/
 }

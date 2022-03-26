@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import IGListKit
 
 public class VideoDataModel: Codable, Equatable {
     var comment: Int?
@@ -49,3 +50,16 @@ public class VideoDataModel: Codable, Equatable {
     }
 }
 
+extension VideoDataModel: ListDiffable {
+    public func diffIdentifier() -> NSObjectProtocol {
+        return (self.id ?? 0) as NSObjectProtocol
+    }
+
+    public func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
+        if let object = object as? VideoDataModel {
+            return self == object
+        }
+
+        return false
+    }
+}

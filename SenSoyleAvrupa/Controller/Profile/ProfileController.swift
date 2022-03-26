@@ -196,7 +196,7 @@ class ProfileController: UIViewController {
     @objc func actionLeftMenu() {
         print("left menu")
         var menu : SideMenuNavigationController?
-        menu = SideMenuNavigationController(rootViewController:LeftMenuController())
+        menu = SideMenuNavigationController(rootViewController: LeftMenuController())
         menu?.leftSide = true
         menu?.statusBarEndAlpha = 0
         menu?.navigationController?.navigationBar.isHidden = true

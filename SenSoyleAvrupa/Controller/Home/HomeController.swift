@@ -7,12 +7,11 @@
 
 import UIKit
 import PanModal
-import Alamofire
-import SwiftyJSON
 import GoogleMobileAds
 import AppTrackingTransparency
 import AdSupport
 import AVFoundation
+import IGListKit
 
 class HomeController: UIViewController {
 
@@ -27,17 +26,21 @@ class HomeController: UIViewController {
     private var interstitial: GADInterstitialAd?
 
     // MARK: Models
-    private var videoDataModels = [VideoDataModel]() {
-        didSet {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
+    private var videoDataModels = [VideoDataModel]()
 
     // MARK: Views
-    let tableView = UITableView()
-    let refreshControl = UIRefreshControl()
+    private let refreshControl = UIRefreshControl()
+    private lazy var adapter: ListAdapter = {
+        return ListAdapter(updater: ListAdapterUpdater(),
+                           viewController: self,
+                           workingRangeSize: 1)
+    }()
+    private let collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.contentInsetAdjustmentBehavior = .never
+        collectionView.isPagingEnabled = true
+        return collectionView
+    }()
 
     init(service: SharedServiceProtocol) {
         self.service = service
@@ -57,13 +60,12 @@ class HomeController: UIViewController {
         checkInternetConnection(completion: { [self] in
             pullData()
             editLayout()
-            editTableView()
             editAdMob()
         })
 
         pullData()
 
-        if let cell = tableView.visibleCells.first as? HomeCell {
+        if let cell = collectionView.visibleCells.first as? HomeCell {
             cell.homeView.playerView.player?.play()
             cell.homeView.imageViewPause.alpha = 0
         }
@@ -71,7 +73,7 @@ class HomeController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if let cell = tableView.visibleCells.first as? HomeCell {
+        if let cell = collectionView.visibleCells.first as? HomeCell {
             cell.homeView.playerView.player?.pause()
         }
     }
@@ -86,9 +88,7 @@ class HomeController: UIViewController {
         pullData()
         
         editLayout()
-        
-        editTableView()
-        
+
         editAdMob()
     }
     
@@ -144,27 +144,15 @@ class HomeController: UIViewController {
 
     func editLayout() {
         view.backgroundColor = .white
-        view.addSubview(tableView)
-        tableView.addToSuperViewAnchors()
-    }
-
-    func editTableView() {
+        view.addSubview(collectionView)
+        collectionView.addToSuperViewAnchors()
         refreshControl.addTarget(self, action: #selector(pullData), for: .valueChanged)
-
-        tableView.backgroundColor = .white
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.tableFooterView = UIView()
-        tableView.isPagingEnabled = true
-        tableView.contentInsetAdjustmentBehavior = .never
-        tableView.showsVerticalScrollIndicator = false
-        tableView.separatorStyle = .none
-        tableView.register(UINib(nibName: "HomeCell", bundle: nil), forCellReuseIdentifier: "HomeCell")
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.prefetchDataSource = self
-        tableView.refreshControl = refreshControl
+        collectionView.refreshControl = refreshControl
 
         refreshControl.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 80))
+
+        adapter.collectionView = collectionView
+        adapter.dataSource = self
     }
 
     @objc
@@ -174,109 +162,13 @@ class HomeController: UIViewController {
                 prefetchedPlayer.removeAll()
                 state = State(oldVideoDataModel: videoDataModels)
                 self.videoDataModels = videoDataModels
+                self.adapter.performUpdates(animated: true)
             }
 
             refreshControl.endRefreshing()
         }
     }
-}
 
-extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return videoDataModels.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        // TODO: Show ad
-        /*if (indexPath.row % 5 == 0) {
-            let number = Int.random(in: 0..<2)
-
-            if number == 0 || indexPath.row != 0 || indexPath.row != videoDataModel.count {
-                let vc = ReklamController()
-                vc.modalPresentationStyle = .fullScreen
-                present(vc, animated: true)
-            } else {
-                startGoogleAdMob()
-            }
-        } else {
-            print("configure ad cell 2")
-        }*/
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath) as! HomeCell
-        let model = videoDataModels[indexPath.row]
-        cell.homeView.configure(with: model)
-
-        /// Use prefetched videos to increase the usability.
-        let player = prefetchedPlayer.compactMap { $0.compactMap { $0.key == "\(indexPath.row)" ? $0.value : nil }.first }.first
-        player != nil ? cell.homeView.setPlayerView(player: player) : cell.homeView.downloadVideo()
-
-        cell.homeView.buttonProfileImageAction = { [self] in
-            print("Go to profile account")
-
-            let vc = ProfileController(store: .init(initialState: ProfileState(),
-                                                    reducer: profileReducer,
-                                                    environment: ProfileEnvironment(service: Services.profileService,
-                                                                                    mainQeue: .main)),
-                                       userModel: UserModel(coin: 0,
-                                                            id: model.id ?? 0,
-                                                            points: 0,
-                                                            pp: model.pp ?? "",
-                                                            username: model.username ?? ""),
-                                       email: model.email ?? "")
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
-        
-        cell.homeView.buttonSendPoint = { [self] in
-            print("Send point")
-            sendPoints(email: model.email ?? "", videoId: model.id ?? 0, point: Int(cell.homeView.ratingView.labelTop.text!) ?? 0)
-            cell.homeView.ratingView.ratingView.rating = 0
-            cell.homeView.ratingView.labelTop.text = "0"
-            cell.homeView.ratingView.isHidden = true
-        }
-        
-        cell.homeView.buttonCommentAction = {
-            print("Comment")
-            let vc = CommentController()
-            vc.videoid = model.id ?? 0
-            vc.email = model.email ?? ""
-            self.presentPanModal(vc)
-        }
-        
-        cell.homeView.buttonSpamAction = {
-            let id = model.id ?? 0
-            let alert = UIAlertController(title: "Bildiri", message: "Bir sebep seçin", preferredStyle: .actionSheet)
-            alert.addAction(UIAlertAction(title: "Spam veya kötüye kullanım", style: .default, handler: { (_) in
-                self.spamPost(type: 1, id: id)
-            }))
-            alert.addAction(UIAlertAction(title: "Yanıltıcı bilgi", style: .default, handler: { (_) in
-                self.spamPost(type: 2, id: id)
-            }))
-            alert.addAction(UIAlertAction(title: "Tehlikeli kuruluşlar ve kişiler", style: .default, handler: { (_) in
-                self.spamPost(type: 3, id: id)
-            }))
-            alert.addAction(UIAlertAction(title: "Yasadışı faaliyetler", style: .default, handler: { (_) in
-                self.spamPost(type: 4, id: id)
-            }))
-            alert.addAction(UIAlertAction(title: "Dolandırıcılık", style: .default, handler: { (_) in
-                self.spamPost(type: 5, id: id)
-            }))
-            alert.addAction(UIAlertAction(title: "Şiddet içeren ve sansürlenmemiş içerik", style: .default, handler: { (_) in
-                self.spamPost(type: 6, id: id)
-            }))
-            alert.addAction(UIAlertAction(title: "Hayvan zulümü", style: .default, handler: { (_) in
-                self.spamPost(type: 7, id: id)
-            }))
-            alert.addAction(UIAlertAction(title: "Nefret söylemi", style: .default, handler: { (_) in
-                self.spamPost(type: 8, id: id)
-            }))
-            alert.addAction(UIAlertAction(title: "İptal et", style: .cancel))
-
-            self.present(alert, animated: true, completion: nil)
-        }
-        return cell
-    }
-    
     func spamPost(type: Int, id: Int) {
         service.spamPost(type: type, id: id) { [self] in
             if let status = $0.status, status {
@@ -298,32 +190,19 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource, UITableVie
             }
         }
     }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return tableView.frame.height
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // If the cell is the first cell in the tableview, the queuePlayer automatically starts.
-        // If the cell will be displayed, pause the video until the drag on the scroll view is ended
-        guard let homeCell = cell as? HomeCell else { return }
+}
 
-        homeCell.homeView.playerView.player?.play()
-    }
-    
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // Pause the video if the cell is ended displaying
-        guard let homeCell = cell as? HomeCell else { return }
-
-        homeCell.homeView.playerView.player?.pause()
+extension HomeController: ListAdapterDataSource {
+    func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
+        return videoDataModels
     }
 
-    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach {
-            guard let url = URL(string: "\(NetworkManager.url)/video/\(videoDataModels[$0.row].video ?? "")") else { return }
+    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
+        return HomeSectionController()
+    }
 
-            prefetchedPlayer.appendIfNotContains(key: "\($0.row)", value: ["\($0.row)": AVPlayer(url: url)])
-        }
+    func emptyView(for listAdapter: ListAdapter) -> UIView? {
+        return EmptyView()
     }
 }
 

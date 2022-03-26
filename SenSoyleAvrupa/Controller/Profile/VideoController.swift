@@ -5,7 +5,6 @@
 //  Created by Ing. Ebu Celik on 26.02.22.
 //
 
-import Foundation
 import UIKit
 import AVFoundation
 import Alamofire
@@ -41,8 +40,10 @@ class VideoController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         checkInternetConnection(completion: nil)
 
-        homeView.setPlayerView(player: player)
-        homeView.playerView.player?.play()
+        if homeView.playerView.player == nil {
+            homeView.setPlayerView(player: player)
+            homeView.playerView.player?.play()
+        }
     }
 
     override func viewDidDisappear(_ animated: Bool) {
