@@ -13,9 +13,9 @@ import ComposableArchitecture
 class ShareVideoController: UITableViewController {
 
     // MARK: Properties
-    var store: Store<ShareVideoState, ShareVideoAction>
-    var viewStore: ViewStore<ShareVideoState, ShareVideoAction>
-    var cancellable: Set<AnyCancellable> = []
+    private let store: Store<ShareVideoState, ShareVideoAction>
+    private var viewStore: ViewStore<ShareVideoState, ShareVideoAction>
+    private var cancellable: Set<AnyCancellable> = []
     private var videoUrl: URL?
     private var videoDataModelChanged = false
 
