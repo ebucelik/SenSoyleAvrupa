@@ -9,7 +9,7 @@ import UIKit
 
 class PrivacyPolicyController: UIViewController {
 
-    let textView : UITextView = {
+    let textView: UITextView = {
         let text = UITextView()
         text.text = """
             Privacy Policy
@@ -60,7 +60,10 @@ class PrivacyPolicyController: UIViewController {
         
         view.addSubview(textView)
         
-        textView.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor)
+        textView.anchor(top: view.safeAreaLayoutGuide.topAnchor,
+                        bottom: view.safeAreaLayoutGuide.bottomAnchor,
+                        leading: view.leadingAnchor,
+                        trailing: view.trailingAnchor)
         
         
         title = "Privacy Policy"
@@ -70,5 +73,6 @@ class PrivacyPolicyController: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "Geri", style: .plain, target: self, action: nil)
     }
 }

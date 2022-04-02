@@ -17,7 +17,7 @@ class LeftMenuController: UITableViewController {
     }()
 
     let profilImage: UIImageView = {
-        let img = UIImageView(image: UIImage(named: "Character1Color1"))
+        let img = UIImageView(image: UIImage(named: "logo"))
         img.layer.borderColor = UIColor.customTintColor().cgColor
         img.widthAnchor.constraint(equalToConstant: 100).isActive = true
         img.heightAnchor.constraint(equalToConstant: 100).isActive = true
@@ -108,7 +108,7 @@ class LeftMenuController: UITableViewController {
 
                 let vc = SplashViewController(service: Services.sharedService)
                 vc.modalPresentationStyle = .fullScreen
-                self.present(vc, animated: true, completion: nil)
+                self.present(vc, animated: true)
             }))
 
             alert.addAction(UIAlertAction(title: "İptal et", style: .cancel))
@@ -119,8 +119,7 @@ class LeftMenuController: UITableViewController {
             guard let url = URL(string: "https://sensoyleavrupa.com/login") else { return }
             let webViewController = WebViewController(url: url)
             present(webViewController, animated: true, completion: nil)
-        }
-        else {
+        } else {
             navigationController?.pushViewController(controller[indexPath.row], animated: true)
         }
     }

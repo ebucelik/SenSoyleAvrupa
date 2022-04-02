@@ -18,7 +18,7 @@ class MessageController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         pullData()
 
         tableView.backgroundColor = .white
@@ -61,6 +61,7 @@ class MessageController: UITableViewController {
         
         title = "Adminden Gelen Mesajlar"
         navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "Geri", style: .plain, target: self, action: nil)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

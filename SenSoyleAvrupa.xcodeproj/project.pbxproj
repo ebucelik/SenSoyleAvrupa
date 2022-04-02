@@ -79,7 +79,6 @@
 		E4C3BC822631C2870038F411 /* roundCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C3BC812631C2870038F411 /* roundCorners.swift */; };
 		E4E860AD2624DC5F007A1915 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E860AC2624DC5F007A1915 /* AppDelegate.swift */; };
 		E4E860AF2624DC5F007A1915 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E860AE2624DC5F007A1915 /* SceneDelegate.swift */; };
-		E4E860B12624DC5F007A1915 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E860B02624DC5F007A1915 /* ViewController.swift */; };
 		E4E860B42624DC5F007A1915 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E4E860B22624DC5F007A1915 /* Main.storyboard */; };
 		E4E860B92624DC64007A1915 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4E860B82624DC64007A1915 /* Assets.xcassets */; };
 		E4E860BC2624DC65007A1915 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E4E860BA2624DC64007A1915 /* LaunchScreen.storyboard */; };
@@ -174,7 +173,6 @@
 		E4E860A92624DC5F007A1915 /* SenSoyleAvrupa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SenSoyleAvrupa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4E860AC2624DC5F007A1915 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E4E860AE2624DC5F007A1915 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		E4E860B02624DC5F007A1915 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E4E860B32624DC5F007A1915 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E4E860B82624DC64007A1915 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E4E860BB2624DC65007A1915 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -388,7 +386,6 @@
 				7183D5CC27BEB596009626D2 /* Network */,
 				E4E860AC2624DC5F007A1915 /* AppDelegate.swift */,
 				E4E860AE2624DC5F007A1915 /* SceneDelegate.swift */,
-				E4E860B02624DC5F007A1915 /* ViewController.swift */,
 				E452251B2624F7A8001ACD0A /* Model */,
 				E452251A2624F7A1001ACD0A /* View */,
 				E45225192624F79A001ACD0A /* Controller */,
@@ -648,7 +645,6 @@
 				E42A33B72636184F00AB6CDA /* VideoDataModel.swift in Sources */,
 				E4F959C126262F2700DC5960 /* LoadingView.swift in Sources */,
 				713335EE27E902A3003B624F /* ShareVideoCore.swift in Sources */,
-				E4E860B12624DC5F007A1915 /* ViewController.swift in Sources */,
 				E4F959CF262639C000DC5960 /* ChooseProfileImageController.swift in Sources */,
 				E452251E2624F7CD001ACD0A /* SplashViewController.swift in Sources */,
 				E4E860F42624E4CB007A1915 /* Constraints.swift in Sources */,
@@ -760,6 +756,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -815,6 +812,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

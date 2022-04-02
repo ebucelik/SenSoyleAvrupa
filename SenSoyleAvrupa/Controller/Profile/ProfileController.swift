@@ -195,7 +195,7 @@ class ProfileController: UIViewController {
     
     @objc func actionLeftMenu() {
         print("left menu")
-        var menu : SideMenuNavigationController?
+        var menu: SideMenuNavigationController?
         menu = SideMenuNavigationController(rootViewController: LeftMenuController())
         menu?.leftSide = true
         menu?.statusBarEndAlpha = 0
@@ -203,7 +203,12 @@ class ProfileController: UIViewController {
         menu?.presentationStyle = .viewSlideOutMenuPartialIn
         SideMenuManager.default.leftMenuNavigationController = menu
         SideMenuManager.default.addPanGestureToPresent(toView: self.view)
-        present(menu!, animated: true)
+
+        guard let menu = menu else {
+            return
+        }
+
+        present(menu, animated: true)
     }
 
     @objc func actionAddVideo() {

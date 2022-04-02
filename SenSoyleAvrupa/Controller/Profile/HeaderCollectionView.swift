@@ -153,9 +153,9 @@ class HeaderCollectionView: UICollectionReusableView {
     func configure() {
         backgroundColor = .white
 
-        let stackViewUserData = UIStackView(arrangedSubviews: [labelUsername, labelEmail, buttonEditProfile])
+        let stackViewUserData = UIStackView(arrangedSubviews: [UIView(), labelUsername, labelEmail, UIView(), buttonEditProfile])
         stackViewUserData.axis = .vertical
-        stackViewUserData.spacing = 10
+        stackViewUserData.spacing = 5
 
         let stackView = UIStackView(arrangedSubviews: [imageViewProfilePicture, stackViewUserData])
         stackView.backgroundColor = .customBackground()

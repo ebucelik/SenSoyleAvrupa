@@ -18,6 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let vc = SplashViewController(service: Services.sharedService)
         let navigationVc = UINavigationController(rootViewController: vc)
         window?.rootViewController = navigationVc
+        window?.overrideUserInterfaceStyle = .light
+
         guard let _ = (scene as? UIWindowScene) else { return }
     }
 }

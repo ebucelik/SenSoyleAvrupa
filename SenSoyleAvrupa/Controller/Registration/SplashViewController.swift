@@ -16,7 +16,7 @@ class SplashViewController: UIViewController {
 
     // MARK: Views
     lazy var imageViewLogo: UIImageView = {
-        let img = UIImageView(image: UIImage(named: "Character1Color1"))
+        let img = UIImageView(image: UIImage(named: "logo"))
         img.widthAnchor.constraint(equalToConstant: view.frame.width / 1.5).isActive = true
         img.heightAnchor.constraint(equalToConstant: view.frame.width / 1.5).isActive = true
         img.clipsToBounds = false
