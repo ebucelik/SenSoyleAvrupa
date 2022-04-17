@@ -8,6 +8,8 @@
 import UIKit
 import TTGSnackbar
 
+import SwiftHelper
+
 extension UIViewController {
     func checkInternetConnection(completion: (() -> Void)?) {
         if !CheckInternet.Connection() {

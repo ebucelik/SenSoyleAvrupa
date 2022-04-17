@@ -8,7 +8,7 @@
 
 import UIKit
 
-public protocol VideoPickerDelegate: class {
+public protocol VideoPickerDelegate: AnyObject {
     func didSelect(url: URL?)
 }
 
@@ -97,6 +97,4 @@ extension VideoPicker: UIImagePickerControllerDelegate {
     }
 }
 
-extension VideoPicker: UINavigationControllerDelegate {
-    
-}
+extension VideoPicker: UINavigationControllerDelegate {}

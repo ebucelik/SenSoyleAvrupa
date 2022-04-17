@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SwiftHelper
+
 class ForgotPasswordController: UITableViewController {
 
     // MARK: Views

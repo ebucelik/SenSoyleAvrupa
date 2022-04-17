@@ -9,6 +9,8 @@ import UIKit
 import PanModal
 import Alamofire
 
+import SwiftHelper
+
 class CommentController: UIViewController {
 
     // MARK: Properties

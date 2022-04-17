@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SwiftHelper
+
 class CommentCell: UITableViewCell {
 
     // MARK: Views

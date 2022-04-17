@@ -15,6 +15,8 @@ import IGListKit
 import Combine
 import ComposableArchitecture
 
+import SwiftHelper
+
 class HomeController: UIViewController {
 
     // MARK: Properties

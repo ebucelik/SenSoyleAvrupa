@@ -11,6 +11,8 @@ import Alamofire
 import Combine
 import ComposableArchitecture
 
+import SwiftHelper
+
 class SignUpController: UITableViewController {
 
     // MARK: Properties

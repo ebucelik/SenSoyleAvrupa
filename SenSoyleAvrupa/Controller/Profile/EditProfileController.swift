@@ -8,6 +8,8 @@
 import UIKit
 import Alamofire
 
+import SwiftHelper
+
 class EditProfileController: UIViewController {
 
     struct State {
@@ -113,12 +115,8 @@ class EditProfileController: UIViewController {
         pullData()
         
         navigationController?.navigationBar.isHidden = false
-        
-        if !CheckInternet.Connection() {
-            let vc = NoInternetController(completion: { self.pullData() })
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
-        }
+
+        checkInternetConnection(completion: { self.pullData() })
     }
 
     override func viewDidLoad() {

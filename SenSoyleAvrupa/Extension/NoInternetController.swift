@@ -7,13 +7,15 @@
 
 import UIKit
 
+import SwiftHelper
+
 class NoInternetController: UIViewController {
 
     // MARK: Properties
     private let completion: (() -> Void)?
 
     // MARK: Views
-    lazy var imgEmoji: UIImageView = {
+    lazy var imageViewEmoji: UIImageView = {
         let img = UIImageView(image: #imageLiteral(resourceName: "logo"))
         img.widthAnchor.constraint(equalToConstant: view.frame.width / 2).isActive = true
         img.heightAnchor.constraint(equalToConstant: view.frame.width / 2).isActive = true
@@ -21,7 +23,7 @@ class NoInternetController: UIViewController {
         return img
     }()
     
-    let lblOops: UILabel = {
+    let labelOops: UILabel = {
        let lbl = UILabel()
         lbl.text = "Oops!"
         lbl.textColor = .customTintColor()
@@ -30,7 +32,7 @@ class NoInternetController: UIViewController {
         return lbl
     }()
     
-    let lblNoInternet: UILabel = {
+    let labelNoInternet: UILabel = {
         let lbl = UILabel()
         lbl.text = "İnternet bağlantısı yok\nLütfen internet bağlantınızı kontrol edin"
         lbl.textColor = .black
@@ -39,7 +41,7 @@ class NoInternetController: UIViewController {
         return lbl
     }()
     
-    let btnTryAgain: UIButton = {
+    let buttonTryAgain: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Tekrar deneyin", for: .normal)
         btn.titleLabel?.font = .boldSystemFont(ofSize: 17)
@@ -78,21 +80,30 @@ class NoInternetController: UIViewController {
     }
     
     func editLayout() {
-        let stackView = UIStackView(arrangedSubviews: [lblOops,lblNoInternet])
+        let stackView = UIStackView(arrangedSubviews: [labelOops, labelNoInternet])
         stackView.axis = .vertical
         stackView.spacing = 20
         
         view.backgroundColor = .white
-        view.addSubview(imgEmoji)
+        view.addSubview(imageViewEmoji)
         view.addSubview(stackView)
-        view.addSubview(btnTryAgain)
+        view.addSubview(buttonTryAgain)
 
-        imgEmoji.centerViewAtSuperView()
+        imageViewEmoji.centerViewAtSuperView()
 
-        stackView.anchor(top: imgEmoji.bottomAnchor, bottom: nil, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 20, left: 30, bottom: 0, right: 30))
+        stackView.anchor(
+            top: imageViewEmoji.bottomAnchor,
+            leading: view.leadingAnchor,
+            trailing: view.trailingAnchor,
+            padding: .init(top: 20, left: 30, bottom: 0, right: 30)
+        )
         
-        btnTryAgain.anchor(top: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: nil, trailing: nil,padding: .init(top: 20, left: 85, bottom: 30, right: 85))
-        btnTryAgain.centerXAtSuperView()
+        buttonTryAgain.anchor(
+            bottom: view.safeAreaLayoutGuide.bottomAnchor,
+            padding: .init(top: 20, left: 85, bottom: 30, right: 85)
+        )
+
+        buttonTryAgain.centerXAtSuperView()
     }
 
     @objc func actionTryAgain() {

@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SwiftHelper
+
 class PurchaseView: UIView {
     private let imageViewCoin: UIImageView = {
         let img = UIImageView(image: UIImage(named: "coin"))

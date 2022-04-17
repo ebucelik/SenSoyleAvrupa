@@ -31,10 +31,3 @@ class CustomTextField: UITextField {
         return bounds.insetBy(dx: 25, dy: 0)
     }
 }
-
-class CustomTextView: UITextView  {
-    override var intrinsicContentSize: CGSize {
-        return .init(width: 0, height: 150)
-    }
-}
-

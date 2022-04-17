@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SwiftHelper
+
 class EmptyView: UIView {
 
     // MARK: Views

@@ -9,6 +9,8 @@ import UIKit
 import Alamofire
 import SDWebImage
 
+import SwiftHelper
+
 class HeaderCollectionView: UICollectionReusableView {
     static let identifer = "HeaderCollectionView"
 

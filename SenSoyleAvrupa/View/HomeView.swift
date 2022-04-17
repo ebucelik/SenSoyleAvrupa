@@ -11,6 +11,8 @@ import AVFoundation
 import NVActivityIndicatorView
 import Alamofire
 
+import SwiftHelper
+
 class HomeView: UIView {
 
     // MARK: Properties

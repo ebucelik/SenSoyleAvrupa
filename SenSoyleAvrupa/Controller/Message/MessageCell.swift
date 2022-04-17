@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SwiftHelper
+
 class MessageCell: UITableViewCell {
 
     // MARK: Views
