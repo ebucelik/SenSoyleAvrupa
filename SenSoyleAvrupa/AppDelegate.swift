@@ -9,7 +9,6 @@
 //Profil seyfesinde videoya gonderme
 //Yorumlarda sekil ve ad
 
-
 import UIKit
 import GoogleMobileAds
 

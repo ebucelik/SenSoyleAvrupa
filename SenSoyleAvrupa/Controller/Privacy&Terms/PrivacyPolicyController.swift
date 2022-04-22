@@ -65,7 +65,6 @@ class PrivacyPolicyController: UIViewController {
                         leading: view.leadingAnchor,
                         trailing: view.trailingAnchor)
         
-        
         title = "Privacy Policy"
     }
     
@@ -73,6 +72,7 @@ class PrivacyPolicyController: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.tintColor = .customLabelColor()
         navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "Geri", style: .plain, target: self, action: nil)
     }
 }

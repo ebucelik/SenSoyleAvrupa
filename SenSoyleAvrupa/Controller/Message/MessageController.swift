@@ -61,6 +61,7 @@ class MessageController: UITableViewController {
         
         title = "Adminden Gelen Mesajlar"
         navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.tintColor = .customLabelColor()
         navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "Geri", style: .plain, target: self, action: nil)
     }
 

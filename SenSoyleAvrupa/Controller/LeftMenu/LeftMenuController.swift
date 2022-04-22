@@ -45,7 +45,7 @@ class LeftMenuController: UITableViewController {
         self.onDismiss = onDismiss
         self.controller = [PurchaseCoinController(service: Services.sharedService, onDismiss: onDismiss),
                            MessageController(),
-                           TermsofServiceController(),
+                           TermsOfServiceController(),
                            PrivacyPolicyController()]
 
         super.init(nibName: nil, bundle: nil)
@@ -133,7 +133,6 @@ class LeftMenuController: UITableViewController {
             let webViewController = WebViewController(url: url)
             present(webViewController, animated: true, completion: nil)
         } else {
-            navigationController?.navigationBar.tintColor = .customLabelColor()
             navigationController?.pushViewController(controller[indexPath.row], animated: true)
         }
     }

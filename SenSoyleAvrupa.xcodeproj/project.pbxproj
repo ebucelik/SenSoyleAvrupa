@@ -89,7 +89,7 @@
 		E4F959C126262F2700DC5960 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F959C026262F2700DC5960 /* LoadingView.swift */; };
 		E4F959C52626390100DC5960 /* PrivacyPolicyTermsofService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F959C42626390100DC5960 /* PrivacyPolicyTermsofService.swift */; };
 		E4F959C82626390600DC5960 /* PrivacyPolicyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F959C72626390600DC5960 /* PrivacyPolicyController.swift */; };
-		E4F959CB2626390B00DC5960 /* TermsofServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F959CA2626390B00DC5960 /* TermsofServiceController.swift */; };
+		E4F959CB2626390B00DC5960 /* TermsOfServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F959CA2626390B00DC5960 /* TermsOfServiceController.swift */; };
 		E4F959CF262639C000DC5960 /* ChooseProfileImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F959CE262639C000DC5960 /* ChooseProfileImageController.swift */; };
 		E4F95A002626590400DC5960 /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F959FF2626590400DC5960 /* ProfileController.swift */; };
 		E4F95A052626620500DC5960 /* ProfileVideoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F95A032626620500DC5960 /* ProfileVideoCell.swift */; };
@@ -181,7 +181,7 @@
 		E4F959C026262F2700DC5960 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		E4F959C42626390100DC5960 /* PrivacyPolicyTermsofService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyTermsofService.swift; sourceTree = "<group>"; };
 		E4F959C72626390600DC5960 /* PrivacyPolicyController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyController.swift; sourceTree = "<group>"; };
-		E4F959CA2626390B00DC5960 /* TermsofServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermsofServiceController.swift; sourceTree = "<group>"; };
+		E4F959CA2626390B00DC5960 /* TermsOfServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermsOfServiceController.swift; sourceTree = "<group>"; };
 		E4F959CE262639C000DC5960 /* ChooseProfileImageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseProfileImageController.swift; sourceTree = "<group>"; };
 		E4F959FF2626590400DC5960 /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		E4F95A032626620500DC5960 /* ProfileVideoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVideoCell.swift; sourceTree = "<group>"; };
@@ -425,7 +425,7 @@
 			isa = PBXGroup;
 			children = (
 				E4F959C42626390100DC5960 /* PrivacyPolicyTermsofService.swift */,
-				E4F959CA2626390B00DC5960 /* TermsofServiceController.swift */,
+				E4F959CA2626390B00DC5960 /* TermsOfServiceController.swift */,
 				E4F959C72626390600DC5960 /* PrivacyPolicyController.swift */,
 			);
 			path = "Privacy&Terms";
@@ -637,7 +637,7 @@
 				71803D2A27EF3F1400953F4B /* HomeCore.swift in Sources */,
 				719DE26B27DFD35800B7F1C7 /* LoginCore.swift in Sources */,
 				711F8EF127E5CD2D00137EE4 /* RegistrationCore.swift in Sources */,
-				E4F959CB2626390B00DC5960 /* TermsofServiceController.swift in Sources */,
+				E4F959CB2626390B00DC5960 /* TermsOfServiceController.swift in Sources */,
 				E4F95A002626590400DC5960 /* ProfileController.swift in Sources */,
 				E4B74089262C4F5700CB9697 /* CommentController.swift in Sources */,
 				E4B666452635890D0017E2D0 /* UserModel.swift in Sources */,

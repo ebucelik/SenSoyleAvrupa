@@ -95,6 +95,8 @@ class HomeController: UIViewController {
         editLayout()
 
         editAdMob()
+
+        enableAudioInSilentMode()
     }
 
     func editLayout() {
@@ -124,6 +126,14 @@ class HomeController: UIViewController {
             interstitial = ad
             interstitial?.fullScreenContentDelegate = self
         })
+    }
+
+    func enableAudioInSilentMode() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback)
+        } catch {
+            print("An error occured while enabling audio in silent mode: \(error)")
+        }
     }
 
     func setupStateObservers() {

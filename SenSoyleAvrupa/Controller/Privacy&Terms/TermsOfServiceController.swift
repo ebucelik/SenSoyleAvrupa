@@ -1,5 +1,5 @@
 //
-//  TermsofServiceController.swift
+//  TermsOfServiceController.swift
 //  Radio Time
 //
 //  Created by ilyas abiyev on 03.03.21.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TermsofServiceController: UIViewController {
+class TermsOfServiceController: UIViewController {
 
     let textView : UITextView = {
         let text = UITextView()
@@ -44,9 +44,11 @@ class TermsofServiceController: UIViewController {
         
         view.addSubview(textView)
         
-        textView.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor)
-        
-        
+        textView.anchor(top: view.safeAreaLayoutGuide.topAnchor,
+                        bottom: view.safeAreaLayoutGuide.bottomAnchor,
+                        leading: view.leadingAnchor,
+                        trailing: view.trailingAnchor)
+
         title = "Terms of Service"
     }
     
@@ -54,6 +56,7 @@ class TermsofServiceController: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.tintColor = .customLabelColor()
         navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "Geri", style: .plain, target: self, action: nil)
     }
 }
