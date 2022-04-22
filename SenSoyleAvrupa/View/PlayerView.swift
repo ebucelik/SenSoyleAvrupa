@@ -18,12 +18,8 @@ class PlayerView: UIView {
         return layer as! AVPlayerLayer
     }
 
-    var player: AVPlayer? {
-        get {
-            return playerLayer.player
-        }
-        set {
-            playerLayer.player = newValue
-        }
+    func setPlayer() {
+        playerLayer.player = SharedPlayer.player
+        playerLayer.player?.automaticallyWaitsToMinimizeStalling = false
     }
 }

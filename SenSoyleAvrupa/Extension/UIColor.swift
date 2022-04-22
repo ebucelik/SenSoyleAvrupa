@@ -8,20 +8,19 @@
 
 import UIKit
 
-//5666ED
+//045C85
 extension UIColor {
     class func customTintColor() -> UIColor {
-        return UIColor(red: 86/255, green: 102/255, blue: 237/255, alpha: 1)
+        return UIColor(red: 4/255, green: 92/255, blue: 132/255, alpha: 1)
     }
 }
 
-//2A4270
+//045C85
 extension UIColor {
     class func customLabelColor() -> UIColor {
-        return UIColor(red: 42/255, green: 66/255, blue: 112/255, alpha: 1)
+        return UIColor(red: 4/255, green: 92/255, blue: 132/255, alpha: 1)
     }
 }
-
 
 //F7F8FA
 extension UIColor {

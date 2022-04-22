@@ -12,11 +12,12 @@ extension RangeReplaceableCollection {
     mutating func appendIfNotContains(key: String, value: Element) {
         var tempKey: String = key
 
-        forEach { _ = ($0 as? [String: AVPlayer])?.map {
-            if $0.key == key {
-                tempKey = ""
-            }
-        }}
+        forEach { _ =
+            ($0 as? [String: Element])?.map {
+                if $0.key == key {
+                    tempKey = ""
+                }
+            }}
 
         if !tempKey.isEmpty {
             append(value)

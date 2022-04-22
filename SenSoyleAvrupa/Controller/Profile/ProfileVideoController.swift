@@ -1,5 +1,5 @@
 //
-//  VideoController.swift
+//  ProfileVideoController.swift
 //  SenSoyleAvrupa
 //
 //  Created by Ing. Ebu Celik on 26.02.22.
@@ -9,14 +9,13 @@ import UIKit
 import AVFoundation
 import Alamofire
 
-class VideoController: UIViewController {
+class ProfileVideoController: UIViewController {
 
     // MARK: Properties
     private let homeView: HomeView
     private let model: VideoDataModel
     private let service: SharedServiceProtocol
     private var modelDidChanged: Bool = false
-    private var player: AVPlayer?
 
     // MARK: Actions
     var onDismiss: ((Bool) -> Void)? = nil
@@ -40,10 +39,8 @@ class VideoController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         checkInternetConnection(completion: nil)
 
-        if homeView.playerView.player == nil {
-            homeView.setPlayerView(player: player)
-            homeView.playerView.player?.play()
-        }
+        homeView.downloadVideo()
+        homeView.playerView.playerLayer.player?.play()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -61,9 +58,6 @@ class VideoController: UIViewController {
 
         homeView.addToSuperViewAnchors()
         homeView.configure(with: model)
-        homeView.downloadVideo()
-        homeView.playerView.player?.play()
-        player = homeView.playerView.player
     }
 
     func configureRatingButtonAction() {

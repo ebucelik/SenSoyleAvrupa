@@ -53,6 +53,7 @@ class HomeSectionController: ListSectionController {
                                                                 username: model.username ?? ""),
                                            email: model.email ?? "")
 
+                self.viewController?.navigationController?.navigationBar.tintColor = .customLabelColor()
                 self.viewController?.navigationController?.pushViewController(vc, animated: true)
             }
 
@@ -112,13 +113,13 @@ class HomeSectionController: ListSectionController {
 extension HomeSectionController: ListDisplayDelegate {
     func listAdapter(_ listAdapter: ListAdapter, willDisplay sectionController: ListSectionController, cell: UICollectionViewCell, at index: Int) {
         if let cell = cell as? HomeCell {
-            cell.homeView.playerView.player?.play()
+            cell.homeView.playerView.playerLayer.player?.play()
         }
     }
 
     func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying sectionController: ListSectionController, cell: UICollectionViewCell, at index: Int) {
         if let cell = cell as? HomeCell {
-            cell.homeView.playerView.player?.pause()
+            cell.homeView.playerView.playerLayer.player?.pause()
         }
     }
 

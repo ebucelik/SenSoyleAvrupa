@@ -68,7 +68,6 @@ class CommentCell: UITableViewCell {
         
         addSubview(imageViewProfile)
         addSubview(viewComment)
-        //addSubview(buttonSpam)
         
         viewComment.addSubview(stackView)
         
@@ -87,7 +86,12 @@ class CommentCell: UITableViewCell {
                          leading: viewComment.leadingAnchor,
                          trailing: viewComment.trailingAnchor,
                          padding: .init(all: 10))
+    }
 
-        //buttonSpam.isHidden = true
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        labelDate.text = nil
+        labelComment.text = nil
     }
 }

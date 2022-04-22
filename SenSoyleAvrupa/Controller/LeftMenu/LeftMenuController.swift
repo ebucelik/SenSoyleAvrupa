@@ -120,6 +120,7 @@ class LeftMenuController: UITableViewController {
             let webViewController = WebViewController(url: url)
             present(webViewController, animated: true, completion: nil)
         } else {
+            navigationController?.navigationBar.tintColor = .customLabelColor()
             navigationController?.pushViewController(controller[indexPath.row], animated: true)
         }
     }

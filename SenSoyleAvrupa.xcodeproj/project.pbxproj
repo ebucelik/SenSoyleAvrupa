@@ -22,12 +22,13 @@
 		711F8EFF27E60B9D00137EE4 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 711F8EFD27E60B9D00137EE4 /* EmptyCell.xib */; };
 		712FA80E27CA2CF10020CAAB /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */; };
 		712FA81027CA30840020CAAB /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA80F27CA30840020CAAB /* HomeView.swift */; };
-		712FA81227CA352A0020CAAB /* VideoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA81127CA352A0020CAAB /* VideoController.swift */; };
+		712FA81227CA352A0020CAAB /* ProfileVideoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FA81127CA352A0020CAAB /* ProfileVideoController.swift */; };
 		713335EE27E902A3003B624F /* ShareVideoCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713335ED27E902A3003B624F /* ShareVideoCore.swift */; };
 		713335F027E90549003B624F /* ShareVideoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713335EF27E90549003B624F /* ShareVideoService.swift */; };
 		713A27D527DD221E00093DE0 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713A27D427DD221E00093DE0 /* WebViewController.swift */; };
 		714A4DB327CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */; };
 		714AE41D27D249CD00ACC228 /* SharedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714AE41C27D249CD00ACC228 /* SharedService.swift */; };
+		7170CA8728122DBE000B6D8E /* SharedPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7170CA8628122DBE000B6D8E /* SharedPlayer.swift */; };
 		717D3B9F27C2693200501FF1 /* VideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717D3B9E27C2693200501FF1 /* VideoModel.swift */; };
 		71803D2427EE5AE400953F4B /* IGListKit in Frameworks */ = {isa = PBXBuildFile; productRef = 71803D2327EE5AE400953F4B /* IGListKit */; };
 		71803D2627EE5F9600953F4B /* HomeSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71803D2527EE5F9600953F4B /* HomeSectionController.swift */; };
@@ -112,12 +113,13 @@
 		711F8EFD27E60B9D00137EE4 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
 		712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		712FA80F27CA30840020CAAB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		712FA81127CA352A0020CAAB /* VideoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoController.swift; sourceTree = "<group>"; };
+		712FA81127CA352A0020CAAB /* ProfileVideoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVideoController.swift; sourceTree = "<group>"; };
 		713335ED27E902A3003B624F /* ShareVideoCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareVideoCore.swift; sourceTree = "<group>"; };
 		713335EF27E90549003B624F /* ShareVideoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareVideoService.swift; sourceTree = "<group>"; };
 		713A27D427DD221E00093DE0 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RangeReplaceableCollection+Extension.swift"; sourceTree = "<group>"; };
 		714AE41C27D249CD00ACC228 /* SharedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedService.swift; sourceTree = "<group>"; };
+		7170CA8628122DBE000B6D8E /* SharedPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedPlayer.swift; sourceTree = "<group>"; };
 		717D3B9E27C2693200501FF1 /* VideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoModel.swift; sourceTree = "<group>"; };
 		71803D2527EE5F9600953F4B /* HomeSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSectionController.swift; sourceTree = "<group>"; };
 		71803D2927EF3F1400953F4B /* HomeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCore.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 				711F8EF827E6071400137EE4 /* EmptyView.swift */,
 				711F8EFC27E60B9D00137EE4 /* EmptyCell.swift */,
 				711F8EFD27E60B9D00137EE4 /* EmptyCell.xib */,
+				7170CA8628122DBE000B6D8E /* SharedPlayer.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -441,7 +444,7 @@
 				E4F95A042626620500DC5960 /* ProfileVideoCell.xib */,
 				E42AD0BA2629A526006C218F /* HeaderCollectionView.swift */,
 				E45F8179262AF3E3001F7979 /* EditProfileController.swift */,
-				712FA81127CA352A0020CAAB /* VideoController.swift */,
+				712FA81127CA352A0020CAAB /* ProfileVideoController.swift */,
 				71EB934627EDBEDC00B7620C /* ProfileCore.swift */,
 			);
 			path = Profile;
@@ -612,7 +615,7 @@
 				E4F95A052626620500DC5960 /* ProfileVideoCell.swift in Sources */,
 				717D3B9F27C2693200501FF1 /* VideoModel.swift in Sources */,
 				711F8EF927E6071400137EE4 /* EmptyView.swift in Sources */,
-				712FA81227CA352A0020CAAB /* VideoController.swift in Sources */,
+				712FA81227CA352A0020CAAB /* ProfileVideoController.swift in Sources */,
 				E45F8187262B0AD7001F7979 /* LeftMenuController.swift in Sources */,
 				712FA80E27CA2CF10020CAAB /* UIViewController+Extension.swift in Sources */,
 				71803D2C27EF432200953F4B /* HomeService.swift in Sources */,
@@ -650,6 +653,7 @@
 				713A27D527DD221E00093DE0 /* WebViewController.swift in Sources */,
 				E4E860AF2624DC5F007A1915 /* SceneDelegate.swift in Sources */,
 				711F8EEF27E5CBC600137EE4 /* RegistrationService.swift in Sources */,
+				7170CA8728122DBE000B6D8E /* SharedPlayer.swift in Sources */,
 				E45225272624F823001ACD0A /* SignInController.swift in Sources */,
 				E45225242624F818001ACD0A /* SignUpController.swift in Sources */,
 				714AE41D27D249CD00ACC228 /* SharedService.swift in Sources */,

@@ -17,6 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         let vc = SplashViewController(service: Services.sharedService)
         let navigationVc = UINavigationController(rootViewController: vc)
+
         window?.rootViewController = navigationVc
         window?.overrideUserInterfaceStyle = .light
 

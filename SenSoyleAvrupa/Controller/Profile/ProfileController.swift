@@ -96,7 +96,7 @@ class ProfileController: UIViewController {
                               bottom: view.safeAreaLayoutGuide.bottomAnchor,
                               leading: view.leadingAnchor,
                               trailing: view.trailingAnchor,
-                              padding: .init(top: 5, left: 20, bottom: 0, right: 20))
+                              padding: .init(top: 5, left: 20, bottom: 20, right: 20))
 
         loadingView.anchor(top: view.safeAreaLayoutGuide.topAnchor,
                            bottom: view.safeAreaLayoutGuide.bottomAnchor,
@@ -260,7 +260,7 @@ extension ProfileController: UICollectionViewDelegateFlowLayout {
             model.email = email
         }
 
-        let videoController = VideoController(model: model, service: Services.sharedService)
+        let videoController = ProfileVideoController(model: model, service: Services.sharedService)
         videoController.onDismiss = { modelDidChanged in
             if modelDidChanged {
                 self.pullData()
@@ -300,6 +300,7 @@ extension ProfileController: UICollectionViewDelegateFlowLayout {
             }
         }
 
+        navigationController?.navigationBar.tintColor = .customLabelColor()
         navigationController?.pushViewController(vc, animated: true)
     }
 }

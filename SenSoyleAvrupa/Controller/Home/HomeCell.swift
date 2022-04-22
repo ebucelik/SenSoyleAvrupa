@@ -47,8 +47,4 @@ class HomeCell: UICollectionViewCell {
     override func select(_ sender: Any?) {
         homeView.setSelected()
     }
-
-    /*override func setSelected(_ selected: Bool, animated: Bool) {
-        homeView.setSelected()
-    }*/
 }

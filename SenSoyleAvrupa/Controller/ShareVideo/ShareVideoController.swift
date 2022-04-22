@@ -97,7 +97,7 @@ class ShareVideoController: UITableViewController {
         return lbl
     }()
 
-    let textFieldVideoTitle : CustomTextField = {
+    let textFieldVideoTitle: CustomTextField = {
         let view = CustomTextField()
         view.backgroundColor = .customBackgroundColor()
         view.layer.cornerRadius = 5
@@ -107,7 +107,7 @@ class ShareVideoController: UITableViewController {
         return view
     }()
     
-    let buttonSelectVideo : UIButton = {
+    let buttonSelectVideo: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("  Video seç", for: .normal)
         btn.backgroundColor = .white
@@ -121,7 +121,7 @@ class ShareVideoController: UITableViewController {
         return btn
     }()
     
-    let buttonShareVideo : UIButton = {
+    let buttonShareVideo: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("  Paylaş", for: .normal)
         btn.setImage(UIImage(systemName: "hand.point.up.braille")?.withRenderingMode(.alwaysOriginal).withTintColor(.white), for: .normal)
@@ -174,7 +174,7 @@ class ShareVideoController: UITableViewController {
     func editLayout() {
         tableView.backgroundColor = .white
         
-        let btnStackView = UIStackView(arrangedSubviews: [buttonSelectVideo,buttonShareVideo])
+        let btnStackView = UIStackView(arrangedSubviews: [buttonSelectVideo, buttonShareVideo])
         btnStackView.axis = .horizontal
         btnStackView.spacing = 15
         btnStackView.distribution = .fillEqually
@@ -209,7 +209,7 @@ class ShareVideoController: UITableViewController {
         
         //Video View
         playerView.contentMode = .scaleAspectFill
-        playerView.player?.isMuted = true
+        playerView.playerLayer.player?.isMuted = true
         
         labelTitle.text = "Video: (Seçilmedi)"
         playerView.isHidden = true
@@ -355,6 +355,8 @@ extension ShareVideoController: VideoPickerDelegate {
         
         labelTitle.text = "Video"
         playerView.isHidden = false
-        playerView.player = AVPlayer(url: url)
+
+        SharedPlayer.player = AVPlayer(url: url)
+        playerView.setPlayer()
     }
 }

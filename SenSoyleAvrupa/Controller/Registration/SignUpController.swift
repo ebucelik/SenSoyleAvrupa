@@ -311,6 +311,11 @@ class SignUpController: UITableViewController {
             return
         }
 
+        if email.checkEmailValidation() {
+            showSnackBar(message: "E-Mail'iniz hatali. Lütfen dogru E-Mail kullanin.")
+            return
+        }
+
         if username.count < 6 {
             showSnackBar(message: "Kullanıcı adınız minimum 6 karakter'li olmali.")
             return

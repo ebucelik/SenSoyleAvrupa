@@ -69,7 +69,7 @@ class HomeController: UIViewController {
         pullData()
 
         if let cell = collectionView.visibleCells.first as? HomeCell {
-            cell.homeView.playerView.player?.play()
+            cell.homeView.playerView.playerLayer.player?.play()
             cell.homeView.imageViewPause.alpha = 0
         }
     }
@@ -77,7 +77,7 @@ class HomeController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if let cell = collectionView.visibleCells.first as? HomeCell {
-            cell.homeView.playerView.player?.pause()
+            cell.homeView.playerView.playerLayer.player?.pause()
         }
     }
 

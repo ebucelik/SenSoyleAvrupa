@@ -10,13 +10,11 @@ import AVFoundation
 import AVKit
 
 class ProfileVideoCell: UICollectionViewCell {
-    
-    var player: AVPlayer?
 
-    var playerView: PlayerView = {
-        let playerView = PlayerView()
-        playerView.backgroundColor = UIColor.customBackground()
-        return playerView
+    let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
     }()
 
     override func awakeFromNib() {
@@ -27,9 +25,9 @@ class ProfileVideoCell: UICollectionViewCell {
         layer.cornerRadius = 10
         clipsToBounds = true
 
-        addSubview(playerView)
+        addSubview(imageView)
 
-        playerView.addToSuperViewAnchors()
+        imageView.addToSuperViewAnchors()
     }
 
     func configureVideo(model: VideoDataModel) {
@@ -37,18 +35,28 @@ class ProfileVideoCell: UICollectionViewCell {
             return
         }
 
-        player = AVPlayer(url: url)
+        let videoAsset = AVAsset(url: url)
+        let cmTime = CMTime(value: 1, timescale: 1)
 
-        playerView.playerLayer.player = player
-        playerView.playerLayer.videoGravity = .resizeAspectFill
+        let assetImageGenerator = AVAssetImageGenerator(asset: videoAsset)
+        assetImageGenerator.appliesPreferredTrackTransform = true
+        assetImageGenerator.requestedTimeToleranceBefore = .zero
+        assetImageGenerator.requestedTimeToleranceAfter = .zero
+
+        assetImageGenerator.generateCGImagesAsynchronously(forTimes: [NSValue(time: cmTime)]) {
+            requestedTime, image, actualTime, result, error in
+
+            if let image = image {
+                DispatchQueue.main.async {
+                    self.imageView.image = UIImage(cgImage: image)
+                }
+            }
+        }
     }
 
-    func playVideo() {
-        playerView.playerLayer.player?.play()
-    }
+    override func prepareForReuse() {
+        super.prepareForReuse()
 
-    func pauseVideo() {
-        playerView.playerLayer.player?.pause()
+        imageView.image = nil
     }
 }
-

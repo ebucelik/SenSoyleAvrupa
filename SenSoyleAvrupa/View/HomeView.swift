@@ -5,7 +5,6 @@
 //  Created by Ing. Ebu Celik on 26.02.22.
 //
 
-import Foundation
 import UIKit
 import AVFoundation
 import NVActivityIndicatorView
@@ -17,6 +16,7 @@ class HomeView: UIView {
 
     // MARK: Properties
     private(set) var isPlaying = true
+    private var observer: NSKeyValueObservation?
 
     // MARK: Models
     private var userModel: UserModel? = nil {
@@ -241,6 +241,11 @@ class HomeView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        observer?.invalidate()
+        SharedPlayer.player.replaceCurrentItem(with: nil)
+    }
+
     func editRatingView() {
         ratingView.isHidden = true
 
@@ -253,10 +258,12 @@ class HomeView: UIView {
         }
     }
 
-    func resetViewsForReuse(){
+    func resetViewsForReuse() {
         imageViewPause.alpha = 0
-        playerView.player?.pause()
-        playerView.player = nil
+        playerView.playerLayer.player?.pause()
+        playerView.playerLayer.player?.replaceCurrentItem(with: nil)
+
+        SharedPlayer.player.replaceCurrentItem(with: nil)
     }
 
     func configure(with model: VideoDataModel) {
@@ -265,19 +272,45 @@ class HomeView: UIView {
     }
 
     func downloadVideo() {
+        loadingView.isHidden = false
+
         guard let url = URL(string: "\(NetworkManager.url)/video/\(model?.video ?? "")") else { return }
 
-        setPlayerView(player: AVPlayer(url: url))
-    }
+        let asset = AVAsset(url: url)
 
-    func setPlayerView(player: AVPlayer?) {
-        playerView.player = player
-        playerView.player?.automaticallyWaitsToMinimizeStalling = false
+        let assetKeys = [
+            "playable",
+            "hasProtectedContent"
+        ]
+
+        let playerItem = AVPlayerItem(asset: asset,
+                                      automaticallyLoadedAssetKeys: assetKeys)
+
+        observer = playerItem.observe(\.status, options: [.new, .old], changeHandler: { [weak self] (playerItem, change) in
+            switch playerItem.status {
+            case .readyToPlay:
+                self?.loadingView.isHidden = true
+
+            case .failed:
+                SharedPlayer.player.replaceCurrentItem(with: nil)
+                // TODO: Implement ups screen
+
+            case .unknown:
+                print("unknown")
+
+            default:
+                print("default")
+            }
+        })
+
+        SharedPlayer.player = AVPlayer(playerItem: playerItem)
+
+        playerView.setPlayer()
 
         NotificationCenter.default.addObserver(self,
                                                selector:#selector(self.playerDidFinishPlaying(note:)),
                                                name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
-                                               object: playerView.player?.currentItem)
+                                               object: playerView.playerLayer.player?.currentItem)
     }
 
     func fetchUserDataWhenNeeded() {
@@ -337,7 +370,7 @@ class HomeView: UIView {
                 self.imageViewPause.alpha = 0.50
                 self.imageViewPause.transform = CGAffineTransform.init(scaleX: 0.45, y: 0.45)
             }, completion: { [weak self] _ in
-                self?.playerView.player?.pause()
+                self?.playerView.playerLayer.player?.pause()
                 return
             })
         }
@@ -348,7 +381,7 @@ class HomeView: UIView {
                 self.imageViewPause.alpha = 0
             }, completion: { [weak self] _ in
                 self?.imageViewPause.transform = .identity
-                self?.playerView.player?.play()
+                self?.playerView.playerLayer.player?.play()
                 return
             })
         }
@@ -356,8 +389,8 @@ class HomeView: UIView {
 
     @objc func playerDidFinishPlaying(note: NSNotification){
         DispatchQueue.main.async { [weak self] in
-            self?.playerView.player?.seek(to: CMTime.zero)
-            self?.playerView.player?.play()
+            self?.playerView.playerLayer.player?.seek(to: CMTime.zero)
+            self?.playerView.playerLayer.player?.play()
         }
     }
 }

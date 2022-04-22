@@ -42,4 +42,10 @@ class MessageCell: UITableViewCell {
         allView.addToSuperViewAnchors(padding: .init(top: 10, left: 30, bottom: 10, right: 10))
         labelMessage.addToSuperViewAnchors(padding: .init(all: 10))
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        labelMessage.text = nil
+    }
 }
