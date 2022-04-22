@@ -130,7 +130,7 @@ extension HomeSectionController: ListDisplayDelegate {
             let number = Int.random(in: 0...1)
 
             if number == 0 {
-                let vc = ReklamController()
+                let vc = AdvertisementController()
                 vc.modalPresentationStyle = .fullScreen
                 viewController?.present(vc, animated: true)
             } else {

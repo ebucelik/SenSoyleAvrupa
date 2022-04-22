@@ -24,7 +24,7 @@ class ShareVideoController: UITableViewController {
     // MARK: Views
     var videoPicker: VideoPicker!
     
-    let buttonDismiss: UIButton = {
+    lazy var buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
@@ -105,7 +105,7 @@ class ShareVideoController: UITableViewController {
         return view
     }()
     
-    let buttonSelectVideo: UIButton = {
+    lazy var buttonSelectVideo: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("  Video seç", for: .normal)
         btn.backgroundColor = .white
@@ -119,7 +119,7 @@ class ShareVideoController: UITableViewController {
         return btn
     }()
     
-    let buttonShareVideo: UIButton = {
+    lazy var buttonShareVideo: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("  Paylaş", for: .normal)
         btn.setImage(UIImage(systemName: "hand.point.up.braille")?.withRenderingMode(.alwaysOriginal).withTintColor(.white), for: .normal)
@@ -176,7 +176,7 @@ class ShareVideoController: UITableViewController {
         btnStackView.axis = .horizontal
         btnStackView.spacing = 15
         btnStackView.distribution = .fillEqually
-        
+
         let stackView = UIStackView(arrangedSubviews: [labelCoinTitle,
                                                        labelCoinCount,
                                                        labelCoinInfo,

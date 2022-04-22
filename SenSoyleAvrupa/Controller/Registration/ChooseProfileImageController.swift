@@ -19,7 +19,7 @@ class ChooseProfileImageController: UIViewController {
 
     // MARK: Views
 
-    let buttonDismiss: UIButton = {
+    lazy var buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
@@ -97,7 +97,7 @@ class ChooseProfileImageController: UIViewController {
         return img
     }()
     
-    let buttonNext: UIButton = {
+    lazy var buttonNext: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Next", for: .normal)
         btn.backgroundColor = .lightGray

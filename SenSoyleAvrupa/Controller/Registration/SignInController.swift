@@ -24,7 +24,7 @@ class SignInController: UITableViewController {
         return view
     }()
     
-    let buttonDismiss: UIButton = {
+    lazy var buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
@@ -85,7 +85,7 @@ class SignInController: UITableViewController {
         return textField
     }()
     
-    let buttonForgotPassword: UIButton = {
+    lazy var buttonForgotPassword: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Parolanızı mı unuttunuz?", for: .normal)
         btn.contentHorizontalAlignment = .right
@@ -94,7 +94,7 @@ class SignInController: UITableViewController {
         return btn
     }()
     
-    let buttonSignIn: UIButton = {
+    lazy var buttonSignIn: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Giriş Yap", for: .normal)
         btn.backgroundColor = .customTintColor()

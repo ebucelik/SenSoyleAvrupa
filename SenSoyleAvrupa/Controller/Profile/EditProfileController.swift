@@ -67,7 +67,7 @@ class EditProfileController: UIViewController {
         return img
     }()
     
-    let buttonSubmit: UIButton = {
+    lazy var buttonSubmit: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Güncelle", for: .normal)
         btn.backgroundColor = .customTintColor()

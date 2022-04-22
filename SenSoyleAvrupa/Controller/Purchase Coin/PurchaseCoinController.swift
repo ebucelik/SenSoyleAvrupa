@@ -28,7 +28,7 @@ class PurchaseCoinController: UIViewController {
     static let userDefaultsInitialVideoPurchasedKey = "initialVideoPurchased"
 
     // MARK: Views
-    let buttonDismiss: UIButton = {
+    lazy var buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()

@@ -18,7 +18,7 @@ class ForgotPasswordController: UITableViewController {
         return view
     }()
     
-    let buttonDismiss: UIButton = {
+    lazy var buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
@@ -59,7 +59,7 @@ class ForgotPasswordController: UITableViewController {
         return textField
     }()
     
-    let buttonForgotPassword : UIButton = {
+    lazy var buttonForgotPassword : UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Gönder", for: .normal)
         btn.backgroundColor = .customTintColor()

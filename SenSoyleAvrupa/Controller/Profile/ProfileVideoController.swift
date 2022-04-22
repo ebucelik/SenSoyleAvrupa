@@ -78,7 +78,7 @@ class ProfileVideoController: UIViewController {
             commentController.email = model.email ?? ""
             commentController.onDismiss = { modelDidChanged in
                 if modelDidChanged {
-                    pullData()
+                    self.pullData()
                 }
             }
 
@@ -126,7 +126,7 @@ class ProfileVideoController: UIViewController {
             if let status = $0.status, status {
                 makeAlert(title: "Başarılı", message: "Bildiriniz bizim için çok önemli. Teşekkürler") { _ in
                     self.modelDidChanged = true
-                    dismiss(animated: true)
+                    self.dismiss(animated: true)
                 }
             } else {
                 makeAlert(title: "Hata", message: $0.message ?? "")
@@ -147,8 +147,8 @@ class ProfileVideoController: UIViewController {
 
     func pullData() {
         service.pullUserData(email: model.email ?? "") { [self] userModel in
-            service.pullProfileData(email: model.email ?? "", userId: userModel.id ?? 0) { videoDataModels in
-                videoDataModels.forEach { [self] in
+            service.pullProfileData(email: model.email ?? "", userId: userModel.id ?? 0) { [self] videoDataModels in
+                videoDataModels.forEach {
                     if $0.id == model.id {
                         model.likes = $0.likes
                         model.comment = $0.comment

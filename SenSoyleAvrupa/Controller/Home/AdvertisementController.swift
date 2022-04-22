@@ -1,5 +1,5 @@
 //
-//  ReklamController.swift
+//  AdvertisementController.swift
 //  SenSoyleAvrupa
 //
 //  Created by ilyas abiyev on 28.04.21.
@@ -9,7 +9,7 @@ import UIKit
 import Alamofire
 import AVFoundation
 
-class ReklamController: UIViewController {
+class AdvertisementController: UIViewController {
     
     let buttonDismiss: UIButton = {
         let button = UIButton(type: .system)
@@ -17,7 +17,7 @@ class ReklamController: UIViewController {
         button.tintColor = .black
         button.heightAnchor.constraint(equalToConstant: 36).isActive = true
         button.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        button.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
+        button.addTarget(AdvertisementController.self, action: #selector(dismissViewController), for: .touchUpInside)
         button.layer.cornerRadius = 18
         button.backgroundColor = .customBackgroundColor()
         return button

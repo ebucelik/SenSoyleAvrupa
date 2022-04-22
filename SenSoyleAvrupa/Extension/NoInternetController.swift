@@ -41,7 +41,7 @@ class NoInternetController: UIViewController {
         return lbl
     }()
     
-    let buttonTryAgain: UIButton = {
+    lazy var buttonTryAgain: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Tekrar deneyin", for: .normal)
         btn.titleLabel?.font = .boldSystemFont(ofSize: 17)

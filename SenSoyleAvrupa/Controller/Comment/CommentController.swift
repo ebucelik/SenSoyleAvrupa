@@ -169,7 +169,7 @@ class CommentController: UIViewController {
                     modelDidChanged = true
 
                     DispatchQueue.main.async {
-                        tableView.reloadData()
+                        self.tableView.reloadData()
                     }
                 } else {
                     makeAlert(title: "Uyarı", message: "Yorum yaparken bir hata oldu")

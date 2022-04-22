@@ -27,7 +27,7 @@ class SignUpController: UITableViewController {
         return view
     }()
 
-    let buttonDismiss: UIButton = {
+    lazy var buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         btn.tintColor = .customTintColor()
@@ -149,7 +149,7 @@ class SignUpController: UITableViewController {
         return view
     }()
     
-    let btnSignUp: UIButton = {
+    lazy var btnSignUp: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Hesap oluştur", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -161,7 +161,7 @@ class SignUpController: UITableViewController {
         return btn
     }()
     
-    let btnSignIn: UIButton = {
+    lazy var btnSignIn: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Giriş Yap", for: .normal)
         btn.backgroundColor = .white

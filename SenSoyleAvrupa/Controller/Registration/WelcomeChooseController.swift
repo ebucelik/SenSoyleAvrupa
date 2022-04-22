@@ -37,7 +37,7 @@ class WelcomeChooseController: UIViewController {
         return lbl
     }()
     
-    let buttonSignUp: UIButton = {
+    lazy var buttonSignUp: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Kayıt Ol", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -49,7 +49,7 @@ class WelcomeChooseController: UIViewController {
         return btn
     }()
     
-    let buttonSignIn: UIButton = {
+    lazy var buttonSignIn: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Giriş Yap", for: .normal)
         btn.backgroundColor = .white

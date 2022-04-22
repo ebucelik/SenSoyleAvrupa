@@ -50,7 +50,7 @@
 		E42AD0C52629BF55006C218F /* HomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42AD0C32629BF55006C218F /* HomeCell.swift */; };
 		E42AD0C62629BF55006C218F /* HomeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E42AD0C42629BF55006C218F /* HomeCell.xib */; };
 		E42AD0CA2629C19C006C218F /* CustomTabbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42AD0C92629C19C006C218F /* CustomTabbar.swift */; };
-		E444804E26397FB40005223B /* ReklamController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E444804D26397FB40005223B /* ReklamController.swift */; };
+		E444804E26397FB40005223B /* AdvertisementController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E444804D26397FB40005223B /* AdvertisementController.swift */; };
 		E452251E2624F7CD001ACD0A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E452251D2624F7CD001ACD0A /* SplashViewController.swift */; };
 		E45225212624F809001ACD0A /* WelcomeChooseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45225202624F809001ACD0A /* WelcomeChooseController.swift */; };
 		E45225242624F818001ACD0A /* SignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45225232624F818001ACD0A /* SignUpController.swift */; };
@@ -140,7 +140,7 @@
 		E42AD0C32629BF55006C218F /* HomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCell.swift; sourceTree = "<group>"; };
 		E42AD0C42629BF55006C218F /* HomeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeCell.xib; sourceTree = "<group>"; };
 		E42AD0C92629C19C006C218F /* CustomTabbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabbar.swift; sourceTree = "<group>"; };
-		E444804D26397FB40005223B /* ReklamController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReklamController.swift; sourceTree = "<group>"; };
+		E444804D26397FB40005223B /* AdvertisementController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisementController.swift; sourceTree = "<group>"; };
 		E452251D2624F7CD001ACD0A /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		E45225202624F809001ACD0A /* WelcomeChooseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeChooseController.swift; sourceTree = "<group>"; };
 		E45225232624F818001ACD0A /* SignUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpController.swift; sourceTree = "<group>"; };
@@ -468,7 +468,7 @@
 				E42AD0C02629BE7C006C218F /* HomeController.swift */,
 				E42AD0C32629BF55006C218F /* HomeCell.swift */,
 				E42AD0C42629BF55006C218F /* HomeCell.xib */,
-				E444804D26397FB40005223B /* ReklamController.swift */,
+				E444804D26397FB40005223B /* AdvertisementController.swift */,
 				71803D2527EE5F9600953F4B /* HomeSectionController.swift */,
 				71803D2927EF3F1400953F4B /* HomeCore.swift */,
 			);
@@ -663,7 +663,7 @@
 				714AE41D27D249CD00ACC228 /* SharedService.swift in Sources */,
 				E4E860F92624E4DD007A1915 /* Alert.swift in Sources */,
 				E45F8183262AFFC7001F7979 /* PurchaseView.swift in Sources */,
-				E444804E26397FB40005223B /* ReklamController.swift in Sources */,
+				E444804E26397FB40005223B /* AdvertisementController.swift in Sources */,
 				E4F78BCA2635C9AE00AAE321 /* CoinSettingsModel.swift in Sources */,
 				71EB934727EDBEDC00B7620C /* ProfileCore.swift in Sources */,
 				E45225312624FD34001ACD0A /* CustomTextField.swift in Sources */,
