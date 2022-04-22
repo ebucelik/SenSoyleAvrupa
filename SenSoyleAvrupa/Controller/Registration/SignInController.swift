@@ -24,8 +24,6 @@ class SignInController: UITableViewController {
         return view
     }()
     
-    let loadingView = LoadingView()
-    
     let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
@@ -152,14 +150,10 @@ class SignInController: UITableViewController {
 
         allView.addSubview(buttonDismiss)
         allView.addSubview(stackView)
-        allView.addSubview(loadingView)
 
         buttonDismiss.anchor(top: allView.safeAreaLayoutGuide.topAnchor, leading: allView.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
         stackView.anchor(top: buttonDismiss.bottomAnchor, leading: allView.leadingAnchor, trailing: allView.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-
-        loadingView.addToSuperViewAnchors()
-        loadingView.isHidden = true
     }
     
     func editTableView() {
@@ -185,10 +179,10 @@ class SignInController: UITableViewController {
     func loadingSignUpModelUpdated(state: SignUpModelLoadingState) {
         switch state {
         case .none, .loaded, .error:
-            loadingView.isHidden = true
+            allView.hideLoading()
 
         case .loading, .refreshing:
-            loadingView.isHidden = false
+            allView.showLoading()
         }
     }
 

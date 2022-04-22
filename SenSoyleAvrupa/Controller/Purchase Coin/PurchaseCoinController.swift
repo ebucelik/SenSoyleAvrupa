@@ -21,6 +21,8 @@ class PurchaseCoinController: UIViewController {
     // MARK: Properties
     private var state: State
     private let service: SharedServiceProtocol
+    private var onDismiss: ((Bool) -> Void)?
+    private var modelDidChanged = false
     private var purchaseModels = [PurchaseModel]()
     private var purchasedCoins = 0
     static let userDefaultsInitialVideoPurchasedKey = "initialVideoPurchased"
@@ -71,15 +73,10 @@ class PurchaseCoinController: UIViewController {
         return purchaseView
     }()
 
-    let loadingView: LoadingView = {
-        let loadingView = LoadingView()
-        loadingView.isHidden = true
-        return loadingView
-    }()
-
-    init(service: SharedServiceProtocol) {
+    init(service: SharedServiceProtocol, onDismiss: ((Bool) -> Void)?) {
         self.state = State(initialVideoPurchased: false)
         self.service = service
+        self.onDismiss = onDismiss
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -101,6 +98,12 @@ class PurchaseCoinController: UIViewController {
 
         setupPurchaseView()
     }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        if let onDismiss = onDismiss {
+            onDismiss(modelDidChanged)
+        }
+    }
     
     func setupView() {
         title = "Satın Al"
@@ -112,33 +115,37 @@ class PurchaseCoinController: UIViewController {
         
         view.addSubview(buttonDismiss)
         view.addSubview(stackView)
-        view.addSubview(loadingView)
         
-        buttonDismiss.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+        buttonDismiss.anchor(top: view.safeAreaLayoutGuide.topAnchor,
+                             leading: view.leadingAnchor,
+                             padding: .init(top: 20, left: 20, bottom: 0, right: 0))
 
-        stackView.anchor(top: buttonDismiss.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-
-        loadingView.addToSuperViewAnchors()
+        stackView.anchor(top: buttonDismiss.bottomAnchor,
+                         leading: view.leadingAnchor,
+                         trailing: view.trailingAnchor,
+                         padding: .init(top: 20, left: 20, bottom: 0, right: 20))
         
         purchaseModels.append(PurchaseModel(coin: 10, price: 9.99, handler: {
-            self.loadingView.isHidden = false
+            self.view.showLoading()
 
             IAPManager.shared.purchase(product: .diamond_10_initial, completion: {
                 self.state = State(initialVideoPurchased: true)
                 UserDefaults.standard.set(true, forKey: PurchaseCoinController.userDefaultsInitialVideoPurchasedKey)
                 self.savePurchasedCoins()
+                self.modelDidChanged = true
             }, purchaseCanceled: {
-                self.loadingView.isHidden = true
+                self.view.hideLoading()
             })
         }))
 
         purchaseModels.append(PurchaseModel(coin: 10, price: 4.99, handler: {
-            self.loadingView.isHidden = false
+            self.view.showLoading()
 
             IAPManager.shared.purchase(product: .diamond_10, completion: {
                 self.savePurchasedCoins()
+                self.modelDidChanged = true
             }, purchaseCanceled: {
-                self.loadingView.isHidden = true
+                self.view.hideLoading()
             })
         }))
 
@@ -154,7 +161,7 @@ class PurchaseCoinController: UIViewController {
     func pullData() {
         service.pullUserData(email: CacheUser.email) {
             self.labelCoins.text = "\($0.coin ?? 0)"
-            self.loadingView.isHidden = true
+            self.view.hideLoading()
         }
     }
 
@@ -168,13 +175,13 @@ class PurchaseCoinController: UIViewController {
             switch result {
             case let .failure(error):
                 print("Network request error: \(error)")
-                loadingView.isHidden = true
+                view.hideLoading()
             case let .success(signUpModel):
                 if let status = signUpModel.status, status {
                     pullData()
                     setupPurchaseView()
                 } else {
-                    loadingView.isHidden = true
+                    view.hideLoading()
                     makeAlert(title: "Hata", message: "Coin alme işlemi yaparken bir hata oluştu: \(signUpModel.message ?? "")")
                 }
             }

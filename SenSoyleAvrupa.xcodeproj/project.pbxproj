@@ -39,6 +39,7 @@
 		719DE26B27DFD35800B7F1C7 /* LoginCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719DE26A27DFD35800B7F1C7 /* LoginCore.swift */; };
 		71C9D8B627DB8D8600761E14 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C9D8B527DB8D8600761E14 /* IAPManager.swift */; };
 		71C9D8B827DB932B00761E14 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71C9D8B727DB932B00761E14 /* StoreKit.framework */; };
+		71D5D2162812AAB400C9E1C9 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D5D2152812AAB400C9E1C9 /* UIView+Extension.swift */; };
 		71EB934727EDBEDC00B7620C /* ProfileCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71EB934627EDBEDC00B7620C /* ProfileCore.swift */; };
 		71EB934927EDBEF200B7620C /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71EB934827EDBEF200B7620C /* ProfileService.swift */; };
 		81C08B11DA2F6C0EBEEA1985 /* Pods_SenSoyleAvrupa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2836D3E175EC00B1444DD53E /* Pods_SenSoyleAvrupa.framework */; };
@@ -128,6 +129,7 @@
 		719DE26A27DFD35800B7F1C7 /* LoginCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCore.swift; sourceTree = "<group>"; };
 		71C9D8B527DB8D8600761E14 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		71C9D8B727DB932B00761E14 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		71D5D2152812AAB400C9E1C9 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		71EB934627EDBEDC00B7620C /* ProfileCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCore.swift; sourceTree = "<group>"; };
 		71EB934827EDBEF200B7620C /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		D887853E4071F865BF816DA0 /* Pods-SenSoyleAvrupa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SenSoyleAvrupa.release.xcconfig"; path = "Target Support Files/Pods-SenSoyleAvrupa/Pods-SenSoyleAvrupa.release.xcconfig"; sourceTree = "<group>"; };
@@ -414,6 +416,7 @@
 				E45225302624FD34001ACD0A /* CustomTextField.swift */,
 				712FA80D27CA2CF10020CAAB /* UIViewController+Extension.swift */,
 				714A4DB227CBB667002BD6E4 /* RangeReplaceableCollection+Extension.swift */,
+				71D5D2152812AAB400C9E1C9 /* UIView+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -617,6 +620,7 @@
 				711F8EF927E6071400137EE4 /* EmptyView.swift in Sources */,
 				712FA81227CA352A0020CAAB /* ProfileVideoController.swift in Sources */,
 				E45F8187262B0AD7001F7979 /* LeftMenuController.swift in Sources */,
+				71D5D2162812AAB400C9E1C9 /* UIView+Extension.swift in Sources */,
 				712FA80E27CA2CF10020CAAB /* UIViewController+Extension.swift in Sources */,
 				71803D2C27EF432200953F4B /* HomeService.swift in Sources */,
 				711F8EED27E4EB1D00137EE4 /* Services.swift in Sources */,

@@ -63,12 +63,6 @@ class HomeView: UIView {
     let alphaBackgroundColor: UIColor = .white.withAlphaComponent(0.3)
 
     // MARK: Views
-    let loadingView: LoadingView = {
-        let loadingView = LoadingView()
-        loadingView.isHidden = true
-        return loadingView
-    }()
-
     let ratingView = RatingView()
 
     var playerView: PlayerView = {
@@ -207,7 +201,6 @@ class HomeView: UIView {
         addSubview(stackViewLabel)
         addSubview(imageViewPause)
         addSubview(ratingView)
-        addSubview(loadingView)
 
         playerView.addToSuperViewAnchors()
 
@@ -233,17 +226,10 @@ class HomeView: UIView {
 
         ratingView.addToSuperViewAnchors()
         editRatingView()
-
-        loadingView.addToSuperViewAnchors()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    deinit {
-        observer?.invalidate()
-        SharedPlayer.player.replaceCurrentItem(with: nil)
     }
 
     func editRatingView() {
@@ -260,10 +246,10 @@ class HomeView: UIView {
 
     func resetViewsForReuse() {
         imageViewPause.alpha = 0
-        playerView.playerLayer.player?.pause()
-        playerView.playerLayer.player?.replaceCurrentItem(with: nil)
-
         SharedPlayer.player.replaceCurrentItem(with: nil)
+        playerView.playerLayer.player?.pause()
+        playerView.setPlayer()
+        observer?.invalidate()
     }
 
     func configure(with model: VideoDataModel) {
@@ -272,7 +258,8 @@ class HomeView: UIView {
     }
 
     func downloadVideo() {
-        loadingView.isHidden = false
+        isPlaying = true
+        showLoading()
 
         guard let url = URL(string: "\(NetworkManager.url)/video/\(model?.video ?? "")") else { return }
 
@@ -289,11 +276,13 @@ class HomeView: UIView {
         observer = playerItem.observe(\.status, options: [.new, .old], changeHandler: { [weak self] (playerItem, change) in
             switch playerItem.status {
             case .readyToPlay:
-                self?.loadingView.isHidden = true
+                self?.hideLoading()
 
             case .failed:
+                self?.hideLoading()
                 SharedPlayer.player.replaceCurrentItem(with: nil)
-                // TODO: Implement ups screen
+                self?.playerView.setPlayer()
+                self?.showError()
 
             case .unknown:
                 print("unknown")
@@ -304,7 +293,6 @@ class HomeView: UIView {
         })
 
         SharedPlayer.player = AVPlayer(playerItem: playerItem)
-
         playerView.setPlayer()
 
         NotificationCenter.default.addObserver(self,
@@ -330,11 +318,6 @@ class HomeView: UIView {
 
     func animate(options: UIView.AnimationOptions, animations: @escaping () -> Void, completion: ((Bool) -> (Void))? = nil) {
         UIView.animate(withDuration: 0.075, delay: 0, options: options, animations: animations, completion: completion)
-    }
-
-    func setSelected() {
-        imageViewPause.alpha = 0
-        isPlaying = true
     }
 
     @objc func actionRatingViewSend() {

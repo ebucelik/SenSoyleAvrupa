@@ -37,8 +37,6 @@ class HomeSectionController: ListSectionController {
         if let cell = cell as? HomeCell, let model = videoDataModel, let viewController = viewController as? HomeController {
             cell.homeView.configure(with: model)
 
-            cell.homeView.downloadVideo()
-
             cell.homeView.buttonProfileImageAction = { [self] in
                 print("Go to profile account")
 
@@ -113,6 +111,7 @@ class HomeSectionController: ListSectionController {
 extension HomeSectionController: ListDisplayDelegate {
     func listAdapter(_ listAdapter: ListAdapter, willDisplay sectionController: ListSectionController, cell: UICollectionViewCell, at index: Int) {
         if let cell = cell as? HomeCell {
+            cell.homeView.downloadVideo()
             cell.homeView.playerView.playerLayer.player?.play()
         }
     }
@@ -120,6 +119,7 @@ extension HomeSectionController: ListDisplayDelegate {
     func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying sectionController: ListSectionController, cell: UICollectionViewCell, at index: Int) {
         if let cell = cell as? HomeCell {
             cell.homeView.playerView.playerLayer.player?.pause()
+            cell.homeView.downloadVideo()
         }
     }
 

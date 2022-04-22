@@ -26,8 +26,6 @@ class SignUpController: UITableViewController {
         view.backgroundColor = .white
         return view
     }()
-    
-    let loadingView = LoadingView()
 
     let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
@@ -224,7 +222,6 @@ class SignUpController: UITableViewController {
         
         allView.addSubview(buttonDismiss)
         allView.addSubview(stackView)
-        allView.addSubview(loadingView)
         
         buttonDismiss.anchor(top: allView.safeAreaLayoutGuide.topAnchor, leading: allView.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
@@ -240,12 +237,8 @@ class SignUpController: UITableViewController {
         labelPrivacyPolicy.anchor(leading: flatSwitch.trailingAnchor, trailing: viewPrivacyPolicy.trailingAnchor, padding: .init(right: 5))
         labelPrivacyPolicy.centerYAtSuperView()
 
-        loadingView.addToSuperViewAnchors()
-
         let gestureSwitch = UITapGestureRecognizer(target: self, action: #selector(actionPrivacyPolicy))
         labelPrivacyPolicy.addGestureRecognizer(gestureSwitch)
-
-        loadingView.isHidden = true
     }
     
     func editTableView() {
@@ -271,10 +264,10 @@ class SignUpController: UITableViewController {
     func loadingSignUpModelUpdated(state: SignUpModelLoadingState) {
         switch state {
         case .none, .loaded, .error:
-            loadingView.isHidden = true
+            allView.hideLoading()
 
         case .loading, .refreshing:
-            loadingView.isHidden = false
+            allView.showLoading()
         }
     }
 

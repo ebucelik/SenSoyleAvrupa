@@ -18,8 +18,6 @@ class ForgotPasswordController: UITableViewController {
         return view
     }()
     
-    let loadingView = LoadingView()
-    
     let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
@@ -101,7 +99,6 @@ class ForgotPasswordController: UITableViewController {
 
         allView.addSubview(buttonDismiss)
         allView.addSubview(stackView)
-        allView.addSubview(loadingView)
 
         buttonDismiss.anchor(top: allView.safeAreaLayoutGuide.topAnchor,
                              leading: allView.leadingAnchor,
@@ -111,10 +108,6 @@ class ForgotPasswordController: UITableViewController {
                          leading: allView.leadingAnchor,
                          trailing: allView.trailingAnchor,
                          padding: .init(all: 20))
-
-
-        loadingView.addToSuperViewAnchors()
-        loadingView.isHidden = true
     }
 
     func editTableView() {

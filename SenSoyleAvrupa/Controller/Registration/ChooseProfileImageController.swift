@@ -18,7 +18,6 @@ class ChooseProfileImageController: UIViewController {
     private var cancellable: Set<AnyCancellable> = []
 
     // MARK: Views
-    let loadingView = LoadingView()
 
     let buttonDismiss: UIButton = {
         let btn = UIButton(type: .system)
@@ -150,7 +149,6 @@ class ChooseProfileImageController: UIViewController {
         littleCircle.addSubview(editImage)
         
         view.addSubview(buttonNext)
-        view.addSubview(loadingView)
         
         buttonDismiss.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
@@ -163,9 +161,6 @@ class ChooseProfileImageController: UIViewController {
         bigCircle.centerViewAtSuperView()
         
         buttonNext.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 20, right: 20))
-
-        loadingView.addToSuperViewAnchors()
-        loadingView.isHidden = true
         
         let gestureEdit = UITapGestureRecognizer(target: self, action: #selector(actionEdit))
         littleCircle.addGestureRecognizer(gestureEdit)
@@ -193,9 +188,9 @@ class ChooseProfileImageController: UIViewController {
     func loadingStatusCodeUpdated(state: StatusCodeState) {
         switch state {
         case .none, .loaded, .error:
-            loadingView.isHidden = true
+            view.hideLoading()
         case .loading, .refreshing:
-            loadingView.isHidden = false
+            view.showLoading()
         }
     }
 

@@ -23,6 +23,8 @@ class ProfileController: UIViewController {
     private let isOwnUserProfile: Bool
     private let collectionViewHeaderHeight: CGFloat = 200
 
+    private var onDismiss: ((Bool) -> Void)?
+
     // MARK: Models
     private var userModel: UserModel? {
         didSet {
@@ -40,7 +42,6 @@ class ProfileController: UIViewController {
     }
 
     // MARK: Views
-    private let loadingView = LoadingView()
     private let refreshControl = UIRefreshControl()
   
     let collectionView: UICollectionView = {
@@ -59,6 +60,12 @@ class ProfileController: UIViewController {
         self.isOwnUserProfile = isOwnUserProfile
 
         super.init(nibName: nil, bundle: nil)
+
+        self.onDismiss = { [self] modelDidChanged in
+            if modelDidChanged {
+                pullData()
+            }
+        }
     }
 
     required init?(coder: NSCoder) {
@@ -90,19 +97,12 @@ class ProfileController: UIViewController {
         view.backgroundColor = .white
 
         view.addSubview(collectionView)
-        view.addSubview(loadingView)
 
         collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor,
                               bottom: view.safeAreaLayoutGuide.bottomAnchor,
                               leading: view.leadingAnchor,
                               trailing: view.trailingAnchor,
                               padding: .init(top: 5, left: 20, bottom: 20, right: 20))
-
-        loadingView.anchor(top: view.safeAreaLayoutGuide.topAnchor,
-                           bottom: view.safeAreaLayoutGuide.bottomAnchor,
-                           leading: view.leadingAnchor,
-                           trailing: view.trailingAnchor,
-                           padding: .init(top: collectionViewHeaderHeight))
 
         if isOwnUserProfile {
             navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"), style: .done, target: self, action: #selector(actionLeftMenu))
@@ -161,10 +161,10 @@ class ProfileController: UIViewController {
     func loadingUserModelUpdated(state: UserModelLoadingState) {
         switch state {
         case .none, .loaded, .error:
-            loadingView.isHidden = true
+            view.hideLoading()
 
         case .loading, .refreshing:
-            loadingView.isHidden = false
+            view.showLoading()
         }
     }
 
@@ -177,10 +177,10 @@ class ProfileController: UIViewController {
     func loadingVideoDataModelsUpdated(state: VideoDataModelLoadingState) {
         switch state {
         case .none, .loaded, .error:
-            loadingView.isHidden = true
+            view.hideLoading()
 
         case .loading, .refreshing:
-            loadingView.isHidden = false
+            view.showLoading()
         }
     }
 
@@ -198,7 +198,7 @@ class ProfileController: UIViewController {
     @objc func actionLeftMenu() {
         print("left menu")
         var menu: SideMenuNavigationController?
-        menu = SideMenuNavigationController(rootViewController: LeftMenuController())
+        menu = SideMenuNavigationController(rootViewController: LeftMenuController(onDismiss: onDismiss))
         menu?.leftSide = true
         menu?.statusBarEndAlpha = 0
         menu?.navigationController?.navigationBar.isHidden = true
@@ -218,11 +218,7 @@ class ProfileController: UIViewController {
                                                    reducer: shareVideoReducer,
                                                    environment: ShareVideoEnvironment(service: Services.shareVideoService,
                                                                                       mainQueue: .main)))
-        vc.onDismiss = { [self] modelDidChanged in
-            if modelDidChanged {
-                pullData()
-            }
-        }
+        vc.onDismiss = onDismiss
 
         let navigationVC = UINavigationController(rootViewController: vc)
         navigationVC.modalPresentationStyle = .fullScreen
@@ -230,11 +226,7 @@ class ProfileController: UIViewController {
     }
 
     func pullData() {
-        if let userModel = userModel {
-            viewStore.send(.loadVideos(email: email, userId: userModel.id ?? 0))
-        } else {
-            viewStore.send(.loadUser(email: email))
-        }
+        viewStore.send(.loadUser(email: email))
     }
 }
 
@@ -261,11 +253,7 @@ extension ProfileController: UICollectionViewDelegateFlowLayout {
         }
 
         let videoController = ProfileVideoController(model: model, service: Services.sharedService)
-        videoController.onDismiss = { modelDidChanged in
-            if modelDidChanged {
-                self.pullData()
-            }
-        }
+        videoController.onDismiss = onDismiss
 
         present(videoController, animated: true)
     }
@@ -294,11 +282,7 @@ extension ProfileController: UICollectionViewDelegateFlowLayout {
 
     @objc func actionEditProfile() {
         let vc = EditProfileController(service: Services.sharedService)
-        vc.onDismiss = { [self] modelDidChanged in
-            if modelDidChanged {
-                viewStore.send(.loadUser(email: email))
-            }
-        }
+        vc.onDismiss = onDismiss
 
         navigationController?.navigationBar.tintColor = .customLabelColor()
         navigationController?.pushViewController(vc, animated: true)

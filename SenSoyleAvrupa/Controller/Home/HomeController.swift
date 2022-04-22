@@ -30,7 +30,6 @@ class HomeController: UIViewController {
     private var videoDataModels = [VideoDataModel]()
 
     // MARK: Views
-    private let loadingView = LoadingView()
     private let refreshControl = UIRefreshControl()
     private lazy var adapter: ListAdapter = {
         return ListAdapter(updater: ListAdapterUpdater(),
@@ -76,6 +75,7 @@ class HomeController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         if let cell = collectionView.visibleCells.first as? HomeCell {
             cell.homeView.playerView.playerLayer.player?.pause()
         }
@@ -100,10 +100,8 @@ class HomeController: UIViewController {
     func editLayout() {
         view.backgroundColor = .white
         view.addSubview(collectionView)
-        view.addSubview(loadingView)
 
         collectionView.addToSuperViewAnchors()
-        loadingView.addToSuperViewAnchors()
 
         refreshControl.addTarget(self, action: #selector(pullData), for: .valueChanged)
         collectionView.refreshControl = refreshControl
@@ -112,8 +110,6 @@ class HomeController: UIViewController {
 
         adapter.collectionView = collectionView
         adapter.dataSource = self
-
-        loadingView.isHidden = true
     }
 
     func editAdMob() {
@@ -165,11 +161,11 @@ class HomeController: UIViewController {
     func loadingVideoDataModels(state: VideoDataModelLoadingState) {
         switch state {
         case .none, .loaded, .error:
-            loadingView.isHidden = true
+            view.hideLoading()
             refreshControl.endRefreshing()
 
         case .loading, .refreshing:
-            loadingView.isHidden = false
+            view.showLoading()
             refreshControl.beginRefreshing()
         }
     }
@@ -184,10 +180,10 @@ class HomeController: UIViewController {
     func loadingSignUpModel(state: SignUpModelLoadingState) {
         switch state {
         case .none, .loaded, .error:
-            loadingView.isHidden = true
+            view.hideLoading()
 
         case .loading, .refreshing:
-            loadingView.isHidden = false
+            view.showLoading()
         }
     }
 

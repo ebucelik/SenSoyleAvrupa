@@ -22,8 +22,6 @@ class ShareVideoController: UITableViewController {
     var onDismiss: ((Bool) -> Void)?
 
     // MARK: Views
-    let loadingView = LoadingView()
-
     var videoPicker: VideoPicker!
     
     let buttonDismiss: UIButton = {
@@ -196,10 +194,6 @@ class ShareVideoController: UITableViewController {
         buttonDismiss.anchor(top: allView.topAnchor, leading: allView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
         stackView.anchor(top: buttonDismiss.bottomAnchor, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 20, left: 20, bottom: 0, right: 20))
-
-        allView.addSubview(loadingView)
-        loadingView.addToSuperViewAnchors()
-        loadingView.isHidden = true
     }
 
     func editTableView() {
@@ -289,10 +283,10 @@ class ShareVideoController: UITableViewController {
     private func handleLoadingState<T: Codable>(state: Loadable<T>) {
         switch state {
         case .none, .loaded, .error:
-            loadingView.isHidden = true
+            allView.hideLoading()
 
         case .loading, .refreshing:
-            loadingView.isHidden = false
+            allView.showLoading()
         }
     }
 
@@ -318,7 +312,7 @@ class ShareVideoController: UITableViewController {
             let alert = UIAlertController(title: "Uyarı", message: "Video paylaşmanız için yeterli Coin e sahib değilsiniz", preferredStyle: .alert)
 
             alert.addAction(UIAlertAction(title: "Coin Satın Al", style: .default, handler: { (_) in
-                self.navigationController?.pushViewController(PurchaseCoinController(service: Services.sharedService), animated: true)
+                self.navigationController?.pushViewController(PurchaseCoinController(service: Services.sharedService, onDismiss: self.onDismiss), animated: true)
             }))
 
             alert.addAction(UIAlertAction(title: "İptal et", style: .cancel, handler: nil))

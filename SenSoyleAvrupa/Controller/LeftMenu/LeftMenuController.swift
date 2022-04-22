@@ -36,12 +36,25 @@ class LeftMenuController: UITableViewController {
     var menus = ["Coin Satın Al", "Mesajlar", "Kullanıcı Sözleşmesi", "Gizlilik Sözleşmesi", "Çıkış Yap", "Profili Sil"]
     
     var systemImages = ["dollarsign.circle", "message.circle.fill", "lock.shield", "shield.checkerboard", "return", "trash.fill"]
-    
-    var controller = [PurchaseCoinController(service: Services.sharedService),
-                      MessageController(),
-                      TermsofServiceController(),
-                      PrivacyPolicyController()]
-    
+
+    var onDismiss: ((Bool) -> Void)?
+
+    var controller: [UIViewController] = []
+
+    init(onDismiss: ((Bool) -> Void)?) {
+        self.onDismiss = onDismiss
+        self.controller = [PurchaseCoinController(service: Services.sharedService, onDismiss: onDismiss),
+                           MessageController(),
+                           TermsofServiceController(),
+                           PrivacyPolicyController()]
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

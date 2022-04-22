@@ -20,7 +20,7 @@ class EditProfileController: UIViewController {
     // MARK: Properties
     private var state: State
     private let service: SharedServiceProtocol
-    private var userModelDidChanged = false
+    private var modelDidChanged = false
 
     var onDismiss: ((Bool) -> Void)?
 
@@ -96,8 +96,6 @@ class EditProfileController: UIViewController {
         return textField
     }()
 
-    let loadingView = LoadingView()
-
     init(service: SharedServiceProtocol) {
         self.state = State(oldUsername: textFieldUsername.text!, oldProfilePicture: imageViewProfileImage.image ?? UIImage())
         self.service = service
@@ -127,7 +125,7 @@ class EditProfileController: UIViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         if let onDismiss = onDismiss {
-            onDismiss(userModelDidChanged)
+            onDismiss(modelDidChanged)
         }
     }
 
@@ -147,7 +145,6 @@ class EditProfileController: UIViewController {
         viewSmallCircle.addSubview(imageViewEdit)
         
         view.addSubview(stackView)
-        view.addSubview(loadingView)
 
         viewBigCircle.anchor(top: view.safeAreaLayoutGuide.topAnchor, padding: .init(top: 20, left: 0, bottom: 0, right: 0))
         viewBigCircle.centerXAtSuperView()
@@ -157,10 +154,6 @@ class EditProfileController: UIViewController {
         imageViewEdit.anchor(top: viewSmallCircle.topAnchor, bottom: viewSmallCircle.bottomAnchor, leading: viewSmallCircle.leadingAnchor, trailing: viewSmallCircle.trailingAnchor)
         
         stackView.anchor(top: imageViewProfileImage.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor,padding: .init(top: 10, left: 20, bottom: 0, right: 20))
-
-        loadingView.addToSuperViewAnchors()
-        
-        loadingView.isHidden = true
         
         let gestureEdit = UITapGestureRecognizer(target: self, action: #selector(selectProfileImage))
         viewSmallCircle.addGestureRecognizer(gestureEdit)
@@ -187,7 +180,6 @@ class EditProfileController: UIViewController {
         
         viewSmallCircle.layoutIfNeeded()
         viewSmallCircle.layer.cornerRadius = 0.5 * viewSmallCircle.frame.height
-        
     }
     
     @objc func selectProfileImage() {
@@ -217,23 +209,23 @@ class EditProfileController: UIViewController {
             return
         }
         
-        loadingView.isHidden = false
+        view.showLoading()
 
         if state.oldUsername != username {
             service.changeUsername(email: CacheUser.email, username: username, onError: {
-                self.loadingView.isHidden = true
+                self.view.hideLoading()
             }) { [self] signUpModel in
                 if let status = signUpModel.status, status {
                     state.oldUsername = username
                     pullData()
-                    userModelDidChanged = true
+                    modelDidChanged = true
 
                     makeAlert(title: "Başarılı", message: "Kullanıcı adınız başarıyla güncellendi")
                 } else {
                     makeAlert(title: "Uyarı", message: signUpModel.message ?? "")
                 }
 
-                loadingView.isHidden = true
+                view.hideLoading()
             }
         } else if state.oldProfilePicture != profilePicture {
             let parametersPhoto = ["email": CacheUser.email]
@@ -249,17 +241,18 @@ class EditProfileController: UIViewController {
             }, to: "\(NetworkManager.url)/api/change-pp").response { [self] response in
                 print(response)
                 if response.response?.statusCode == 200 {
-                    print("OK. Done")
-                    loadingView.isHidden = true
+                    view.hideLoading()
                     pullData()
+                    modelDidChanged = true
+
                     makeAlert(title: "Başarılı", message: "Profil resminiz başarıyla düzenlendi")
                 } else {
-                    loadingView.isHidden = true
+                    view.hideLoading()
                     makeAlert(title: "Uyarı", message: "Profil resminiz düzenmede hata olustu")
                 }
             }
         } else {
-            loadingView.isHidden = true
+            view.hideLoading()
             makeAlert(title: "Uyarı", message: "Profiliniz'de bi degisim fark edilmedi")
         }
     }

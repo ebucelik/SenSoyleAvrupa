@@ -43,8 +43,4 @@ class HomeCell: UICollectionViewCell {
 
         homeView.resetViewsForReuse()
     }
-
-    override func select(_ sender: Any?) {
-        homeView.setSelected()
-    }
 }
