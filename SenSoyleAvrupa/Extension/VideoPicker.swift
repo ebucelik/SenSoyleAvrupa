@@ -26,11 +26,11 @@ open class VideoPicker: NSObject {
         self.presentationController = presentationController
         self.delegate = delegate
     
-        self.pickerController.delegate = self
-        self.pickerController.allowsEditing = true
-        self.pickerController.mediaTypes = ["public.movie"]
-        self.pickerController.videoQuality = .typeHigh
-        self.pickerController.videoMaximumDuration = 60
+        pickerController.delegate = self
+        pickerController.allowsEditing = true
+        pickerController.mediaTypes = ["public.movie"]
+        pickerController.videoQuality = .typeHigh
+        pickerController.videoMaximumDuration = 60
     }
     
     private func action(for type: UIImagePickerController.SourceType, title: String) -> UIAlertAction? {

@@ -160,6 +160,21 @@ class HomeView: UIView {
         return imageView
     }()
 
+    private let shadowView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private let shadowViewLayer: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.frame = .zero
+        layer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.5).cgColor]
+        layer.startPoint = .init(x: 0.5, y: 0)
+        layer.endPoint = .init(x: 0.5, y: 1)
+        return layer
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -197,12 +212,20 @@ class HomeView: UIView {
         stackViewLabel.axis = .vertical
 
         addSubview(playerView)
+        addSubview(shadowView)
         addSubview(stackView)
         addSubview(stackViewLabel)
         addSubview(imageViewPause)
         addSubview(ratingView)
 
         playerView.addToSuperViewAnchors()
+
+        shadowView.anchor(top: stackView.topAnchor,
+                          bottom: bottomAnchor,
+                          leading: leadingAnchor,
+                          trailing: trailingAnchor)
+
+        shadowView.layer.addSublayer(shadowViewLayer)
 
         stackView.anchor(bottom: safeAreaLayoutGuide.bottomAnchor,
                          trailing: trailingAnchor,
@@ -225,7 +248,16 @@ class HomeView: UIView {
         buttonSpam.addTarget(self, action: #selector(spamAction), for: .touchUpInside)
 
         ratingView.addToSuperViewAnchors()
+
         editRatingView()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if shadowViewLayer.frame == .zero {
+            shadowViewLayer.frame = shadowView.bounds
+        }
     }
 
     required init?(coder: NSCoder) {

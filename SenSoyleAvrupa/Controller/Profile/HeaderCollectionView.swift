@@ -72,6 +72,7 @@ class HeaderCollectionView: UICollectionReusableView {
         let view = UIView()
         view.layer.cornerRadius = 5
         view.backgroundColor = .customBackground()
+        view.addShadow(opacity: 0.5, radius: 1, color: UIColor.lightGray)
         return view
     }()
     
@@ -79,6 +80,7 @@ class HeaderCollectionView: UICollectionReusableView {
         let view = UIView()
         view.layer.cornerRadius = 5
         view.backgroundColor = .customBackground()
+        view.addShadow(opacity: 0.5, radius: 1, color: UIColor.lightGray)
         return view
     }()
     
@@ -86,6 +88,7 @@ class HeaderCollectionView: UICollectionReusableView {
         let view = UIView()
         view.layer.cornerRadius = 5
         view.backgroundColor = .customBackground()
+        view.addShadow(opacity: 0.5, radius: 1, color: UIColor.lightGray)
         return view
     }()
     
@@ -161,6 +164,7 @@ class HeaderCollectionView: UICollectionReusableView {
 
         let stackView = UIStackView(arrangedSubviews: [imageViewProfilePicture, stackViewUserData])
         stackView.backgroundColor = .customBackground()
+        stackView.addShadow(opacity: 0.5, radius: 1, color: UIColor.lightGray)
         stackView.axis = .horizontal
         stackView.layer.cornerRadius = 10
         stackView.spacing = 10
@@ -190,7 +194,9 @@ class HeaderCollectionView: UICollectionReusableView {
 
         addSubview(stackViewAll)
 
-        stackViewAll.anchor(leading: leadingAnchor, trailing: trailingAnchor)
+        stackViewAll.anchor(leading: leadingAnchor,
+                            trailing: trailingAnchor,
+                            padding: .init(horizontal: 1))
 
         viewVideoCount.addSubview(labelVideoCount)
         viewPointCount.addSubview(labelPointCount)

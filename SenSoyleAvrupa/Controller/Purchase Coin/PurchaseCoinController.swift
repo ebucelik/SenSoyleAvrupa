@@ -25,6 +25,7 @@ class PurchaseCoinController: UIViewController {
     private var modelDidChanged = false
     private var purchaseModels = [PurchaseModel]()
     private var purchasedCoins = 0
+
     static let userDefaultsInitialVideoPurchasedKey = "initialVideoPurchased"
 
     // MARK: Views

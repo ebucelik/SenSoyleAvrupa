@@ -36,11 +36,23 @@ class HomeController: UIViewController {
                            viewController: self,
                            workingRangeSize: 0)
     }()
+
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.isPagingEnabled = true
         return collectionView
+    }()
+
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Ana sayfa"
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.textAlignment = .left
+        label.addShadow(opacity: 0.5, radius: 5)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
 
     init(store: Store<HomeState, HomeAction>) {
@@ -101,14 +113,22 @@ class HomeController: UIViewController {
 
     func editLayout() {
         view.backgroundColor = .white
+
         view.addSubview(collectionView)
+        view.addSubview(titleLabel)
 
         collectionView.addToSuperViewAnchors()
+        titleLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor,
+                          leading: view.safeAreaLayoutGuide.leadingAnchor,
+                          padding: .init(top: 10, left: 16, bottom: 0, right: 0))
 
         refreshControl.addTarget(self, action: #selector(pullData), for: .valueChanged)
         collectionView.refreshControl = refreshControl
 
-        refreshControl.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, padding: .init(top: 80))
+        refreshControl.anchor(top: view.topAnchor,
+                              leading: view.leadingAnchor,
+                              trailing: view.trailingAnchor,
+                              padding: .init(top: 80))
 
         adapter.collectionView = collectionView
         adapter.dataSource = self

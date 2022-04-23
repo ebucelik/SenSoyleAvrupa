@@ -83,6 +83,12 @@ class ProfileController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if isOwnUserProfile {
+            navigationController?.navigationBar.prefersLargeTitles = true
+            navigationController?.navigationItem.largeTitleDisplayMode = .always
+            navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.customTintColor()]
+        }
+
         setupStateChange()
 
         pullData()

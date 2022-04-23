@@ -24,6 +24,7 @@ class PurchaseView: UIView {
         lbl.textAlignment = .center
         lbl.font = .systemFont(ofSize: 30, weight: .heavy)
         lbl.numberOfLines = 0
+        lbl.setContentHuggingPriority(.required, for: .horizontal)
         return lbl
     }()
 
@@ -42,6 +43,7 @@ class PurchaseView: UIView {
         imageView.image = UIImage(systemName: "info.circle.fill")?.withRenderingMode(.alwaysTemplate)
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .lightGray
+        imageView.setContentHuggingPriority(.required, for: .horizontal)
         return imageView
     }()
 
@@ -65,6 +67,7 @@ class PurchaseView: UIView {
         let stackViewComponents = UIStackView(arrangedSubviews: [imageViewCoin, labelCoin, labelPrice])
         stackViewComponents.axis = .horizontal
         stackViewComponents.spacing = 10
+        stackViewComponents.distribution = .fillProportionally
 
         let stackViewInfo = UIStackView(arrangedSubviews: [imageViewInfo, labelInfo])
         stackViewInfo.axis = .horizontal

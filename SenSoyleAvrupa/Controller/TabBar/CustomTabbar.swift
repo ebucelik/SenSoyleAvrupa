@@ -60,7 +60,6 @@ class CustomTabbar: UITabBarController{
         navController.tabBarItem.image = unselectedIcon
         return navController
     }
-    
 }
 
 extension CustomTabbar: UITabBarControllerDelegate {
@@ -123,4 +122,3 @@ class MyTransition: NSObject, UIViewControllerAnimatedTransitioning {
         return nil
     }
 }
-
