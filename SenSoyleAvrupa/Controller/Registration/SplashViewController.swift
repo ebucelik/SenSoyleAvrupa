@@ -12,19 +12,30 @@ class SplashViewController: UIViewController {
 
     // MARK: Properties
     private let service: SharedServiceProtocol
+    private let isAppLaunch: Bool
+
     static let userDefaultsEmailKey = "userEmail"
 
     // MARK: Views
     lazy var imageViewLogo: UIImageView = {
-        let img = UIImageView(image: UIImage(named: "logo"))
-        img.widthAnchor.constraint(equalToConstant: view.frame.width / 1.5).isActive = true
-        img.heightAnchor.constraint(equalToConstant: view.frame.width / 1.5).isActive = true
-        img.clipsToBounds = false
-        return img
+        if isAppLaunch {
+            let imageView = UIImageView(image: UIImage(named: "sponsor"))
+            imageView.widthAnchor.constraint(equalToConstant: view.frame.width).isActive = true
+            imageView.heightAnchor.constraint(equalToConstant: view.frame.height).isActive = true
+            imageView.contentMode = .scaleAspectFit
+            return imageView
+        } else {
+            let imageView = UIImageView(image: UIImage(named: "logo"))
+            imageView.widthAnchor.constraint(equalToConstant: view.frame.width / 1.5).isActive = true
+            imageView.heightAnchor.constraint(equalToConstant: view.frame.width / 1.5).isActive = true
+            imageView.clipsToBounds = false
+            return imageView
+        }
     }()
 
-    init(service: SharedServiceProtocol) {
+    init(service: SharedServiceProtocol, isAppLaunch: Bool = false) {
         self.service = service
+        self.isAppLaunch = isAppLaunch
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -71,8 +82,6 @@ class SplashViewController: UIViewController {
                     perform(#selector(actionTabBar), with: nil, afterDelay: 1)
                 }
             }
-        } else if CacheUser.email.isEmpty {
-            perform(#selector(actionWelcomePage), with: nil, afterDelay: 3)
         } else {
             perform(#selector(actionWelcomePage), with: nil, afterDelay: 3)
         }

@@ -8,23 +8,24 @@
 import UIKit
 import Cosmos
 
-class RatingView : UIView {
-    
-    
-    let allView : UIView = {
-       let view = UIView()
+import SwiftHelper
+
+class RatingView: UIView {
+
+    let allView: UIView = {
+        let view = UIView()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.4)
         return view
     }()
     
-    let centerView : UIView = {
-       let view = UIView()
+    let centerView: UIView = {
+        let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 10
         return view
     }()
     
-    let buttonLeft : UIButton = {
+    let buttonLeft: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "xmark"), for: .normal)
         btn.tintColor = .customTintColor()
@@ -35,7 +36,7 @@ class RatingView : UIView {
         return btn
     }()
     
-    let ratingView : CosmosView = {
+    let ratingView: CosmosView = {
         let cosmosView = CosmosView()
         cosmosView.settings.fillMode = .full
         cosmosView.settings.starSize = 30
@@ -50,7 +51,7 @@ class RatingView : UIView {
         return cosmosView
     }()
     
-    let labelTop : UILabel = {
+    let labelTop: UILabel = {
         let lbl = UILabel()
         lbl.text = "0"
         lbl.textColor = .customLabelColor()
@@ -60,7 +61,7 @@ class RatingView : UIView {
         return lbl
     }()
     
-    let buttonSend : UIButton = {
+    let buttonSend: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Send", for: .normal)
         btn.backgroundColor = .customTintColor()
@@ -74,39 +75,40 @@ class RatingView : UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        //backgroundColor = .clear
-        
         addSubview(allView)
         
         allView.addSubview(centerView)
         
         centerView.addSubview(buttonLeft)
-        
         centerView.addSubview(labelTop)
-        
         centerView.addSubview(ratingView)
-        
         centerView.addSubview(buttonSend)
-        
-        
-        
+
         allView.addToSuperViewAnchors()
         
-        centerView.anchor(top: nil, bottom: nil, leading: allView.leadingAnchor, trailing: allView.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
+        centerView.anchor(leading: allView.leadingAnchor,
+                          trailing: allView.trailingAnchor,
+                          padding: .init(horizontal: 20))
         centerView.centerViewAtSuperView()
         
-        buttonLeft.anchor(top: centerView.topAnchor, bottom: nil, leading: centerView.leadingAnchor, trailing: nil,padding: .init(top: 20, left: 20, bottom: 0, right: 0))
+        buttonLeft.anchor(top: centerView.topAnchor,
+                          leading: centerView.leadingAnchor,
+                          padding: .init(top: 20, left: 20, bottom: 0, right: 0))
         
-        labelTop.anchor(top: buttonLeft.bottomAnchor, bottom: nil, leading: centerView.leadingAnchor, trailing: centerView.trailingAnchor,padding: .init(top: 5, left: 20, bottom: 0, right: 20))
+        labelTop.anchor(top: buttonLeft.bottomAnchor,
+                        leading: centerView.leadingAnchor,
+                        trailing: centerView.trailingAnchor,
+                        padding: .init(top: 5, left: 20, bottom: 0, right: 20))
         
-        ratingView.anchor(top: labelTop.bottomAnchor, bottom: nil, leading: nil, trailing: nil,padding: .init(top: 15, left: 0, bottom: 0, right: 0))
+        ratingView.anchor(top: labelTop.bottomAnchor,
+                          padding: .init(top: 15))
         ratingView.centerXAtSuperView()
         
-        buttonSend.anchor(top: ratingView.bottomAnchor, bottom: centerView.bottomAnchor, leading: centerView.leadingAnchor, trailing: centerView.trailingAnchor,padding: .init(top: 15, left: 20, bottom: 20, right: 20))
-        
-       
-      
-        
+        buttonSend.anchor(top: ratingView.bottomAnchor,
+                          bottom: centerView.bottomAnchor,
+                          leading: centerView.leadingAnchor,
+                          trailing: centerView.trailingAnchor,
+                          padding: .init(top: 15, left: 20, bottom: 20, right: 20))
     }
     
     override func draw(_ rect: CGRect) {
@@ -117,5 +119,3 @@ class RatingView : UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
-

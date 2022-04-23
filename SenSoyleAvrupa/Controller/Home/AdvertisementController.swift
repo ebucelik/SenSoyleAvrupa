@@ -11,13 +11,13 @@ import AVFoundation
 
 class AdvertisementController: UIViewController {
     
-    let buttonDismiss: UIButton = {
+    lazy var buttonDismiss: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "xmark"), for: .normal)
         button.tintColor = .black
         button.heightAnchor.constraint(equalToConstant: 36).isActive = true
         button.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        button.addTarget(AdvertisementController.self, action: #selector(dismissViewController), for: .touchUpInside)
+        button.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
         button.layer.cornerRadius = 18
         button.backgroundColor = .customBackgroundColor()
         return button
