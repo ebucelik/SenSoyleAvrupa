@@ -10,6 +10,8 @@
 		710E0FA6280C2CF50005367C /* SwiftHelper in Frameworks */ = {isa = PBXBuildFile; productRef = 710E0FA5280C2CF50005367C /* SwiftHelper */; };
 		7113785627C9689000C23710 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7113785527C9689000C23710 /* PlayerView.swift */; };
 		71150BA627D3A89A0097B65C /* PurchaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71150BA527D3A89A0097B65C /* PurchaseModel.swift */; };
+		711599982815720F00F22647 /* CachingPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711599972815720F00F22647 /* CachingPlayerItem.swift */; };
+		7115999B2815725C00F22647 /* Cache in Frameworks */ = {isa = PBXBuildFile; productRef = 7115999A2815725C00F22647 /* Cache */; };
 		711F8EE927E4A0F400137EE4 /* Loadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711F8EE827E4A0F400137EE4 /* Loadable.swift */; };
 		711F8EEB27E4EA3900137EE4 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711F8EEA27E4EA3900137EE4 /* LoginService.swift */; };
 		711F8EED27E4EB1D00137EE4 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711F8EEC27E4EB1D00137EE4 /* Services.swift */; };
@@ -102,6 +104,7 @@
 		710E0FA4280C2C7F0005367C /* SwiftHelper */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SwiftHelper; path = ../../SwiftHelper; sourceTree = "<group>"; };
 		7113785527C9689000C23710 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		71150BA527D3A89A0097B65C /* PurchaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseModel.swift; sourceTree = "<group>"; };
+		711599972815720F00F22647 /* CachingPlayerItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachingPlayerItem.swift; sourceTree = "<group>"; };
 		711F8EE827E4A0F400137EE4 /* Loadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loadable.swift; sourceTree = "<group>"; };
 		711F8EEA27E4EA3900137EE4 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		711F8EEC27E4EB1D00137EE4 /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
@@ -196,6 +199,7 @@
 				81C08B11DA2F6C0EBEEA1985 /* Pods_SenSoyleAvrupa.framework in Frameworks */,
 				71803D2427EE5AE400953F4B /* IGListKit in Frameworks */,
 				71C9D8B827DB932B00761E14 /* StoreKit.framework in Frameworks */,
+				7115999B2815725C00F22647 /* Cache in Frameworks */,
 				719DE26627DFD0A000B7F1C7 /* ComposableArchitecture in Frameworks */,
 				710E0FA6280C2CF50005367C /* SwiftHelper in Frameworks */,
 			);
@@ -246,6 +250,7 @@
 		719DE26927DFD2E600B7F1C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				711599972815720F00F22647 /* CachingPlayerItem.swift */,
 				711F8EE827E4A0F400137EE4 /* Loadable.swift */,
 				711F8EEC27E4EB1D00137EE4 /* Services.swift */,
 				711F8EF827E6071400137EE4 /* EmptyView.swift */,
@@ -497,6 +502,7 @@
 				719DE26527DFD0A000B7F1C7 /* ComposableArchitecture */,
 				71803D2327EE5AE400953F4B /* IGListKit */,
 				710E0FA5280C2CF50005367C /* SwiftHelper */,
+				7115999A2815725C00F22647 /* Cache */,
 			);
 			productName = SenSoyleAvrupa;
 			productReference = E4E860A92624DC5F007A1915 /* SenSoyleAvrupa.app */;
@@ -528,6 +534,7 @@
 			packageReferences = (
 				719DE26427DFD0A000B7F1C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				71803D2227EE5AE400953F4B /* XCRemoteSwiftPackageReference "IGListKit" */,
+				711599992815725C00F22647 /* XCRemoteSwiftPackageReference "Cache" */,
 			);
 			productRefGroup = E4E860AA2624DC5F007A1915 /* Products */;
 			projectDirPath = "";
@@ -647,6 +654,7 @@
 				E4F959CF262639C000DC5960 /* ChooseProfileImageController.swift in Sources */,
 				E452251E2624F7CD001ACD0A /* SplashViewController.swift in Sources */,
 				E4E860F42624E4CB007A1915 /* Constraints.swift in Sources */,
+				711599982815720F00F22647 /* CachingPlayerItem.swift in Sources */,
 				711F8EE927E4A0F400137EE4 /* Loadable.swift in Sources */,
 				E4E860AD2624DC5F007A1915 /* AppDelegate.swift in Sources */,
 				7183D5CE27BEB5C0009626D2 /* NetworkManager.swift in Sources */,
@@ -890,6 +898,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		711599992815725C00F22647 /* XCRemoteSwiftPackageReference "Cache" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hyperoslo/Cache.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		71803D2227EE5AE400953F4B /* XCRemoteSwiftPackageReference "IGListKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Instagram/IGListKit";
@@ -912,6 +928,11 @@
 		710E0FA5280C2CF50005367C /* SwiftHelper */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftHelper;
+		};
+		7115999A2815725C00F22647 /* Cache */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 711599992815725C00F22647 /* XCRemoteSwiftPackageReference "Cache" */;
+			productName = Cache;
 		};
 		71803D2327EE5AE400953F4B /* IGListKit */ = {
 			isa = XCSwiftPackageProductDependency;

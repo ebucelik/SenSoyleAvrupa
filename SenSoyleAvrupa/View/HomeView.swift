@@ -9,6 +9,7 @@ import UIKit
 import AVFoundation
 import NVActivityIndicatorView
 import Alamofire
+import Cache
 
 import SwiftHelper
 
@@ -17,6 +18,15 @@ class HomeView: UIView {
     // MARK: Properties
     private(set) var isPlaying = true
     private var observer: NSKeyValueObservation?
+
+    // MARK: Cache properties
+    private let currentDate = Date()
+    private let diskConfig = DiskConfig(name: "DiskCache")
+    private let memoryConfig = MemoryConfig(expiry: .seconds(10 * 60), countLimit: 10, totalCostLimit: 10)
+
+    lazy var storage: Cache.Storage<String, Data>? = {
+        return try? Cache.Storage(diskConfig: diskConfig, memoryConfig: memoryConfig, transformer: TransformerFactory.forData())
+    }()
 
     // MARK: Models
     private var userModel: UserModel? = nil {
@@ -250,6 +260,8 @@ class HomeView: UIView {
         ratingView.addToSuperViewAnchors()
 
         editRatingView()
+
+        try? storage?.removeExpiredObjects()
     }
 
     override func layoutSubviews() {
@@ -291,19 +303,20 @@ class HomeView: UIView {
 
     func downloadVideo() {
         isPlaying = true
-        showLoading()
 
         guard let url = URL(string: "\(NetworkManager.url)/video/\(model?.video ?? "")") else { return }
 
-        let asset = AVAsset(url: url)
+        let playerItem: CachingPlayerItem
 
-        let assetKeys = [
-            "playable",
-            "hasProtectedContent"
-        ]
+        do {
+            let result = try storage!.entry(forKey: url.absoluteString)
 
-        let playerItem = AVPlayerItem(asset: asset,
-                                      automaticallyLoadedAssetKeys: assetKeys)
+            playerItem = CachingPlayerItem(data: result.object, mimeType: "video/\(url.pathExtension)", fileExtension: url.pathExtension)
+        } catch {
+            playerItem = CachingPlayerItem(url: url)
+
+            showLoading()
+        }
 
         observer = playerItem.observe(\.status, options: [.new, .old], changeHandler: { [weak self] (playerItem, change) in
             switch playerItem.status {
@@ -311,10 +324,7 @@ class HomeView: UIView {
                 self?.hideLoading()
 
             case .failed:
-                self?.hideLoading()
-                SharedPlayer.player.replaceCurrentItem(with: nil)
-                self?.playerView.setPlayer()
-                self?.showError()
+                self?.setVideoDidFailed()
 
             case .unknown:
                 print("unknown")
@@ -323,6 +333,8 @@ class HomeView: UIView {
                 print("default")
             }
         })
+
+        playerItem.delegate = self
 
         SharedPlayer.player = AVPlayer(playerItem: playerItem)
         playerView.setPlayer()
@@ -337,7 +349,7 @@ class HomeView: UIView {
         if model?.pp == nil || model?.username == nil {
             let userParameters: Parameters = ["email": model?.email ?? ""]
 
-            NetworkManager.call(endpoint: "/api/user", method: .get, parameters: userParameters) { (result: Result<UserModel, Error>) in
+            NetworkManager.call(endpoint: "/api/user", method: .get, parameters: userParameters) { (result: Swift.Result<UserModel, Error>) in
                 switch result {
                 case let .failure(error):
                     print("Network request error: \(error)")
@@ -346,6 +358,14 @@ class HomeView: UIView {
                 }
             }
         }
+    }
+
+    func setVideoDidFailed() {
+        hideLoading()
+        SharedPlayer.player.replaceCurrentItem(with: nil)
+        playerView.setPlayer()
+        showError()
+        try? storage?.removeAll()
     }
 
     func animate(options: UIView.AnimationOptions, animations: @escaping () -> Void, completion: ((Bool) -> (Void))? = nil) {
@@ -407,5 +427,19 @@ class HomeView: UIView {
             self?.playerView.playerLayer.player?.seek(to: CMTime.zero)
             self?.playerView.playerLayer.player?.play()
         }
+    }
+}
+
+extension HomeView: CachingPlayerItemDelegate {
+    func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
+        storage?.async.setObject(data, forKey: playerItem.url.absoluteString, expiry: .seconds(10 * 60), completion: { _ in })
+    }
+
+    func playerItemReadyToPlay(_ playerItem: CachingPlayerItem) {
+        hideLoading()
+    }
+
+    func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
+        setVideoDidFailed()
     }
 }
