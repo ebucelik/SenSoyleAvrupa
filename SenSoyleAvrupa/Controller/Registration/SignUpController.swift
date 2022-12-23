@@ -304,7 +304,7 @@ class SignUpController: UITableViewController {
             return
         }
 
-        if email.checkEmailValidation() {
+        if !email.checkEmailValidation() {
             showSnackBar(message: "E-Mail'iniz hatali. Lütfen dogru E-Mail kullanin.")
             return
         }
